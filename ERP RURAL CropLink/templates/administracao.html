@@ -1,0 +1,177 @@
+{% extends "base.html" %}
+
+{% block title %}Administração - CropLink{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col">
+            <h1 class="display-6">
+                <i class="fas fa-cog text-secondary"></i>
+                Administração
+            </h1>
+            <p class="text-muted">Gestão de usuários e configurações do sistema</p>
+        </div>
+        <div class="col-auto">
+            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalNovoUsuario">
+                <i class="fas fa-user-plus"></i> Novo Usuário
+            </button>
+        </div>
+    </div>
+
+    <!-- Lista de Usuários -->
+    <div class="card shadow">
+        <div class="card-header">
+            <h5 class="mb-0">Usuários do Sistema</h5>
+        </div>
+        <div class="card-body">
+            {% if usuarios %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead class="table-light">
+                            <tr>
+                                <th>ID</th>
+                                <th>Nome de Usuário</th>
+                                <th>Data de Criação</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for usuario in usuarios %}
+                            <tr>
+                                <td>{{ usuario.id }}</td>
+                                <td>
+                                    <i class="fas fa-user text-muted me-2"></i>
+                                    {{ usuario.username }}
+                                </td>
+                                <td>
+                                    {% if usuario.id == 1 %}
+                                        <span class="badge bg-success">Administrador Principal</span>
+                                    {% else %}
+                                        Usuário do Sistema
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <button class="btn btn-sm btn-outline-warning" 
+                                            onclick="editarSenha({{ usuario.id }}, '{{ usuario.username }}')"
+                                            title="Alterar Senha">
+                                        <i class="fas fa-key"></i>
+                                    </button>
+                                    {% if usuario.id != 1 %}
+                                    <button class="btn btn-sm btn-outline-danger ms-1" 
+                                            onclick="excluirUsuario({{ usuario.id }}, '{{ usuario.username }}')"
+                                            title="Excluir Usuário">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="text-center py-5">
+                    <i class="fas fa-users fa-3x text-muted mb-3"></i>
+                    <h5 class="text-muted">Nenhum usuário cadastrado</h5>
+                    <p class="text-muted">Adicione usuários para acessar o sistema.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Modal Novo Usuário -->
+<div class="modal fade" id="modalNovoUsuario" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-user-plus text-primary"></i>
+                    Criar Novo Usuário
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="POST" action="{{ url_for('adicionar_usuario') }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="username" class="form-label">Nome de Usuário *</label>
+                        <input type="text" class="form-control" id="username" name="username" required 
+                               placeholder="Ex: joao.silva">
+                        <div class="form-text">O nome de usuário será usado para login no sistema</div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Senha *</label>
+                        <input type="password" class="form-control" id="password" name="password" required 
+                               minlength="6" placeholder="Mínimo 6 caracteres">
+                        <div class="form-text">Senha deve ter pelo menos 6 caracteres</div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Criar Usuário
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Editar Senha -->
+<div class="modal fade" id="modalEditarSenha" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-key text-warning"></i>
+                    Alterar Senha
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="POST" id="formEditarSenha">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                <div class="modal-body">
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle"></i>
+                        Alterando senha do usuário: <strong id="nomeUsuario"></strong>
+                    </div>
+                    <div class="mb-3">
+                        <label for="nova_senha" class="form-label">Nova Senha *</label>
+                        <input type="password" class="form-control" id="nova_senha" name="nova_senha" required 
+                               minlength="6" placeholder="Digite a nova senha">
+                        <div class="form-text">Senha deve ter pelo menos 6 caracteres</div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-warning">
+                        <i class="fas fa-save"></i> Alterar Senha
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function editarSenha(userId, username) {
+    document.getElementById('nomeUsuario').textContent = username;
+    document.getElementById('formEditarSenha').action = `/administracao/usuario/editar/${userId}`;
+    document.getElementById('nova_senha').value = '';
+    
+    new bootstrap.Modal(document.getElementById('modalEditarSenha')).show();
+}
+
+function excluirUsuario(userId, username) {
+    if (confirm(`Tem certeza que deseja excluir o usuário "${username}"?\n\nEsta ação não pode ser desfeita.`)) {
+        // Implementar exclusão se necessário no futuro
+        alert('Funcionalidade de exclusão será implementada em versões futuras.');
+    }
+}
+</script>
+{% endblock %}

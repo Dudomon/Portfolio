@@ -1,0 +1,412 @@
+// backend-proxy.js - Para ser usado no backend do Wix
+import { fetch } from 'wix-fetch';
+
+// Configurações da API Sienge
+// ⚠️ IMPORTANTE: Substitua com suas credenciais reais
+const API_CONFIG = {
+    baseURL: 'https://api.sienge.com.br/YOUR_COMPANY/public/api/v1',
+    auth: {
+        username: 'YOUR_USERNAME_HERE',
+        password: 'YOUR_PASSWORD_HERE'
+    }
+};
+
+// Função para buscar boletos via backend (contorna CORS)
+export async function get_boletos(request) {
+    try {
+        const { cpfCnpj, nome } = request.query;
+
+        if (!cpfCnpj || !nome) {
+            return {
+                status: 400,
+                body: { error: 'CPF/CNPJ e nome são obrigatórios' }
+            };
+        }
+
+        console.log('Buscando boletos para:', { cpfCnpj, nome });
+
+        // Fazer requisição para a API Sienge
+        const response = await fetch(`${API_CONFIG.baseURL}/financeiro/boletos`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Basic ${btoa(`${API_CONFIG.auth.username}:${API_CONFIG.auth.password}`)}`,
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            }
+        });
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error('Erro na API Sienge:', response.status, errorText);
+            return {
+                status: response.status,
+                body: { error: `Erro na API: ${response.status}` }
+            };
+        }
+
+        const data = await response.json();
+        console.log('Dados recebidos da API:', data);
+
+        // Verificar estrutura dos dados
+        let boletos = [];
+        if (Array.isArray(data)) {
+            boletos = data;
+        } else if (data.resultados && Array.isArray(data.resultados)) {
+            boletos = data.resultados;
+        } else if (data.data && Array.isArray(data.data)) {
+            boletos = data.data;
+        }
+
+        // Filtrar boletos pelo CPF/CNPJ
+        const cpfCnpjLimpo = cpfCnpj.replace(/\D/g, '');
+        const boletosFiltrados = boletos.filter(boleto => {
+            const campos = ['cpfCnpj', 'cpf', 'cnpj', 'documento', 'cliente.cpfCnpj', 'cliente.documento'];
+
+            for (let campo of campos) {
+                let valorCampo = boleto;
+                const partes = campo.split('.');
+
+                for (let parte of partes) {
+                    valorCampo = valorCampo?.[parte];
+                }
+
+                if (valorCampo) {
+                    const boletoCpfCnpj = String(valorCampo).replace(/\D/g, '');
+                    if (boletoCpfCnpj === cpfCnpjLimpo) {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        });
+
+        console.log(`Encontrados ${boletosFiltrados.length} boletos para o CPF/CNPJ ${cpfCnpj}`);
+
+        return {
+            status: 200,
+            headers: {
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+                'Access-Control-Allow-Headers': 'Content-Type'
+            },
+            body: {
+                success: true,
+                boletos: boletosFiltrados,
+                total: boletosFiltrados.length
+            }
+        };
+
+    } catch (error) {
+        console.error('Erro ao buscar boletos:', error);
+        return {
+            status: 500,
+            body: {
+                error: 'Erro interno do servidor',
+                details: error.message
+            }
+        };
+    }
+}
+
+// Função para gerar segunda via de boleto
+export async function post_segundaVia(request) {
+    console.log('=== INÍCIO DA FUNÇÃO post_segundaVia ===');
+
+    try {
+        console.log('Request recebido:', {
+            method: request.method,
+            url: request.url,
+            headers: Object.fromEntries(request.headers || []),
+            query: request.query
+        });
+
+        let billReceivableId, installmentId;
+
+        // Tentar diferentes formas de ler os parâmetros
+        console.log('Tentando extrair parâmetros...');
+
+        // 1. Tentar body JSON
+        if (request.body) {
+            try {
+                console.log('Tentando ler body...');
+                const bodyText = await request.body.text();
+                console.log('Body text recebido:', bodyText);
+
+                if (bodyText) {
+                    const bodyData = JSON.parse(bodyText);
+                    console.log('Body parseado:', bodyData);
+                    billReceivableId = bodyData.billReceivableId;
+                    installmentId = bodyData.installmentId;
+                }
+            } catch (e) {
+                console.error('Erro ao processar body:', e.message);
+            }
+        }
+
+        // 2. Tentar query parameters se body não funcionou
+        if (!billReceivableId || !installmentId) {
+            console.log('Tentando query params:', request.query);
+            billReceivableId = request.query?.billReceivableId;
+            installmentId = request.query?.installmentId;
+        }
+
+        console.log('Parâmetros finais extraídos:', {
+            billReceivableId,
+            installmentId,
+            tipos: {
+                billReceivableId: typeof billReceivableId,
+                installmentId: typeof installmentId
+            }
+        });
+
+        // Validar parâmetros
+        if (!billReceivableId || !installmentId) {
+            const errorMsg = 'Parâmetros billReceivableId e installmentId são obrigatórios';
+            console.error(errorMsg);
+            return {
+                status: 400,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin': '*',
+                    'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+                    'Access-Control-Allow-Headers': 'Content-Type'
+                },
+                body: {
+                    success: false,
+                    error: errorMsg,
+                    debug: {
+                        receivedParams: { billReceivableId, installmentId },
+                        hasBody: !!request.body,
+                        queryParams: request.query
+                    }
+                }
+            };
+        }
+
+        console.log('=== INICIANDO CHAMADA PARA API SIENGE ===');
+        console.log('Parâmetros validados:', { billReceivableId, installmentId });
+
+        const apiUrl = `${API_CONFIG.baseURL}/payment-slip-notification?billReceivableId=${billReceivableId}&installmentId=${installmentId}`;
+        console.log('URL da API:', apiUrl);
+
+        // Criar token de autenticação Basic sem usar Buffer (compatibilidade Wix)
+        const credentials = `${API_CONFIG.auth.username}:${API_CONFIG.auth.password}`;
+        const authToken = btoa(credentials);
+        console.log('Token de autenticação gerado (primeiros 20 chars):', authToken.substring(0, 20) + '...');
+
+        console.log('Fazendo requisição para API Sienge...');
+        const response = await fetch(apiUrl, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Basic ${authToken}`,
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            }
+        });
+
+        console.log('Resposta da API Sienge:', {
+            status: response.status,
+            statusText: response.statusText,
+            headers: Object.fromEntries(response.headers || [])
+        });
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error('ERRO na API Sienge:', {
+                status: response.status,
+                statusText: response.statusText,
+                errorText: errorText.substring(0, 500)
+            });
+            return {
+                status: response.status,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin': '*',
+                    'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+                    'Access-Control-Allow-Headers': 'Content-Type'
+                },
+                body: {
+                    success: false,
+                    error: `Erro na API Sienge: ${response.status} - ${response.statusText}`,
+                    details: errorText.substring(0, 200)
+                }
+            };
+        }
+
+        const data = await response.json();
+        console.log('Segunda via gerada:', data);
+
+        // Extrair URL do PDF da resposta
+        let downloadUrl = null;
+        if (data.results && data.results.length > 0) {
+            downloadUrl = data.results[0].urlReport;
+        }
+
+        console.log('URL do PDF extraída:', downloadUrl);
+
+        return {
+            status: 200,
+            headers: {
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+                'Access-Control-Allow-Headers': 'Content-Type'
+            },
+            body: {
+                success: true,
+                data: data,
+                downloadUrl: downloadUrl,
+                digitableNumber: data.results && data.results.length > 0 ? data.results[0].digitableNumber : null
+            }
+        };
+
+    } catch (error) {
+        console.error('=== ERRO GERAL NA FUNÇÃO post_segundaVia ===');
+        console.error('Tipo do erro:', error.constructor.name);
+        console.error('Mensagem:', error.message);
+        console.error('Stack trace:', error.stack);
+
+        return {
+            status: 500,
+            headers: {
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+                'Access-Control-Allow-Headers': 'Content-Type'
+            },
+            body: {
+                success: false,
+                error: 'Erro interno do servidor',
+                details: error.message,
+                type: error.constructor.name
+            }
+        };
+    }
+}
+
+// Função para buscar detalhes de um boleto específico
+export async function get_boletosDetalhes(request) {
+    try {
+        const { cpfCnpj } = request.query;
+
+        if (!cpfCnpj) {
+            return {
+                status: 400,
+                body: { error: 'CPF/CNPJ é obrigatório' }
+            };
+        }
+
+        console.log('Buscando detalhes para CPF/CNPJ:', cpfCnpj);
+
+        // Buscar saldo devedor atual (contém billReceivableId e installmentId)
+        const response = await fetch(`${API_CONFIG.baseURL}/current-debit-balance?cpf=${cpfCnpj.replace(/\D/g, '')}`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Basic ${btoa(`${API_CONFIG.auth.username}:${API_CONFIG.auth.password}`)}`,
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            }
+        });
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error('Erro ao buscar detalhes:', response.status, errorText);
+            return {
+                status: response.status,
+                body: { error: `Erro ao buscar detalhes: ${response.status}` }
+            };
+        }
+
+        const data = await response.json();
+        console.log('Detalhes recebidos:', data);
+
+        // Processar dados para extrair informações de segunda via
+        const boletosComDetalhes = [];
+
+        for (const bill of data.results || []) {
+            const billReceivableId = bill.billReceivableId;
+
+            // Verificar parcelas a vencer, vencidas e pagas
+            const tiposParcelas = ['dueInstallments', 'payableInstallments', 'paidInstallments'];
+
+            for (const tipo of tiposParcelas) {
+                for (const installment of bill[tipo] || []) {
+                    if (installment.generatedBoleto) {
+                        boletosComDetalhes.push({
+                            numero: installment.installmentNumber || 'N/A',
+                            valorOriginal: installment.originalValue || 0,
+                            valorAtual: installment.currentBalance || 0,
+                            dataVencimento: installment.dueDate,
+                            situacao: installment.currentBalance > 0 ? (tipo === 'dueInstallments' ? 'Vencido' : 'A Vencer') : 'Pago',
+                            billReceivableId: billReceivableId,
+                            installmentId: installment.installmentId,
+                            podeSegundaVia: installment.generatedBoleto && installment.currentBalance > 0,
+                            nossoNumero: installment.ourNumber || 'N/A'
+                        });
+                    }
+                }
+            }
+        }
+
+        return {
+            status: 200,
+            headers: {
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+                'Access-Control-Allow-Headers': 'Content-Type'
+            },
+            body: {
+                success: true,
+                boletos: boletosComDetalhes,
+                total: boletosComDetalhes.length
+            }
+        };
+
+    } catch (error) {
+        console.error('Erro ao buscar detalhes dos boletos:', error);
+        return {
+            status: 500,
+            body: {
+                error: 'Erro interno do servidor',
+                details: error.message
+            }
+        };
+    }
+}
+
+// Função para lidar com requisições OPTIONS (CORS preflight)
+export function options_boletos() {
+    return {
+        status: 200,
+        headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+            'Access-Control-Allow-Headers': 'Content-Type'
+        }
+    };
+}
+
+export function options_segundaVia() {
+    return {
+        status: 200,
+        headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+            'Access-Control-Allow-Headers': 'Content-Type'
+        }
+    };
+}
+
+export function options_boletosDetalhes() {
+    return {
+        status: 200,
+        headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+            'Access-Control-Allow-Headers': 'Content-Type'
+        }
+    };
+}

@@ -1,0 +1,702 @@
+{% extends "base.html" %}
+
+{% block title %}Talhões - CropLink{% endblock %}
+
+{% block content %}
+
+<style>
+/* Estilo padrão do mapa */
+#map {
+    height: 600px;
+    width: 100%;
+    position: relative;
+}
+
+/* Os botões e painel já estão dentro do #map, então vão automaticamente para fullscreen */
+/* Apenas garantir z-index alto */
+#floatingControls {
+    z-index: 10000 !important;
+}
+
+#drawingInstructions {
+    z-index: 10000 !important;
+}
+</style>
+
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col">
+            <h1 class="display-6">
+                <i class="fas fa-map-marked-alt text-success"></i>
+                Gestão de Talhões
+            </h1>
+            <p class="text-muted">Desenhe e gerencie áreas agrícolas no mapa</p>
+        </div>
+    </div>
+
+    <!-- Mapa -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-map"></i> Desenhe no mapa a área
+                    </h5>
+                    <small>Alterar o desenho não altera automaticamente a quantidade de hectares da área.</small>
+                </div>
+                <div class="card-body p-0" style="position: relative;" id="mapContainer">
+                    <!-- Botão Desenhar Novo Talhão -->
+                    <div id="btnDesenhar" style="position: absolute; z-index: 10000;">
+                        <button class="btn btn-success btn-lg shadow-lg" onclick="iniciarDesenho()">
+                            <i class="fas fa-draw-polygon"></i> DESENHAR NOVO TALHÃO
+                        </button>
+                    </div>
+
+                    <!-- Painel de Instruções Flutuante -->
+                    <div id="drawingInstructions" style="display: none; position: absolute; top: 10px; left: 50%; transform: translateX(-50%); z-index: 1000; max-width: 500px;">
+                        <div class="alert alert-success shadow-lg m-0" style="border-left: 5px solid #28a745;">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-hand-pointer fa-2x me-3"></i>
+                                <div>
+                                    <h6 class="mb-1"><strong>Modo de Desenho Ativo</strong></h6>
+                                    <p class="mb-1"><small>Clique no mapa para adicionar pontos do polígono</small></p>
+                                    <div class="badge bg-primary" id="pointCounter">0 pontos</div>
+                                    <small class="text-muted ms-2">(mínimo: 3 pontos)</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Botões de Edição Flutuantes -->
+                    <div id="floatingControls" style="display: none; position: absolute; top: 20px; right: 150px; z-index: 10000;">
+                        <div class="btn-group-vertical shadow-lg" role="group">
+                            <button class="btn btn-success btn-lg" onclick="salvarTalhao()" style="border-radius: 10px 10px 0 0; min-width: 200px;">
+                                <i class="fas fa-save"></i> SALVAR EDIÇÃO
+                            </button>
+                            <button class="btn btn-secondary btn-lg" onclick="cancelarEdicao()" style="border-radius: 0; min-width: 200px;">
+                                <i class="fas fa-times"></i> CANCELAR EDIÇÃO
+                            </button>
+                            <button class="btn btn-danger btn-lg" onclick="removerPontos()" style="border-radius: 0 0 10px 10px; min-width: 200px;">
+                                <i class="fas fa-trash"></i> REMOVER PONTOS
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Mapa do Google Maps -->
+                    <div id="map" data-talhoes='{{ talhoes_json }}'></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Lista de Talhões -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">
+                        <i class="fas fa-list"></i> Novas áreas
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% if talhoes %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Nome</th>
+                                    <th>Área (ha)</th>
+                                    <th>Desenho da área</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for talhao in talhoes %}
+                                <tr>
+                                    <td>
+                                        <i class="fas fa-grip-vertical text-muted me-2"></i>
+                                        {{ talhao.nome }}
+                                    </td>
+                                    <td>{{ talhao.get_area_display() }}</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-primary" onclick="visualizarTalhao({{ talhao.id }})">
+                                            <i class="fas fa-eye"></i> Ver no mapa
+                                        </button>
+                                    </td>
+                                    <td>
+                                        <button class="btn btn-sm btn-primary" onclick="editarTalhao({{ talhao.id }})">
+                                            <i class="fas fa-edit"></i> EDITAR
+                                        </button>
+                                        <button class="btn btn-sm btn-danger" onclick="excluirTalhao({{ talhao.id }}, '{{ talhao.nome }}')">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="text-center py-5">
+                        <i class="fas fa-map-marked-alt fa-3x text-muted mb-3"></i>
+                        <p class="text-muted">Nenhum talhão cadastrado ainda.</p>
+                        <button class="btn btn-success" onclick="iniciarDesenho()">
+                            <i class="fas fa-plus"></i> Desenhar Primeiro Talhão
+                        </button>
+                    </div>
+                    {% endif %}
+
+                    {% if talhoes %}
+                    <div class="mt-3">
+                        <button class="btn btn-success" onclick="iniciarDesenho()">
+                            <i class="fas fa-plus"></i> ADICIONAR MAIS ÁREAS
+                        </button>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Visualização em Cards removida conforme solicitado -->
+</div>
+
+<!-- Modal para Salvar Talhão -->
+<div class="modal fade" id="modalSalvarTalhao" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title">Salvar Talhão</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="formSalvarTalhao">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                <input type="hidden" id="talhao_id" name="talhao_id">
+                <input type="hidden" id="coordenadas" name="coordenadas">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="nome_talhao" class="form-label">Nome *</label>
+                        <input type="text" class="form-control" id="nome_talhao" name="nome" required
+                                placeholder="Ex: Talhão Norte, Área 1, etc." maxlength="100">
+                    </div>
+                    <div class="mb-3">
+                        <label for="area_hectares" class="form-label">Área (hectares)</label>
+                        <input type="number" class="form-control" id="area_hectares" name="area_hectares"
+                                step="0.01" placeholder="Calculado automaticamente" readonly>
+                    </div>
+                    <div class="mb-3">
+                        <label for="area_alqueires" class="form-label">Área (alqueires paulista)</label>
+                        <input type="number" class="form-control" id="area_alqueires" name="area_alqueires"
+                                step="0.01" placeholder="Calculado automaticamente" readonly>
+                    </div>
+                    <div class="mb-3">
+                        <label for="cor_talhao" class="form-label">Cor do Polígono</label>
+                        <input type="color" class="form-control form-control-color" id="cor_talhao" name="cor" value="#FFD700">
+                    </div>
+                    <div class="mb-3">
+                        <label for="observacao_talhao" class="form-label">Observação</label>
+                        <textarea class="form-control" id="observacao_talhao" name="observacao" rows="3"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-success">Salvar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+// Variáveis globais - Talhões Map System v2.1
+let map;
+let currentPolygon = null;
+let allPolygons = [];
+let editingPolygonId = null;
+let isDrawing = false;
+let drawingPath = [];
+let vertexMarkers = []; // Marcadores dos vértices
+let talhoesData = []; // Será carregado do data-attribute
+
+// IMPORTANTE: Função global para callback do Google Maps API
+window.initMap = function() {
+    console.log('✅ initMap() GLOBAL chamado - timestamp:', new Date().toISOString());
+
+    // Carregar dados dos talhões do data-attribute
+    try {
+        const mapDiv = document.getElementById('map');
+        const talhoesJson = mapDiv.getAttribute('data-talhoes');
+        talhoesData = JSON.parse(talhoesJson);
+        console.log('📊 Talhões carregados:', talhoesData.length);
+    } catch (e) {
+        console.error('❌ Erro ao carregar dados dos talhões:', e);
+        talhoesData = [];
+    }
+
+    // Centralizar no Brasil (ou usar geolocalização)
+    const center = { lat: -15.7801, lng: -47.9292 }; // Brasília como centro padrão
+
+    map = new google.maps.Map(document.getElementById("map"), {
+        zoom: 15,
+        center: center,
+        mapTypeId: 'satellite',
+        mapTypeControl: true,
+        streetViewControl: false,
+        fullscreenControl: true,
+        gestureHandling: 'greedy', // Remove mensagem de "Ctrl + scroll" e permite zoom direto
+        zoomControl: true, // Mostrar controles de zoom
+        zoomControlOptions: {
+            position: google.maps.ControlPosition.RIGHT_CENTER // Posição dos controles
+        },
+        scaleControl: true, // Mostrar escala
+        rotateControl: true, // Mostrar controle de rotação
+        panControl: false // Não mostrar pan control (redundante com arrastar)
+    });
+
+    console.log('Mapa criado:', map);
+
+    // Adicionar botões e controles ao mapa como custom controls
+    const btnDesenhar = document.getElementById('btnDesenhar');
+    const floatingControls = document.getElementById('floatingControls');
+    const drawingInstructions = document.getElementById('drawingInstructions');
+
+    if (btnDesenhar) {
+        // Botão "Desenhar Novo Talhão" no lado direito, junto com os outros
+        map.controls[google.maps.ControlPosition.RIGHT_TOP].push(btnDesenhar);
+    }
+    if (floatingControls) {
+        // Botões de edição no mesmo lugar (RIGHT_TOP)
+        map.controls[google.maps.ControlPosition.RIGHT_TOP].push(floatingControls);
+    }
+    if (drawingInstructions) {
+        // Painel de instruções no centro superior
+        map.controls[google.maps.ControlPosition.TOP_CENTER].push(drawingInstructions);
+    }
+
+    // Tentar obter localização do usuário
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+                const pos = {
+                    lat: position.coords.latitude,
+                    lng: position.coords.longitude,
+                };
+                map.setCenter(pos);
+            },
+            () => {
+                console.log("Não foi possível obter localização");
+            }
+        );
+    }
+
+    // Carregar talhões existentes
+    carregarTalhoes();
+};  // Fim do window.initMap
+
+function carregarTalhoes() {
+    talhoesData.forEach(talhao => {
+        const coords = JSON.parse(talhao.coordenadas);
+        const polygon = new google.maps.Polygon({
+            paths: coords,
+            strokeColor: talhao.cor || '#FFD700',
+            strokeOpacity: 0.8,
+            strokeWeight: 2,
+            fillColor: talhao.cor || '#FFD700',
+            fillOpacity: 0.35,
+            map: map,
+            clickable: true
+        });
+
+        polygon.talhaoId = talhao.id;
+        allPolygons.push(polygon);
+
+        // Click no polígono para visualizar
+        polygon.addListener('click', function() {
+            visualizarTalhao(talhao.id);
+        });
+
+        // Desenhar minimap
+        desenharMinimap(talhao.id, coords, talhao.cor);
+    });
+}
+
+function iniciarDesenho() {
+    console.log('iniciarDesenho() chamado');
+
+    if (!map) {
+        alert('Aguarde o mapa carregar!');
+        return;
+    }
+
+    // CRITICAL: Remover listener anterior primeiro para evitar listeners duplicados
+    if (map.drawingClickListener) {
+        google.maps.event.removeListener(map.drawingClickListener);
+        map.drawingClickListener = null;
+        console.log('✅ Listener anterior removido');
+    }
+
+    // Ocultar botão "Desenhar" e mostrar controles de edição
+    const btnDesenhar = document.getElementById('btnDesenhar');
+    const floatingControls = document.getElementById('floatingControls');
+    const drawingInstructions = document.getElementById('drawingInstructions');
+
+    if (btnDesenhar) btnDesenhar.style.display = 'none';
+    if (floatingControls) floatingControls.style.display = 'block';
+    if (drawingInstructions) drawingInstructions.style.display = 'block';
+
+    // Limpar desenho anterior
+    if (currentPolygon) {
+        currentPolygon.setMap(null);
+        currentPolygon = null;
+    }
+
+    // Limpar marcadores antigos
+    vertexMarkers.forEach(marker => marker.setMap(null));
+    vertexMarkers = [];
+
+    isDrawing = true;
+    drawingPath = []; // Resetar o array completamente
+    editingPolygonId = null;
+
+    // Mostrar painel de instruções (reutilizar variáveis já declaradas)
+    const pointCounter = document.getElementById('pointCounter');
+
+    if (drawingInstructions) drawingInstructions.style.display = 'block';
+    if (pointCounter) pointCounter.textContent = '0 pontos';
+    if (floatingControls) floatingControls.style.display = 'block'; // Mostrar botões flutuantes
+
+    // Mudar cursor do mapa
+    map.setOptions({ draggableCursor: 'crosshair' });
+
+    // Adicionar listener de clique no mapa
+    const clickListener = map.addListener('click', function(event) {
+        if (!isDrawing) return;
+
+        drawingPath.push(event.latLng);
+
+        // Adicionar marcador visual no vértice
+        const marker = new google.maps.Marker({
+            position: event.latLng,
+            map: map,
+            icon: {
+                path: google.maps.SymbolPath.CIRCLE,
+                fillColor: '#28a745',
+                fillOpacity: 1,
+                strokeColor: '#ffffff',
+                strokeWeight: 2,
+                scale: 8
+            },
+            draggable: false,
+            label: {
+                text: String(drawingPath.length),
+                color: '#ffffff',
+                fontSize: '12px',
+                fontWeight: 'bold'
+            }
+        });
+        vertexMarkers.push(marker);
+
+        // Atualizar contador
+        const pointCount = drawingPath.length;
+        const pointCounterElement = document.getElementById('pointCounter');
+        if (pointCounterElement) {
+            pointCounterElement.textContent = `${pointCount} ponto${pointCount > 1 ? 's' : ''}`;
+        }
+
+        // Criar/atualizar polígono temporário
+        if (currentPolygon) {
+            currentPolygon.setMap(null);
+        }
+
+        if (drawingPath.length >= 2) {
+            currentPolygon = new google.maps.Polygon({
+                paths: drawingPath,
+                fillColor: '#28a745',
+                fillOpacity: 0.4,
+                strokeWeight: 3,
+                strokeColor: '#28a745',
+                editable: false,
+                map: map
+            });
+        }
+
+        // Mostrar controles após 3 pontos
+        if (drawingPath.length >= 3) {
+            const controlsElement = document.getElementById('drawingControls');
+            if (controlsElement) controlsElement.style.display = 'block';
+
+            if (pointCounterElement) {
+                pointCounterElement.classList.remove('bg-primary');
+                pointCounterElement.classList.add('bg-success');
+            }
+        }
+
+        console.log('Ponto adicionado. Total:', drawingPath.length);
+    });
+
+    // Guardar listener para remover depois
+    map.drawingClickListener = clickListener;
+
+    console.log('Modo de desenho ativado');
+}
+
+function salvarTalhao() {
+    if (!currentPolygon) {
+        alert('Desenhe um polígono primeiro!');
+        return;
+    }
+
+    // Obter coordenadas
+    const path = currentPolygon.getPath();
+    const coords = [];
+    for (let i = 0; i < path.getLength(); i++) {
+        const point = path.getAt(i);
+        coords.push({lat: point.lat(), lng: point.lng()});
+    }
+
+    // Calcular área
+    const areaMeters = google.maps.geometry.spherical.computeArea(path);
+    const areaHectares = areaMeters / 10000;
+    const areaAlqueires = areaHectares / 2.42;
+
+    // Preencher form
+    document.getElementById('coordenadas').value = JSON.stringify(coords);
+    document.getElementById('area_hectares').value = areaHectares.toFixed(2);
+    document.getElementById('area_alqueires').value = areaAlqueires.toFixed(2);
+    document.getElementById('talhao_id').value = editingPolygonId || '';
+
+    // Ocultar controles flutuantes
+    const floatingControls = document.getElementById('floatingControls');
+    if (floatingControls) floatingControls.style.display = 'none';
+
+    // Abrir modal
+    const modal = new bootstrap.Modal(document.getElementById('modalSalvarTalhao'));
+    modal.show();
+}
+
+function cancelarEdicao() {
+    // Parar modo de desenho
+    isDrawing = false;
+    drawingPath = [];
+
+    // Remover polígono
+    if (currentPolygon) {
+        currentPolygon.setMap(null);
+        currentPolygon = null;
+    }
+
+    // Remover marcadores
+    vertexMarkers.forEach(marker => marker.setMap(null));
+    vertexMarkers = [];
+
+    // Remover listener de clique
+    if (map.drawingClickListener) {
+        google.maps.event.removeListener(map.drawingClickListener);
+        map.drawingClickListener = null;
+    }
+
+    // Restaurar cursor
+    map.setOptions({ draggableCursor: null });
+
+    // Ocultar controles de edição e mostrar botão "Desenhar" novamente
+    const btnDesenhar = document.getElementById('btnDesenhar');
+    const controlsElement = document.getElementById('drawingControls');
+    const instructionsElement = document.getElementById('drawingInstructions');
+    const floatingControls = document.getElementById('floatingControls');
+
+    if (btnDesenhar) btnDesenhar.style.display = 'block';
+    if (controlsElement) controlsElement.style.display = 'none';
+    if (instructionsElement) instructionsElement.style.display = 'none';
+    if (floatingControls) floatingControls.style.display = 'none';
+    editingPolygonId = null;
+
+    console.log('Edição cancelada');
+}
+
+function removerPontos() {
+    if (currentPolygon) {
+        currentPolygon.setMap(null);
+        currentPolygon = null;
+    }
+
+    // Remover marcadores
+    vertexMarkers.forEach(marker => marker.setMap(null));
+    vertexMarkers = [];
+
+    drawingPath = [];
+
+    const controlsElement = document.getElementById('drawingControls');
+    const pointCounterElement = document.getElementById('pointCounter');
+
+    if (controlsElement) controlsElement.style.display = 'none';
+
+    if (pointCounterElement) {
+        pointCounterElement.textContent = '0 pontos';
+        pointCounterElement.classList.remove('bg-success');
+        pointCounterElement.classList.add('bg-primary');
+    }
+
+    console.log('Pontos removidos');
+}
+
+function visualizarTalhao(id) {
+    const polygon = allPolygons.find(p => p.talhaoId === id);
+    if (polygon) {
+        const bounds = new google.maps.LatLngBounds();
+        polygon.getPath().forEach(coord => bounds.extend(coord));
+        map.fitBounds(bounds);
+    }
+}
+
+function editarTalhao(id) {
+    const talhao = talhoesData.find(t => t.id === id);
+    if (!talhao) return;
+
+    const coords = JSON.parse(talhao.coordenadas);
+
+    // Remover polígono atual se existir
+    if (currentPolygon) {
+        currentPolygon.setMap(null);
+    }
+
+    // Criar polígono editável
+    currentPolygon = new google.maps.Polygon({
+        paths: coords,
+        fillColor: talhao.cor || '#FFD700',
+        fillOpacity: 0.5,
+        strokeWeight: 2,
+        strokeColor: '#FFFFFF',
+        clickable: true,
+        editable: true,
+        map: map
+    });
+
+    editingPolygonId = id;
+    document.getElementById('drawingControls').style.display = 'block';
+
+    // Zoom para o polígono
+    const bounds = new google.maps.LatLngBounds();
+    coords.forEach(coord => bounds.extend(coord));
+    map.fitBounds(bounds);
+}
+
+function excluirTalhao(id, nome) {
+    if (!confirm(`Deseja realmente excluir o talhão "${nome}"?`)) {
+        return;
+    }
+
+    fetch(`/talhoes/${id}/excluir`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': document.querySelector('meta[name=csrf-token]').getAttribute('content')
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            location.reload();
+        } else {
+            alert('Erro ao excluir talhão');
+        }
+    });
+}
+
+function desenharMinimap(talhaoId, coords, cor) {
+    const canvas = document.getElementById(`minimap_${talhaoId}`);
+    if (!canvas) {
+        console.log(`Canvas minimap_${talhaoId} não encontrado`);
+        return;
+    }
+
+    if (!coords || coords.length < 3) {
+        console.log(`Talhão ${talhaoId} não tem coordenadas suficientes`);
+        return;
+    }
+
+    const ctx = canvas.getContext('2d');
+    const width = canvas.width;
+    const height = canvas.height;
+
+    // Limpar canvas
+    ctx.clearRect(0, 0, width, height);
+
+    // Fundo do canvas (imagem satélite simulada)
+    ctx.fillStyle = '#1a472a';
+    ctx.fillRect(0, 0, width, height);
+
+    try {
+        // Encontrar bounds
+        let minLat = coords[0].lat, maxLat = coords[0].lat;
+        let minLng = coords[0].lng, maxLng = coords[0].lng;
+
+        coords.forEach(coord => {
+            minLat = Math.min(minLat, coord.lat);
+            maxLat = Math.max(maxLat, coord.lat);
+            minLng = Math.min(minLng, coord.lng);
+            maxLng = Math.max(maxLng, coord.lng);
+        });
+
+        // Adicionar padding para evitar divisão por zero
+        const latRange = maxLat - minLat || 0.001;
+        const lngRange = maxLng - minLng || 0.001;
+
+        // Normalizar coordenadas
+        const normalizedCoords = coords.map(coord => ({
+            x: ((coord.lng - minLng) / lngRange) * (width - 20) + 10,
+            y: ((maxLat - coord.lat) / latRange) * (height - 20) + 10
+        }));
+
+        // Desenhar polígono
+        ctx.fillStyle = cor || '#FFD700';
+        ctx.globalAlpha = 0.6;
+        ctx.strokeStyle = '#FFFFFF';
+        ctx.lineWidth = 3;
+
+        ctx.beginPath();
+        ctx.moveTo(normalizedCoords[0].x, normalizedCoords[0].y);
+        normalizedCoords.forEach(coord => {
+            ctx.lineTo(coord.x, coord.y);
+        });
+        ctx.closePath();
+        ctx.fill();
+        ctx.globalAlpha = 1.0;
+        ctx.stroke();
+
+        console.log(`Minimap desenhado para talhão ${talhaoId}`);
+    } catch (error) {
+        console.error(`Erro ao desenhar minimap para talhão ${talhaoId}:`, error);
+    }
+}
+
+// Submeter formulário
+document.getElementById('formSalvarTalhao').addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    const formData = new FormData(this);
+    const data = Object.fromEntries(formData);
+
+    fetch('/talhoes/salvar', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': document.querySelector('meta[name=csrf-token]').getAttribute('content')
+        },
+        body: JSON.stringify(data)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            location.reload();
+        } else {
+            alert('Erro ao salvar talhão');
+        }
+    });
+});
+</script>
+
+<!-- Carregar Google Maps API -->
+<!-- CONFIGURE A VARIÁVEL DE AMBIENTE GOOGLE_MAPS_API_KEY -->
+<script src="https://maps.googleapis.com/maps/api/js?key={{ config.get('GOOGLE_MAPS_API_KEY', 'YOUR_API_KEY_HERE') }}&libraries=geometry&callback=initMap" async defer></script>
+
+{% endblock %}

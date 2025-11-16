@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste Chatbot - Rádio Entre Rios</title>
+
+    <!-- CSS do Chatbot -->
+    <link rel="stylesheet" href="chatbot.css">
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .info {
+            max-width: 600px;
+            margin: 50px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 { color: #FF6B00; }
+        .success { color: #00c851; font-weight: bold; }
+        .error { color: #ff4444; font-weight: bold; }
+        .loading { color: #ffbb33; }
+    </style>
+</head>
+<body>
+    <div class="info">
+        <h1>🧪 Teste do Chatbot</h1>
+        <p>Esta página testa se o chatbot está carregando corretamente.</p>
+
+        <h3>Status:</h3>
+        <p id="status" class="loading">⏳ Carregando chatbot...</p>
+
+        <h3>Instruções:</h3>
+        <ol>
+            <li>Você deve ver o <strong>ícone laranja</strong> no canto inferior direito</li>
+            <li>Clique no ícone para abrir o chat</li>
+            <li>Digite uma mensagem de teste: "Oi"</li>
+            <li>Aguarde a resposta do GROQ</li>
+        </ol>
+
+        <h3>Console de Debug:</h3>
+        <div id="console" style="background: #000; color: #0f0; padding: 10px; border-radius: 5px; font-family: monospace; min-height: 100px; max-height: 300px; overflow-y: auto;">
+            Aguardando eventos...
+        </div>
+    </div>
+
+    <!-- JavaScript do Chatbot -->
+    <script src="chatbot.js"></script>
+
+    <script>
+        // Logs de debug
+        const consoleDiv = document.getElementById('console');
+        const statusDiv = document.getElementById('status');
+
+        function log(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const color = type === 'error' ? '#f00' : type === 'success' ? '#0f0' : '#0ff';
+            consoleDiv.innerHTML += `<div style="color: ${color}">[${timestamp}] ${message}</div>`;
+            consoleDiv.scrollTop = consoleDiv.scrollHeight;
+        }
+
+        // Verifica se chatbot.js carregou
+        log('✓ test_chatbot_html.html carregado');
+
+        // Tenta inicializar chatbot
+        setTimeout(() => {
+            try {
+                // Verifica se a classe RadioChatbot existe
+                if (typeof RadioChatbot === 'undefined') {
+                    log('❌ ERRO: RadioChatbot não foi carregado!', 'error');
+                    log('Verifique se chatbot.js existe e está sem erros', 'error');
+                    statusDiv.className = 'error';
+                    statusDiv.textContent = '❌ Chatbot NÃO carregou (chatbot.js não encontrado)';
+                    return;
+                }
+
+                log('✓ Classe RadioChatbot encontrada');
+
+                // Inicializa chatbot manualmente
+                const chatbot = new RadioChatbot({
+                    apiUrl: '/chatbot/chat_api.php',
+                    botName: 'Chatinho',
+                    position: 'bottom-right',
+                    debug: true
+                });
+
+                log('✓ Chatbot inicializado com sucesso!', 'success');
+                statusDiv.className = 'success';
+                statusDiv.textContent = '✅ Chatbot carregado! Veja o ícone no canto inferior direito.';
+
+                // Verifica se o ícone apareceu no DOM
+                setTimeout(() => {
+                    const toggle = document.getElementById('chatbot-toggle');
+                    if (toggle) {
+                        log('✓ Ícone do chatbot encontrado no DOM', 'success');
+                        log('Dimensões: ' + toggle.offsetWidth + 'x' + toggle.offsetHeight + 'px');
+                        log('Posição: ' + toggle.style.position || 'static');
+                    } else {
+                        log('❌ Ícone do chatbot NÃO encontrado no DOM', 'error');
+                    }
+                }, 500);
+
+            } catch (error) {
+                log('❌ ERRO ao inicializar: ' + error.message, 'error');
+                statusDiv.className = 'error';
+                statusDiv.textContent = '❌ Erro ao inicializar: ' + error.message;
+            }
+        }, 1000);
+
+        // Captura erros do JavaScript
+        window.addEventListener('error', (e) => {
+            log('❌ JavaScript Error: ' + e.message, 'error');
+            log('   Arquivo: ' + e.filename + ':' + e.lineno, 'error');
+        });
+
+        // Verifica carregamento de recursos
+        window.addEventListener('load', () => {
+            log('✓ Página totalmente carregada');
+
+            // Lista todos os scripts carregados
+            document.querySelectorAll('script').forEach((script, i) => {
+                log(`Script ${i + 1}: ${script.src || '(inline)'}`);
+            });
+
+            // Lista todos os CSS carregados
+            document.querySelectorAll('link[rel="stylesheet"]').forEach((link, i) => {
+                log(`CSS ${i + 1}: ${link.href}`);
+            });
+        });
+    </script>
+</body>
+</html>

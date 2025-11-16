@@ -1,0 +1,447 @@
+{% extends "base.html" %}
+
+{% block title %}Contas a Receber - CropLink{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Header com Estatísticas -->
+    <div class="row mb-4">
+        <div class="col">
+            <h1 class="display-6">
+                <i class="fas fa-hand-holding-usd text-success"></i>
+                Contas a Receber
+            </h1>
+            <p class="text-muted">Gestão financeira de obrigações e clientees</p>
+        </div>
+        <div class="col-auto">
+            <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalAdicionarConta">
+                <i class="fas fa-plus"></i> Nova Conta
+            </button>
+        </div>
+    </div>
+
+    <!-- Cards de Estatísticas -->
+    <div class="row mb-4">
+        <div class="col-md-4 mb-3">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0">
+                            <i class="fas fa-clock fa-2x text-warning"></i>
+                        </div>
+                        <div class="ms-3">
+                            <h6 class="text-muted mb-1">Pendentes</h6>
+                            <h3 class="mb-0">R$ {{ "%.2f"|format(total_pendente) }}</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0">
+                            <i class="fas fa-exclamation-triangle fa-2x text-danger"></i>
+                        </div>
+                        <div class="ms-3">
+                            <h6 class="text-muted mb-1">Vencidas</h6>
+                            <h3 class="mb-0 text-danger">R$ {{ "%.2f"|format(total_vencido) }}</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0">
+                            <i class="fas fa-check-circle fa-2x text-success"></i>
+                        </div>
+                        <div class="ms-3">
+                            <h6 class="text-muted mb-1">Recebidas</h6>
+                            <h3 class="mb-0 text-success">R$ {{ "%.2f"|format(total_recebido) }}</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Lista de Contas -->
+    <div class="card shadow">
+        <div class="card-body">
+            {% if contas %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th style="width: 20%;">Descrição</th>
+                                <th style="width: 15%;">Cliente</th>
+                                <th style="width: 12%;">Categoria</th>
+                                <th style="width: 10%;" class="text-end">Valor</th>
+                                <th style="width: 10%;" class="text-center-td">Vencimento</th>
+                                <th style="width: 10%;" class="text-center-td">Status</th>
+                                <th style="width: 8%;" class="text-center-td">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for conta in contas %}
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <i class="fas fa-file-invoice text-success me-2"></i>
+                                        <div>
+                                            <span class="fw-semibold">{{ conta.descricao }}</span>
+                                            {% if conta.numero_documento %}
+                                                <br><small class="text-muted">Doc: {{ conta.numero_documento }}</small>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>{{ conta.cliente }}</td>
+                                <td>
+                                    <span class="badge bg-info">{{ conta.categoria }}</span>
+                                </td>
+                                <td class="text-end">
+                                    <span class="fw-bold">R$ {{ "%.2f"|format(conta.valor) }}</span>
+                                </td>
+                                <td class="text-center-td">
+                                    {{ conta.data_vencimento.strftime('%d/%m/%Y') }}
+                                    {% if conta.esta_vencida() %}
+                                        <br><small class="text-danger"><i class="fas fa-exclamation-circle"></i> Vencida</small>
+                                    {% elif conta.dias_ate_vencimento() is not none and conta.dias_ate_vencimento() <= 5 %}
+                                        <br><small class="text-warning"><i class="fas fa-clock"></i> {{ conta.dias_ate_vencimento() }} dias</small>
+                                    {% endif %}
+                                </td>
+                                <td class="text-center-td">
+                                    {% if conta.status == 'recebido' %}
+                                        <span class="badge bg-success">
+                                            <i class="fas fa-check-circle me-1"></i>Recebido
+                                        </span>
+                                    {% elif conta.status == 'cancelado' %}
+                                        <span class="badge bg-secondary">
+                                            <i class="fas fa-ban me-1"></i>Cancelado
+                                        </span>
+                                    {% elif conta.esta_vencida() %}
+                                        <span class="badge bg-danger">
+                                            <i class="fas fa-exclamation-triangle me-1"></i>Vencida
+                                        </span>
+                                    {% else %}
+                                        <span class="badge bg-warning">
+                                            <i class="fas fa-clock me-1"></i>Pendente
+                                        </span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <div class="btn-group" role="group">
+                                        {% if conta.status == 'pendente' %}
+                                            <button class="btn btn-sm btn-outline-success btn-receber-conta" 
+                                                    data-id="{{ conta.id }}"
+                                                    data-descricao="{{ conta.descricao }}"
+                                                    title="Registrar recebimento">
+                                                <i class="fas fa-dollar-sign"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-outline-primary btn-editar-conta" 
+                                                    data-id="{{ conta.id }}"
+                                                    data-descricao="{{ conta.descricao }}"
+                                                    data-cliente="{{ conta.cliente }}"
+                                                    data-categoria="{{ conta.categoria }}"
+                                                    data-valor="{{ conta.valor }}"
+                                                    data-vencimento="{{ conta.data_vencimento.strftime('%Y-%m-%d') }}"
+                                                    data-documento="{{ conta.numero_documento or '' }}"
+                                                    data-observacoes="{{ conta.observacoes or '' }}"
+                                                    title="Editar conta">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-outline-danger btn-excluir-conta" 
+                                                    data-id="{{ conta.id }}"
+                                                    data-descricao="{{ conta.descricao }}"
+                                                    title="Excluir conta">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        {% elif conta.status == 'recebido' %}
+                                            <button class="btn btn-sm btn-outline-info" disabled title="Conta paga">
+                                                <i class="fas fa-check"></i>
+                                            </button>
+                                        {% else %}
+                                            <button class="btn btn-sm btn-outline-secondary" disabled>
+                                                <i class="fas fa-ban"></i>
+                                            </button>
+                                        {% endif %}
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="text-center py-5">
+                    <i class="fas fa-hand-holding-usd fa-3x text-muted mb-3"></i>
+                    <p class="text-muted">Nenhuma conta a receber cadastrada ainda.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Modal Adicionar Conta -->
+<div class="modal fade" id="modalAdicionarConta" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Nova Conta a Receber</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="POST" action="{{ url_for('adicionar_conta_receber') }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="descricao" class="form-label">Descrição *</label>
+                        <input type="text" class="form-control" id="descricao" name="descricao" required placeholder="Descrição da despesa">
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label for="cliente" class="form-label">Cliente *</label>
+                            <input type="text" class="form-control" id="cliente" name="cliente" required placeholder="Nome do cliente">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="categoria" class="form-label">Categoria *</label>
+                            <select class="form-select" id="categoria" name="categoria" required>
+                                <option value="">Selecione a categoria</option>
+                                <option value="Venda de Grãos">Venda de Grãos</option>
+                                <option value="Venda de Produtos">Venda de Produtos</option>
+                                <option value="Serviços">Serviços</option>
+                                <option value="Arrendamento">Arrendamento</option>
+                                <option value="Subsídios">Subsídios</option>
+                                <option value="Outros">Outros</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label for="valor" class="form-label">Valor (R$) *</label>
+                            <input type="number" class="form-control" id="valor" name="valor" step="0.01" min="0.01" required placeholder="0.00">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="data_vencimento" class="form-label">Data de Vencimento *</label>
+                            <input type="date" class="form-control" id="data_vencimento" name="data_vencimento" required>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="numero_documento" class="form-label">Número do Documento</label>
+                        <input type="text" class="form-control" id="numero_documento" name="numero_documento" placeholder="NF, boleto, etc.">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="observacoes" class="form-label">Observações</label>
+                        <textarea class="form-control" id="observacoes" name="observacoes" rows="3" placeholder="Observações adicionais (opcional)"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-success">Adicionar Conta</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Editar Conta -->
+<div class="modal fade" id="modalEditarConta" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Editar Conta a Receber</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="POST" id="formEditarConta">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="edit_descricao" class="form-label">Descrição *</label>
+                        <input type="text" class="form-control" id="edit_descricao" name="descricao" required>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label for="edit_cliente" class="form-label">Cliente *</label>
+                            <input type="text" class="form-control" id="edit_cliente" name="cliente" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="edit_categoria" class="form-label">Categoria *</label>
+                            <select class="form-select" id="edit_categoria" name="categoria" required>
+                                <option value="Venda de Grãos">Venda de Grãos</option>
+                                <option value="Venda de Produtos">Venda de Produtos</option>
+                                <option value="Serviços">Serviços</option>
+                                <option value="Arrendamento">Arrendamento</option>
+                                <option value="Subsídios">Subsídios</option>
+                                <option value="Outros">Outros</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label for="edit_valor" class="form-label">Valor (R$) *</label>
+                            <input type="number" class="form-control" id="edit_valor" name="valor" step="0.01" min="0.01" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="edit_data_vencimento" class="form-label">Data de Vencimento *</label>
+                            <input type="date" class="form-control" id="edit_data_vencimento" name="data_vencimento" required>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="edit_numero_documento" class="form-label">Número do Documento</label>
+                        <input type="text" class="form-control" id="edit_numero_documento" name="numero_documento">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="edit_observacoes" class="form-label">Observações</label>
+                        <textarea class="form-control" id="edit_observacoes" name="observacoes" rows="3"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Salvar Alterações</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Receber Conta -->
+<div class="modal fade" id="modalReceberConta" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Registrar Recebimento</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="POST" id="formReceberConta">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                <div class="modal-body">
+                    <p id="receber_descricao_conta" class="mb-3"></p>
+                    
+                    <div class="mb-3">
+                        <label for="forma_recebimento" class="form-label">Forma de Recebimento *</label>
+                        <select class="form-select" id="forma_recebimento" name="forma_recebimento" required>
+                            <option value="">Selecione...</option>
+                            <option value="Dinheiro">Dinheiro</option>
+                            <option value="PIX">PIX</option>
+                            <option value="Transferência">Transferência Bancária</option>
+                            <option value="Boleto">Boleto</option>
+                            <option value="Cheque">Cheque</option>
+                            <option value="Cartão">Cartão</option>
+                        </select>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="data_recebimento" class="form-label">Data do Recebimento</label>
+                        <input type="date" class="form-control" id="data_recebimento" name="data_recebimento" value="{{ datetime.now().strftime('%Y-%m-%d') }}">
+                        <small class="text-muted">Deixe em branco para usar a data atual</small>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-success">Confirmar Recebimento</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Excluir Conta -->
+<div class="modal fade" id="modalExcluirConta" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Confirmar Exclusão</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="POST" id="formExcluirConta">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                <div class="modal-body">
+                    <p>Tem certeza que deseja excluir esta conta?</p>
+                    <p id="excluir_descricao_conta" class="fw-bold"></p>
+                    <p class="text-danger"><i class="fas fa-exclamation-triangle"></i> Esta ação não pode ser desfeita.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-danger">Excluir Conta</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Event delegation para botões de editar
+    document.querySelectorAll('.btn-editar-conta').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const id = this.dataset.id;
+            const descricao = this.dataset.descricao;
+            const cliente = this.dataset.cliente;
+            const categoria = this.dataset.categoria;
+            const valor = this.dataset.valor;
+            const vencimento = this.dataset.vencimento;
+            const documento = this.dataset.documento;
+            const observacoes = this.dataset.observacoes;
+            
+            document.getElementById('formEditarConta').action = `/contas-receber/editar/${id}`;
+            document.getElementById('edit_descricao').value = descricao;
+            document.getElementById('edit_cliente').value = cliente;
+            document.getElementById('edit_categoria').value = categoria;
+            document.getElementById('edit_valor').value = valor;
+            document.getElementById('edit_data_vencimento').value = vencimento;
+            document.getElementById('edit_numero_documento').value = documento;
+            document.getElementById('edit_observacoes').value = observacoes;
+            
+            new bootstrap.Modal(document.getElementById('modalEditarConta')).show();
+        });
+    });
+    
+    // Event delegation para botões de receber
+    document.querySelectorAll('.btn-receber-conta').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const id = this.dataset.id;
+            const descricao = this.dataset.descricao;
+            
+            document.getElementById('formReceberConta').action = `/contas-receber/receber/${id}`;
+            const descHtml = document.createElement('div');
+            descHtml.innerHTML = `<strong>Conta:</strong> ${escapeHtml(descricao)}`;
+            document.getElementById('receber_descricao_conta').replaceChildren(descHtml);
+            
+            new bootstrap.Modal(document.getElementById('modalReceberConta')).show();
+        });
+    });
+    
+    // Event delegation para botões de excluir
+    document.querySelectorAll('.btn-excluir-conta').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const id = this.dataset.id;
+            const descricao = this.dataset.descricao;
+            
+            document.getElementById('formExcluirConta').action = `/contas-receber/excluir/${id}`;
+            document.getElementById('excluir_descricao_conta').textContent = descricao;
+            
+            new bootstrap.Modal(document.getElementById('modalExcluirConta')).show();
+        });
+    });
+});
+
+// Função para escapar HTML e prevenir XSS
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+</script>
+{% endblock %}

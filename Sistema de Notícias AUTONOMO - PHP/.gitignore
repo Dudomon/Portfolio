@@ -1,0 +1,157 @@
+# ======================================
+# Sistema de Notícias AUTÔNOMO - .gitignore
+# ======================================
+#
+# ⚠️ ESTE PROJETO É PROPRIETÁRIO
+# Apenas estrutura básica e screenshots são expostos
+# NENHUMA lógica de negócio será compartilhada
+#
+# ======================================
+
+# ======================================
+# 🔒 CÓDIGO PROPRIETÁRIO - NÃO EXPOR
+# ======================================
+
+# TODOS os arquivos PHP (lógica proprietária)
+*.php
+
+# TODOS os arquivos de configuração
+*.json
+config.php
+database.php
+*.ini
+*.conf
+
+# Scripts e automações
+*.bat
+*.sh
+*.ps1
+
+# Documentação técnica interna
+DOCUMENTACAO_*.md
+COMO_*.md
+CORRECAO_*.md
+CHANGELOG_*.md
+DIAGNOSTICO_*.md
+GEMINI_*.md
+GUIA_*.md
+INSTRUCOES_*.md
+RELATORIO_*.md
+PROXY_*.txt
+RATE_*.txt
+TTS_*.md
+
+# Arquivos de texto com lógica/dados
+*.txt
+!README.txt
+
+# Queries SQL
+*.sql
+
+# ======================================
+# 🗂️ PASTAS COMPLETAS - NÃO EXPOR
+# ======================================
+
+# Sistemas internos completos
+news_system_php/
+chatbot/
+instagram/
+instagram_local_api/
+pwa/
+audio/
+cache/
+posts/
+stories/
+icons/
+documentacao/
+
+# Subprojetos
+app-radio/
+
+# ======================================
+# 📦 DEPENDÊNCIAS E BUILD
+# ======================================
+
+node_modules/
+vendor/
+package-lock.json
+composer.lock
+yarn.lock
+
+# ======================================
+# 🎥 ARQUIVOS GRANDES/MEDIA
+# ======================================
+
+# Vídeos de demonstração
+*.mkv
+*.mp4
+*.avi
+*.mov
+
+# Áudios
+*.mp3
+*.wav
+*.ogg
+
+# Imagens EXCETO screenshots organizados
+*.png
+*.jpg
+*.jpeg
+*.gif
+!screenshots/*.png
+!screenshots/*.jpg
+
+# PDFs e documentos
+*.pdf
+*.doc
+*.docx
+
+# ======================================
+# 🗃️ DADOS E LOGS
+# ======================================
+
+# Dados sensíveis
+*.csv
+*.db
+*.sqlite
+*.log
+
+# Cache e temporários
+*.cache
+.cache/
+temp/
+tmp/
+
+# ======================================
+# 💻 IDE E EDITORES
+# ======================================
+
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# ======================================
+# 🌐 WEB SERVER
+# ======================================
+
+.htaccess
+.htaccess_*
+.htpasswd
+
+# ======================================
+# PERMITIR APENAS
+# ======================================
+
+# Apenas README e screenshots
+!README.md
+!SECURITY.md
+!screenshots/
+!screenshots/*.png
+!screenshots/*.jpg
+
+# Nenhum arquivo de exemplo será fornecido
+# Este é código proprietário para showcase apenas

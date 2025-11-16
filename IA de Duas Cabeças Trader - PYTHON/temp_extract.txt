@@ -1,0 +1,234 @@
+                    close_reason = "SL hit"
+                elif pos['type'] == 'short' and current_price >= pos['sl']:
+                    should_close = True
+                    close_reason = "SL hit"
+                    
+            if 'tp' in pos and pos['tp'] > 0 and not should_close:
+                if pos['type'] == 'long' and current_price >= pos['tp']:
+                    should_close = True
+                    close_reason = "TP hit"
+                elif pos['type'] == 'short' and current_price <= pos['tp']:
+                    should_close = True
+                    close_reason = "TP hit"
+            
+            if should_close:
+                self._close_position(pos, self.current_step)
+                action_taken = True
+        
+        # 🎯 PROCESSAR AÇÕES DO MODELO - NOVA ESTRUTURA ACTION HEAD + MANAGER HEAD (OTIMIZADO)
+        # Debug timing removido para máxima performance
+        action_start_time = None
+        # Garantir que action é um array com 4 dimensões
+        if not isinstance(action, (list, tuple, np.ndarray)):
+            action = np.array([action])
+        
+        if len(action) >= 4:
+            # 🚀 VALIDAÇÃO DO NOVO ACTION SPACE 4D
+            if len(action) != 4:
+                raise ValueError(f"Action space expects 4 dimensions, got {len(action)}")
+            
+            # 🔧 NOVO ACTION SPACE 4D - OTIMIZADO
+            raw_decision = float(action[0])
+            if raw_decision < ACTION_THRESHOLD_SHORT:
+                entry_decision = 2  # SHORT (extremo negativo)
+            elif raw_decision < ACTION_THRESHOLD_LONG:
+                entry_decision = 0  # HOLD (centro)
+            else:
+                entry_decision = 1  # LONG (extremo positivo)
+            
+            # [1] entry_confidence: Confiança na entrada
+            entry_confidence = float(action[1])  # [0,1] Confiança unificada
+            
+            # [2-3] Management Head: Controle bidirecional de 2 posições (4D)
+            pos1_management = float(action[2])   # [-1,1] Posição 1: negativo=SL, positivo=TP
+            pos2_management = float(action[3])   # [-1,1] Posição 2: negativo=SL, positivo=TP
+            
+            # 🚀 FUNÇÃO BIDIRECIONAL: Converter management em ajustes SL/TP
+            def convert_management_to_sltp_adjustments(mgmt_value):
+                """
+                Converte valor de management [-1,1] em ajustes SL/TP bidirecionais
+                
+                LÓGICA:
+                - mgmt_value < 0: foco em SL (proteção)
+                  - < -0.5: SL +0.5 pontos (afrouxar = mais risco)  
+                  - > -0.5: SL -0.5 pontos (apertar = menos risco)
+                - mgmt_value > 0: foco em TP (target)
+                  - > +0.5: TP +0.5 pontos (target distante)
+                  - < +0.5: TP -0.5 pontos (target próximo)
+                  
+                Returns: (sl_adjust, tp_adjust)
+                """
+                if mgmt_value < 0:
+                    # Foco em SL management
+                    if mgmt_value < -0.5:
+                        return (0.5, 0)  # Afrouxar SL
+                    else:
+                        return (-0.5, 0)  # Apertar SL
+                elif mgmt_value > 0:
+                    # Foco em TP management
+                    if mgmt_value > 0.5:
+                        return (0, 0.5)  # TP distante
+                    else:
+                        return (0, -0.5)  # TP próximo
+                else:
+                    # Valor próximo de zero = HOLD
+                    return (0, 0)
+            
+            # Converter management values em ajustes
+            pos1_sl_adjust, pos1_tp_adjust = convert_management_to_sltp_adjustments(pos1_management)
+            pos2_sl_adjust, pos2_tp_adjust = convert_management_to_sltp_adjustments(pos2_management)
+            
+            # 🔬 LISTAS CIRÚRGICAS: apenas 2 posições ativas (otimizado)
+            sl_adjusts = [pos1_sl_adjust, pos2_sl_adjust]
+            tp_adjusts = [pos1_tp_adjust, pos2_tp_adjust]
+            
+            # 🚨 SISTEMA DE COOLDOWN ANTI-OVERTRADING (por slot)
+            # Decrementar contadores de cooldown dos slots
+            try:
+                for s in list(self.slot_cooldowns.keys()):
+                    if self.slot_cooldowns[s] > 0:
+                        self.slot_cooldowns[s] -= 1
+            except Exception:
+                pass
+
+            # Se houver espaço para nova posição, encontrar primeiro slot disponível
+            available_slot = None
+            if entry_decision > 0 and len(self.positions) < self.max_positions:
+                # 🔧 CORRIGIDO: Lógica baseada no Robot V7 (funcionando)
+                occupied_slots = set()
+                for pos in self.positions:
+                    pos_slot = pos.get('position_id')
+                    if pos_slot is not None and isinstance(pos_slot, int) and 0 <= pos_slot < self.max_positions:
+                        occupied_slots.add(pos_slot)
+                
+                # Debug slots (esporádico)
+                if self.current_step % 200 == 0:
+                    slots_debug = []
+                    for s in range(self.max_positions):
+                        cooldown_remaining = self.slot_cooldowns.get(s, 0)
+                        is_occupied = s in occupied_slots
+                        is_free = cooldown_remaining == 0 and not is_occupied
+                        status = 'OCCUPIED' if is_occupied else 'FREE' if is_free else f'CD{cooldown_remaining}'
+                        slots_debug.append(f"S{s}:{status}")
+                    print(f"[SLOT-DEBUG] {' | '.join(slots_debug)}")
+                
+                for slot_idx in range(self.max_positions):
+                    # Verificar se slot não está ocupado E não está em cooldown
+                    if (slot_idx not in occupied_slots and 
+                        self.slot_cooldowns.get(slot_idx, 0) == 0):
+                        available_slot = slot_idx
+                        break
+                
+                # Se não encontrou slot disponível, bloquear entrada
+                if available_slot is None:
+                    entry_decision = 0
+                    # Log esporádico para debug
+                    if self.current_step % 200 == 0:
+                        cooldown_info = {k: v for k, v in self.slot_cooldowns.items() if v > 0}
+                        print(f"[COOLDOWN-SLOT] Todos os slots ocupados ou em cooldown: {cooldown_info}")
+            
+                    # PROCESSAR ENTRADA DE NOVA POSIÇÃO
+        if entry_decision > 0 and len(self.positions) < self.max_positions and available_slot is not None:
+            # 🎯 FILTRO DE CONFIANÇA MÍNIMA - DRASTICAMENTE REDUZIDO 
+            MIN_CONFIDENCE_THRESHOLD = 0.8  # Valor original restaurado (80%)
+            if entry_confidence < MIN_CONFIDENCE_THRESHOLD:
+                # Log opcional para debug
+                if self.current_step % 1000 == 0:  # Log só a cada 1000 steps
+                    print(f"[CONFIDENCE FILTER] Entry rejected: confidence={entry_confidence:.2f} < {MIN_CONFIDENCE_THRESHOLD}")
+            else:
+                # 🚀 PASSOU NO FILTRO DE QUALIDADE - V7 Intuition decide
+                entry_allowed = True
+                # 🎯 Position size baseado em entry_confidence (fusão quality+risk)
+                lot_size = self._calculate_adaptive_position_size_quality(entry_confidence)
+                
+                # Criar nova posição
+                position = {
+                    'type': 'long' if entry_decision == 1 else 'short',
+                    'entry_price': current_price,
+                    'lot_size': lot_size,
+                    'entry_step': self.current_step,
+                    'position_id': available_slot  # Usar slot específico encontrado
+                }
+                # 🚀 CORREÇÃO CRÍTICA: Definir SL/TP e adicionar posição AQUI (se entrada permitida)
+                
+                # 🔧 NOVO SISTEMA SL/TP: Position management
+                pos_index = len(self.positions)  # Índice da nova posição
+                
+                # 🔬 ESCOLHA CIRÚRGICA: SL/TP baseado na posição (2 posições apenas)
+                if pos_index == 0:  # Primeira posição - usar pos1_mgmt
+                    sl_adjust = sl_adjusts[0]
+                    tp_adjust = tp_adjusts[0]
+                elif pos_index == 1:  # Segunda posição - usar pos2_mgmt
+                    sl_adjust = sl_adjusts[1]
+                    tp_adjust = tp_adjusts[1]
+                else:  # ⚠️ ERRO: Não deveria haver terceira posição
+                    raise ValueError(f"🔬 CIRÚRGICO: Tentativa de criar posição {pos_index} > max_positions=2")
+                
+                # 🎯 UNIFICADO: Usar função unificada para criação
+                creation_result = convert_model_adjustments_to_points(sl_adjust, tp_adjust, "creation")
+                sl_points = creation_result['sl_points']  # Já positivo e validado
+                tp_points = creation_result['tp_points']  # Já positivo e validado
+                
+                # Converter pontos para diferença de preço
+                sl_price_diff = sl_points * 1.0
+                tp_price_diff = tp_points * 1.0
+                
+                if position['type'] == 'long':
+                    position['sl'] = current_price - sl_price_diff
+                    position['tp'] = current_price + tp_price_diff
+                else:
+                    position['sl'] = current_price + sl_price_diff
+                    position['tp'] = current_price - tp_price_diff
+                
+                # Adicionar nova posição
+                self.positions.append(position)
+                self.current_positions = len(self.positions)
+                action_taken = True
+        else:
+            # Entry decision == 0 (HOLD) ou máximo de posições atingido
+            action_taken = False
+            
+        # Se não passou no filtro de confiança dentro do bloco anterior, também é HOLD
+        if entry_decision > 0 and len(self.positions) < self.max_positions and entry_confidence < 0.2:  # Usar mesmo threshold
+            action_taken = False
+            
+            # PROCESSAR GESTÃO DE POSIÇÕES EXISTENTES VIA MANAGER HEAD
+            # Sistema de trailing stop dinâmico baseado nas ações do modelo
+            for i, pos in enumerate(self.positions):
+                if i < 2:  # 🔬 CIRÚRGICO: Máximo 2 posições
+                    sl_adjust = sl_adjusts[i]
+                    tp_adjust = tp_adjusts[i]
+                    
+                    # 🎯 DYNAMIC TRAILING STOP - Baseado nas ações do modelo
+                    trailing_result = self._process_dynamic_trailing_stop(
+                        pos, sl_adjust, tp_adjust, current_price, i
+                    )
+                    
+                    # Aplicar mudanças se o modelo decidiu
+                    if trailing_result['action_taken']:
+                        pos.update(trailing_result['position_updates'])
+                        
+                        # Marcar informações para reward system (NEW SYSTEM doesn't use trailing_activated)
+                        # OLD: if trailing_result['trailing_activated']:
+                        # NEW: SL trailing is always active when sl_adjusted
+                        if trailing_result.get('sl_adjusted', False):
+                            pos['trailing_activated'] = True
+                            pos['trailing_activation_step'] = self.current_step
+                        
+                        # NEW SYSTEM: trailing_moved replaced by sl_adjusted
+                        if trailing_result.get('sl_adjusted', False):
+                            pos['trailing_moves'] = pos.get('trailing_moves', 0) + 1
+                            pos['last_trailing_move'] = self.current_step
+                        
+                        if trailing_result.get('tp_adjusted', False):
+                            pos['tp_adjusted'] = True
+                            pos['tp_adjustment_step'] = self.current_step
+            
+            # 🚀 V7 SIMPLE: Mantém compatibilidade com observation space V6
+            for pos in self.positions[:]:
+                duration = self.current_step - pos['entry_step']
+                # 48h = 48 horas * 60 steps/hora = 2880 steps (1min bars)
+                if duration > 2880:  # 48 HORAS máximo conforme especificação da política
+                    self._close_position(pos, self.current_step)
+                    action_taken = True
+        

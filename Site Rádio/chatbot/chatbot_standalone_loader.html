@@ -1,0 +1,104 @@
+<!-- ============================================ -->
+<!-- CHATBOT CHATINHO - LOADER STANDALONE        -->
+<!-- ============================================ -->
+<!--
+  INSTRUÇÕES:
+
+  Copie ESTE CÓDIGO COMPLETO e cole no WordPress em:
+  Aparência → Personalizar → HTML Adicional → Footer
+
+  OU
+
+  Aparência → Editor de Temas → footer.php
+  (cole ANTES do </body>)
+-->
+
+<!-- CSS -->
+<link rel="stylesheet" href="/chatbot/chatbot.css?v=1.0.5">
+
+<!-- JavaScript -->
+<script src="/chatbot/chatbot.js?v=1.0.5"></script>
+
+<!-- Inicialização -->
+<script>
+(function() {
+    console.log('🤖 CHATBOT STANDALONE: Iniciando...');
+
+    let attempts = 0;
+    const maxAttempts = 10;
+
+    function tryInit() {
+        attempts++;
+        console.log(`🔄 Tentativa ${attempts}/${maxAttempts}`);
+
+        if (typeof RadioChatbot === 'undefined') {
+            console.warn('⚠️ RadioChatbot ainda não carregou');
+            if (attempts < maxAttempts) {
+                setTimeout(tryInit, 1000);
+            } else {
+                console.error('❌ FALHA: chatbot.js não carregou após 10 tentativas');
+            }
+            return;
+        }
+
+        console.log('✅ RadioChatbot encontrado!');
+
+        try {
+            window.chatbotInstance = new RadioChatbot({
+                apiUrl: '/chatbot/chat_api.php',
+                botName: 'Chatinho',
+                position: 'bottom-right',
+                debug: true
+            });
+            console.log('✅ Chatbot inicializado com sucesso!');
+
+            // Força estilos após inicializar
+            setTimeout(() => {
+                const toggle = document.getElementById('chatbot-toggle');
+                const chatbot = document.getElementById('radio-chatbot');
+
+                if (toggle && chatbot) {
+                    toggle.style.setProperty('z-index', '999999', 'important');
+                    toggle.style.setProperty('pointer-events', 'auto', 'important');
+                    toggle.style.setProperty('cursor', 'pointer', 'important');
+                    chatbot.style.setProperty('z-index', '999999', 'important');
+                    console.log('✅ Estilos forçados aplicados');
+                }
+            }, 500);
+
+        } catch (error) {
+            console.error('❌ Erro ao inicializar chatbot:', error);
+        }
+    }
+
+    // Tenta em múltiplos momentos
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', tryInit);
+    } else {
+        tryInit();
+    }
+
+    window.addEventListener('load', tryInit);
+
+    if (typeof jQuery !== 'undefined') {
+        jQuery(document).ready(tryInit);
+    }
+
+    setTimeout(tryInit, 2000);
+})();
+</script>
+
+<!-- Estilos forçados inline -->
+<style>
+#chatbot-toggle {
+    z-index: 999999 !important;
+    pointer-events: auto !important;
+    cursor: pointer !important;
+}
+#radio-chatbot {
+    z-index: 999999 !important;
+}
+.chatbot-backdrop {
+    z-index: 999998 !important;
+}
+</style>

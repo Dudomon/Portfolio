@@ -1,0 +1,1846 @@
+<style>
+.modern-radio-player {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    width: 100%;
+    height: 80px;
+    background: rgba(0, 0, 0, 0.95);
+    color: #FFB580;
+    z-index: 9999;
+    backdrop-filter: blur(10px);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    transition: height 0.3s ease;
+}
+
+.modern-radio-player.expanded {
+    height: 400px;
+}
+
+.player-container {
+    max-width: 95%;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 80px;
+    padding: 0 20px;
+}
+
+/* Visualizador de ondas sonoras */
+.audio-visualizer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 80px;
+    opacity: 0.3;
+    pointer-events: none;
+}
+
+.radio-brand {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    z-index: 2;
+}
+
+.radio-logo {
+    width: 50px;
+    height: 50px;
+    background: linear-gradient(135deg, #FFB580 0%, #FF8C42 100%);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 15px rgba(255, 181, 128, 0.4);
+}
+
+.radio-logo i {
+    font-size: 24px;
+    color: white;
+}
+
+.radio-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.radio-name {
+    font-size: 1.1em;
+    font-weight: bold;
+    color: #FFB580;
+}
+
+.live-indicator {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.8em;
+    color: #FFB580;
+}
+
+.pulse {
+    width: 8px;
+    height: 8px;
+    background-color: #FFB580;
+    border-radius: 50%;
+    animation: pulse 1.5s infinite;
+}
+
+/* Seção "Agora Tocando" */
+.now-playing-section {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 0 20px;
+    z-index: 2;
+}
+
+.song-cover {
+    width: 50px;
+    height: 50px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #333 0%, #555 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.song-cover img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.song-cover i {
+    font-size: 24px;
+    color: #FFB580;
+}
+
+.song-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+}
+
+.song-title {
+    font-size: 0.95em;
+    font-weight: 600;
+    color: #FFB580;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.song-artist {
+    font-size: 0.85em;
+    color: rgba(255, 181, 128, 0.7);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Controles principais */
+.player-controls {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    z-index: 2;
+}
+
+.control-btn {
+    width: 36px;
+    height: 36px;
+    border: none;
+    border-radius: 50%;
+    background: rgba(255, 181, 128, 0.1);
+    color: #FFB580;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    font-size: 0.9em;
+}
+
+.karaoke-btn-text {
+    width: auto;
+    padding: 8px 16px;
+    border-radius: 20px;
+    gap: 6px;
+    font-size: 0.85em;
+}
+
+.control-btn:hover {
+    background: rgba(255, 181, 128, 0.2);
+    transform: scale(1.05);
+}
+
+.control-btn.active {
+    background: #FFB580;
+    color: white;
+}
+
+.play-button {
+    width: 50px;
+    height: 50px;
+    border: none;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #FFB580 0%, #FF8C42 100%);
+    color: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    font-size: 1.2em;
+    box-shadow: 0 4px 15px rgba(255, 181, 128, 0.3);
+}
+
+.play-button:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 20px rgba(255, 181, 128, 0.5);
+}
+
+.volume-control {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+#volume-slider {
+    width: 80px;
+    height: 4px;
+    -webkit-appearance: none;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 2px;
+    outline: none;
+}
+
+#volume-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 14px;
+    height: 14px;
+    background: #FFB580;
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+.volume-control i {
+    color: #FFB580;
+    font-size: 1.1em;
+    cursor: pointer;
+}
+
+/* Painel expandido */
+.expanded-panel {
+    display: none;
+    padding: 20px;
+    max-height: 320px;
+    overflow-y: auto;
+}
+
+.modern-radio-player.expanded .expanded-panel {
+    display: block;
+}
+
+.panel-tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.tab-btn {
+    padding: 10px 20px;
+    background: none;
+    border: none;
+    color: rgba(255, 181, 128, 0.6);
+    cursor: pointer;
+    font-size: 0.9em;
+    transition: all 0.3s ease;
+    border-bottom: 2px solid transparent;
+}
+
+.tab-btn.active {
+    color: #FFB580;
+    border-bottom-color: #FFB580;
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+/* Histórico de músicas */
+.song-history-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.history-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.history-item:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.history-time {
+    font-size: 0.75em;
+    color: rgba(255, 181, 128, 0.5);
+    min-width: 50px;
+}
+
+.history-cover {
+    width: 40px;
+    height: 40px;
+    border-radius: 6px;
+    background: rgba(255, 181, 128, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.history-cover i {
+    color: #FFB580;
+}
+
+.history-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.history-title {
+    font-size: 0.9em;
+    font-weight: 600;
+    color: #FFB580;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.history-artist {
+    font-size: 0.8em;
+    color: rgba(255, 181, 128, 0.6);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.history-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.history-btn {
+    width: 32px;
+    height: 32px;
+    border: none;
+    border-radius: 50%;
+    background: rgba(255, 181, 128, 0.1);
+    color: #FFB580;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    font-size: 0.85em;
+}
+
+.history-btn:hover {
+    background: rgba(255, 181, 128, 0.2);
+}
+
+.history-btn.favorited {
+    background: #FFB580;
+    color: white;
+}
+
+/* Letra da Música */
+.lyrics-container {
+    padding: 15px;
+}
+
+.lyrics-header {
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgba(255, 181, 128, 0.2);
+    text-align: center;
+}
+
+.lyrics-song-info {
+    font-size: 1.1em;
+    font-weight: bold;
+    color: #FFB580;
+    margin-bottom: 5px;
+}
+
+.lyrics-artist-info {
+    font-size: 0.9em;
+    color: rgba(255, 181, 128, 0.7);
+}
+
+.lyrics-content {
+    font-size: 0.95em;
+    line-height: 1.8;
+    color: #FFB580;
+    max-height: 250px;
+    overflow-y: auto;
+    white-space: pre-wrap;
+    text-align: left;
+}
+
+.lyrics-notice {
+    color: rgba(255, 181, 128, 0.5);
+    font-size: 0.9em;
+    font-style: italic;
+    text-align: center;
+    padding: 40px 20px;
+}
+
+.lyrics-content::-webkit-scrollbar {
+    width: 6px;
+}
+
+.lyrics-content::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 3px;
+}
+
+.lyrics-content::-webkit-scrollbar-thumb {
+    background: rgba(255, 181, 128, 0.3);
+    border-radius: 3px;
+}
+
+.lyrics-content::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 181, 128, 0.5);
+}
+
+
+/* Playlist Mini-Player */
+.favorites-mini-player {
+    background: rgba(255, 181, 128, 0.05);
+    border-radius: 12px;
+    padding: 15px;
+    margin-bottom: 15px;
+}
+
+.playlist-current-song {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 15px;
+}
+
+.playlist-cover {
+    width: 60px;
+    height: 60px;
+    border-radius: 8px;
+    background: rgba(255, 181, 128, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.playlist-cover img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.playlist-cover i {
+    font-size: 24px;
+    color: #FFB580;
+}
+
+.playlist-song-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.playlist-title {
+    font-size: 0.95em;
+    font-weight: 600;
+    color: #FFB580;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-bottom: 4px;
+}
+
+.playlist-artist {
+    font-size: 0.85em;
+    color: rgba(255, 181, 128, 0.7);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.playlist-progress {
+    width: 100%;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 2px;
+    margin-bottom: 12px;
+    cursor: pointer;
+    overflow: hidden;
+}
+
+.playlist-progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, #FFB580 0%, #FF8C42 100%);
+    width: 0%;
+    transition: width 0.3s ease;
+}
+
+.playlist-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 15px;
+}
+
+.playlist-btn {
+    width: 36px;
+    height: 36px;
+    border: none;
+    border-radius: 50%;
+    background: rgba(255, 181, 128, 0.15);
+    color: #FFB580;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    font-size: 0.9em;
+}
+
+.playlist-btn:hover {
+    background: rgba(255, 181, 128, 0.25);
+    transform: scale(1.05);
+}
+
+.playlist-btn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+.playlist-play-btn {
+    width: 48px;
+    height: 48px;
+    background: linear-gradient(135deg, #FFB580 0%, #FF8C42 100%);
+    color: white;
+    font-size: 1.1em;
+}
+
+.playlist-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.playlist-action-btn {
+    padding: 10px 16px;
+    border: none;
+    border-radius: 8px;
+    background: rgba(255, 181, 128, 0.1);
+    color: #FFB580;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-size: 0.85em;
+    transition: all 0.3s ease;
+    text-decoration: none;
+}
+
+.playlist-action-btn:hover {
+    background: rgba(255, 181, 128, 0.2);
+}
+
+.playlist-action-btn.primary {
+    background: rgba(255, 181, 128, 0.15);
+    font-weight: 600;
+}
+
+.playlist-action-btn .badge {
+    background: rgba(0, 255, 0, 0.2);
+    color: #0f0;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 0.75em;
+    font-weight: bold;
+}
+
+.favorites-empty {
+    text-align: center;
+    color: rgba(255, 181, 128, 0.5);
+    padding: 40px 20px;
+}
+
+.favorites-list-with-player {
+    max-height: 150px;
+    overflow-y: auto;
+}
+
+.favorites-list-with-player::-webkit-scrollbar {
+    width: 6px;
+}
+
+.favorites-list-with-player::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 3px;
+}
+
+.favorites-list-with-player::-webkit-scrollbar-thumb {
+    background: rgba(255, 181, 128, 0.3);
+    border-radius: 3px;
+}
+
+.favorites-list-with-player .history-item {
+    cursor: pointer;
+}
+
+.favorites-list-with-player .history-item.playing {
+    background: rgba(255, 181, 128, 0.15);
+    border: 1px solid rgba(255, 181, 128, 0.3);
+}
+
+/* Scrollbar personalizado */
+.expanded-panel::-webkit-scrollbar {
+    width: 6px;
+}
+
+.expanded-panel::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.expanded-panel::-webkit-scrollbar-thumb {
+    background: rgba(255, 181, 128, 0.3);
+    border-radius: 3px;
+}
+
+.expanded-panel::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 181, 128, 0.5);
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.2);
+        opacity: 0.5;
+    }
+}
+
+@media (max-width: 768px) {
+    .modern-radio-player {
+        height: 80px;
+    }
+
+    .player-container {
+        max-width: 100%;
+        padding: 0 8px;
+        gap: 6px;
+        height: 80px;
+        flex-wrap: nowrap;
+    }
+
+    .radio-brand {
+        display: none;
+    }
+
+    .now-playing-section {
+        flex: 1;
+        margin: 0 8px;
+        min-width: 0;
+    }
+
+    .song-cover {
+        width: 45px;
+        height: 45px;
+    }
+
+    .song-cover i {
+        font-size: 20px;
+    }
+
+    .song-info {
+        gap: 3px;
+    }
+
+    .song-title {
+        font-size: 0.85em;
+        font-weight: 600;
+    }
+
+    .song-artist {
+        font-size: 0.75em;
+    }
+
+    .player-controls {
+        gap: 6px;
+        flex-shrink: 0;
+    }
+
+    .control-btn {
+        width: 32px;
+        height: 32px;
+        font-size: 0.75em;
+        flex-shrink: 0;
+    }
+
+    #favorite-btn,
+    #share-btn {
+        display: none;
+    }
+
+    .karaoke-btn-text {
+        padding: 6px 10px;
+        font-size: 0.7em;
+    }
+
+    .play-button {
+        width: 45px;
+        height: 45px;
+        font-size: 1.1em;
+        flex-shrink: 0;
+    }
+
+    .volume-control {
+        display: none;
+    }
+
+    .song-history-list {
+        font-size: 0.85em;
+    }
+
+    .modern-radio-player.expanded {
+        height: 400px;
+    }
+
+    .expanded-panel {
+        max-height: 320px;
+    }
+}
+</style>
+
+<div class="modern-radio-player">
+    <!-- Visualizador de áudio -->
+    <canvas id="audio-visualizer" class="audio-visualizer"></canvas>
+
+    <div class="player-container">
+        <!-- Logo e Info da Rádio -->
+        <div class="radio-brand">
+            <div class="radio-logo">
+                <i class="fas fa-broadcast-tower"></i>
+            </div>
+            <div class="radio-info">
+                <span class="radio-name">Rádio Entre Rios</span>
+                <span class="live-indicator">
+                    <span class="pulse"></span>
+                    AO VIVO
+                </span>
+            </div>
+        </div>
+
+        <!-- Agora Tocando -->
+        <div class="now-playing-section">
+            <div class="song-cover">
+                <i class="fas fa-music"></i>
+            </div>
+            <div class="song-info">
+                <div class="song-title" id="current-song-title">105.5 FM - Palmitos/SC</div>
+                <div class="song-artist" id="current-song-artist">Transmissão ao vivo</div>
+            </div>
+        </div>
+
+        <!-- Controles -->
+        <div class="player-controls">
+            <!-- Favoritar -->
+            <button class="control-btn" id="favorite-btn" title="Favoritar música">
+                <i class="fas fa-heart"></i>
+            </button>
+
+            <!-- Compartilhar -->
+            <button class="control-btn" id="share-btn" title="Compartilhar">
+                <i class="fas fa-share-alt"></i>
+            </button>
+
+            <!-- Histórico -->
+            <button class="control-btn" id="history-btn" title="Histórico de músicas">
+                <i class="fas fa-history"></i>
+            </button>
+
+            <!-- Ver Letra -->
+            <button class="control-btn" id="lyrics-btn" title="Ver Letra" style="display: none;">
+                <i class="fas fa-file-alt"></i>
+            </button>
+
+            <!-- Play/Pause -->
+            <button id="play-pause-btn" class="play-button">
+                <i class="fas fa-play"></i>
+            </button>
+
+            <!-- Volume -->
+            <div class="volume-control">
+                <i class="fas fa-volume-up" id="volume-icon"></i>
+                <input type="range" id="volume-slider" min="0" max="100" value="100">
+            </div>
+        </div>
+    </div>
+
+    <!-- Painel Expandido -->
+    <div class="expanded-panel">
+        <div class="panel-tabs">
+            <button class="tab-btn active" data-tab="history">
+                <i class="fas fa-history"></i> Histórico
+            </button>
+            <button class="tab-btn" data-tab="favorites">
+                <i class="fas fa-heart"></i> Favoritos
+            </button>
+            <button class="tab-btn" data-tab="lyrics" style="display: none;">
+                <i class="fas fa-file-alt"></i> Letra
+            </button>
+        </div>
+
+        <!-- Aba Histórico -->
+        <div class="tab-content active" id="history-tab">
+            <div class="song-history-list" id="history-list">
+                <!-- Será preenchido dinamicamente -->
+            </div>
+        </div>
+
+        <!-- Aba Favoritos -->
+        <div class="tab-content" id="favorites-tab">
+            <!-- Mini-player de playlist (oculto por padrão) -->
+            <div class="favorites-mini-player" id="playlist-player" style="display: none;">
+                <div class="playlist-current-song">
+                    <div class="playlist-cover" id="playlist-cover">
+                        <i class="fas fa-music"></i>
+                    </div>
+                    <div class="playlist-song-info">
+                        <div class="playlist-title" id="playlist-title">Selecione uma música</div>
+                        <div class="playlist-artist" id="playlist-artist">Playlist de Favoritos</div>
+                    </div>
+                </div>
+
+                <div class="playlist-progress" id="playlist-progress">
+                    <div class="playlist-progress-bar" id="playlist-progress-bar"></div>
+                </div>
+
+                <div class="playlist-controls">
+                    <button class="playlist-btn" id="playlist-prev" disabled>
+                        <i class="fas fa-step-backward"></i>
+                    </button>
+                    <button class="playlist-btn playlist-play-btn" id="playlist-play">
+                        <i class="fas fa-play"></i>
+                    </button>
+                    <button class="playlist-btn" id="playlist-next" disabled>
+                        <i class="fas fa-step-forward"></i>
+                    </button>
+                    <button class="playlist-btn" id="playlist-shuffle" title="Aleatório">
+                        <i class="fas fa-random"></i>
+                    </button>
+                </div>
+
+                <div class="playlist-actions">
+                    <button class="playlist-action-btn primary" id="playlist-preview-btn">
+                        <i class="fas fa-play"></i>
+                        Tocar Preview (30s)
+                        <span class="badge">GRÁTIS</span>
+                    </button>
+                    <a class="playlist-action-btn" id="playlist-youtube-btn" href="#" target="_blank">
+                        <i class="fab fa-youtube"></i>
+                        Abrir no YouTube
+                    </a>
+                    <button class="playlist-action-btn" id="playlist-spotify-btn">
+                        <i class="fab fa-spotify"></i>
+                        Abrir no Spotify
+                    </button>
+                </div>
+            </div>
+
+            <div class="song-history-list favorites-list-with-player" id="favorites-list">
+                <!-- Será preenchido dinamicamente -->
+            </div>
+        </div>
+
+        <!-- Aba Letra -->
+        <div class="tab-content" id="lyrics-tab">
+            <div class="lyrics-container">
+                <div class="lyrics-header" id="lyrics-header">
+                    <div class="lyrics-song-info" id="lyrics-song"></div>
+                    <div class="lyrics-artist-info" id="lyrics-artist"></div>
+                </div>
+                <div class="lyrics-content" id="lyrics-content">
+                    <p class="lyrics-notice">Carregando letra...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <audio id="radio-stream" preload="none" crossorigin="anonymous">
+        <source src="https://live9.livemus.com.br:27076/stream" type="audio/mpeg">
+        Seu navegador não suporta o elemento de áudio.
+    </audio>
+</div>
+
+<script>
+jQuery(document).ready(function($) {
+    // Elementos DOM
+    const audio = document.getElementById('radio-stream');
+    const playPauseBtn = document.getElementById('play-pause-btn');
+    const volumeSlider = document.getElementById('volume-slider');
+    const volumeIcon = document.getElementById('volume-icon');
+    const playIcon = playPauseBtn.querySelector('i');
+    const playerContainer = document.querySelector('.modern-radio-player');
+
+    // Botões de controle
+    const favoriteBtn = document.getElementById('favorite-btn');
+    const shareBtn = document.getElementById('share-btn');
+    const historyBtn = document.getElementById('history-btn');
+    const lyricsBtn = document.getElementById('lyrics-btn');
+
+    // Info da música
+    const songTitle = document.getElementById('current-song-title');
+    const songArtist = document.getElementById('current-song-artist');
+
+    // Listas
+    const historyList = document.getElementById('history-list');
+    const favoritesList = document.getElementById('favorites-list');
+
+    let isPlaying = false;
+    let currentSong = {
+        title: '105.5 FM - Palmitos/SC',
+        artist: 'Transmissão ao vivo',
+        timestamp: Date.now()
+    };
+
+    // ============ WEB AUDIO API - VISUALIZADOR ============
+    let audioContext, analyser, dataArray, bufferLength, source;
+    const canvas = document.getElementById('audio-visualizer');
+    const canvasContext = canvas.getContext('2d');
+
+    function setupAudioContext() {
+        if (!audioContext) {
+            audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            analyser = audioContext.createAnalyser();
+            source = audioContext.createMediaElementSource(audio);
+            source.connect(analyser);
+            analyser.connect(audioContext.destination);
+            analyser.fftSize = 256;
+            bufferLength = analyser.frequencyBinCount;
+            dataArray = new Uint8Array(bufferLength);
+        }
+    }
+
+    function drawVisualizer() {
+        if (!analyser) return;
+
+        requestAnimationFrame(drawVisualizer);
+
+        canvas.width = canvas.offsetWidth;
+        canvas.height = canvas.offsetHeight;
+
+        analyser.getByteFrequencyData(dataArray);
+
+        canvasContext.fillStyle = 'transparent';
+        canvasContext.fillRect(0, 0, canvas.width, canvas.height);
+
+        const barWidth = (canvas.width / bufferLength) * 2.5;
+        let barHeight;
+        let x = 0;
+
+        for (let i = 0; i < bufferLength; i++) {
+            barHeight = (dataArray[i] / 255) * canvas.height * 0.8;
+
+            const gradient = canvasContext.createLinearGradient(0, canvas.height - barHeight, 0, canvas.height);
+            gradient.addColorStop(0, 'rgba(255, 181, 128, 0.8)');
+            gradient.addColorStop(1, 'rgba(255, 140, 66, 0.3)');
+
+            canvasContext.fillStyle = gradient;
+            canvasContext.fillRect(x, canvas.height - barHeight, barWidth, barHeight);
+
+            x += barWidth + 1;
+        }
+    }
+
+    // ============ CONTROLE DE REPRODUÇÃO ============
+    function togglePlay() {
+        if (isPlaying) {
+            audio.pause();
+            playIcon.classList.remove('fa-pause');
+            playIcon.classList.add('fa-play');
+        } else {
+            setupAudioContext();
+            audio.play();
+            playIcon.classList.remove('fa-play');
+            playIcon.classList.add('fa-pause');
+            drawVisualizer();
+        }
+        isPlaying = !isPlaying;
+    }
+
+    playPauseBtn.addEventListener('click', togglePlay);
+
+    // ============ CONTROLE DE VOLUME ============
+    volumeSlider.addEventListener('input', function() {
+        audio.volume = this.value / 100;
+        updateVolumeIcon(this.value);
+    });
+
+    volumeIcon.addEventListener('click', function() {
+        if (audio.volume > 0) {
+            audio.volume = 0;
+            volumeSlider.value = 0;
+        } else {
+            audio.volume = 1;
+            volumeSlider.value = 100;
+        }
+        updateVolumeIcon(volumeSlider.value);
+    });
+
+    function updateVolumeIcon(value) {
+        volumeIcon.classList.remove('fa-volume-up', 'fa-volume-down', 'fa-volume-mute');
+        if (value == 0) {
+            volumeIcon.classList.add('fa-volume-mute');
+        } else if (value < 50) {
+            volumeIcon.classList.add('fa-volume-down');
+        } else {
+            volumeIcon.classList.add('fa-volume-up');
+        }
+    }
+
+    // ============ HISTÓRICO DE MÚSICAS (Backend) ============
+    async function fetchHistory() {
+        try {
+            const response = await fetch(`${API_URL}?action=history&t=${Date.now()}`);
+            const result = await response.json();
+
+            if (result.success && result.data) {
+                return result.data;
+            }
+            return [];
+        } catch (error) {
+            console.log('Erro ao buscar histórico:', error);
+            return [];
+        }
+    }
+
+    async function renderHistory() {
+        historyList.innerHTML = '<p style="text-align: center; color: rgba(255, 181, 128, 0.5); padding: 20px;">Carregando...</p>';
+
+        const history = await fetchHistory();
+        historyList.innerHTML = '';
+
+        if (history.length === 0) {
+            historyList.innerHTML = '<p style="text-align: center; color: rgba(255, 181, 128, 0.5); padding: 20px;">Nenhuma música no histórico ainda</p>';
+            return;
+        }
+
+        history.forEach(song => {
+            // Usar played_at (Unix timestamp) ao invés de timestamp (string)
+            const time = song.played_at ? new Date(song.played_at * 1000) : new Date(song.timestamp);
+            const timeStr = time.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+
+            const item = document.createElement('div');
+            item.className = 'history-item';
+            item.innerHTML = `
+                <div class="history-time">${timeStr}</div>
+                <div class="history-cover">
+                    ${song.cover ? `<img src="${song.cover}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 6px;">` : '<i class="fas fa-music"></i>'}
+                </div>
+                <div class="history-info">
+                    <div class="history-title">${escapeHtml(song.title)}</div>
+                    <div class="history-artist">${escapeHtml(song.artist)}</div>
+                </div>
+                <div class="history-actions">
+                    <button class="history-btn favorite-btn-item ${isFavorite(song.artist, song.title) ? 'favorited' : ''}" data-artist="${escapeHtml(song.artist)}" data-title="${escapeHtml(song.title)}">
+                        <i class="fas fa-heart"></i>
+                    </button>
+                    <button class="history-btn share-btn-item" data-song='${JSON.stringify(song)}'>
+                        <i class="fas fa-share-alt"></i>
+                    </button>
+                </div>
+            `;
+            historyList.appendChild(item);
+        });
+
+        // Event listeners para botões do histórico
+        document.querySelectorAll('.favorite-btn-item').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const artist = this.dataset.artist;
+                const title = this.dataset.title;
+                toggleFavorite(artist, title);
+                this.classList.toggle('favorited');
+                renderFavorites();
+            });
+        });
+
+        document.querySelectorAll('.share-btn-item').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const song = JSON.parse(this.dataset.song);
+                shareOnSocial(song);
+            });
+        });
+    }
+
+    // ============ FAVORITOS (LocalStorage - Armazena objetos completos) ============
+    function getFavorites() {
+        const favorites = localStorage.getItem('radio_favorites_v2');
+        return favorites ? JSON.parse(favorites) : [];
+    }
+
+    function makeSongId(artist, title) {
+        return `${artist}-${title}`.replace(/\s+/g, '-').toLowerCase();
+    }
+
+    function isFavorite(artist, title) {
+        const favorites = getFavorites();
+        const songId = makeSongId(artist, title);
+        return favorites.some(fav => fav.id === songId);
+    }
+
+    function findFavorite(artist, title) {
+        const favorites = getFavorites();
+        const songId = makeSongId(artist, title);
+        return favorites.find(fav => fav.id === songId);
+    }
+
+    async function toggleFavorite(artist, title, songData = {}) {
+        let favorites = getFavorites();
+        const songId = makeSongId(artist, title);
+        const index = favorites.findIndex(fav => fav.id === songId);
+
+        if (index > -1) {
+            // Remover dos favoritos
+            favorites.splice(index, 1);
+            console.log('Música removida dos favoritos');
+        } else {
+            // Adicionar aos favoritos COM busca de preview
+            const favorite = {
+                id: songId,
+                artist: artist,
+                title: title,
+                cover: songData.cover || null,
+                timestamp: Date.now(),
+                preview_url: null,
+                preview_fetched: false
+            };
+
+            // Buscar preview do Deezer em background
+            fetchPreviewForSong(favorite);
+
+            favorites.unshift(favorite); // Adicionar no início
+            console.log('Música adicionada aos favoritos:', favorite);
+        }
+
+        localStorage.setItem('radio_favorites_v2', JSON.stringify(favorites));
+        return index === -1; // Retorna true se foi adicionado
+    }
+
+    async function fetchPreviewForSong(favorite) {
+        try {
+            const url = `${API_URL}?action=preview&artist=${encodeURIComponent(favorite.artist)}&title=${encodeURIComponent(favorite.title)}`;
+            console.log('🔍 Buscando preview:', url);
+
+            const response = await fetch(url);
+            const result = await response.json();
+
+            console.log('📦 Resposta do servidor:', result);
+
+            if (result.success && result.preview_url) {
+                // Atualizar o favorito com o preview_url
+                let favorites = getFavorites();
+                const fav = favorites.find(f => f.id === favorite.id);
+                if (fav) {
+                    fav.preview_url = result.preview_url;
+                    fav.preview_fetched = true;
+                    fav.deezer_data = result;
+                    localStorage.setItem('radio_favorites_v2', JSON.stringify(favorites));
+                    console.log('✅ Preview salvo:', result.preview_url);
+
+                    // Re-renderizar favoritos para atualizar UI
+                    renderFavorites();
+                }
+            } else {
+                console.warn('⚠️ Preview não encontrado:', result);
+            }
+        } catch (error) {
+            console.error('❌ Erro ao buscar preview:', error);
+        }
+    }
+
+    async function toggleCurrentFavorite() {
+        if (!currentSong || !currentSong.artist || !currentSong.title) {
+            console.log('Nenhuma música tocando');
+            return;
+        }
+
+        // Verificar se não é programa ao vivo
+        if (currentSong.artist === 'Rádio Entre Rios' && currentSong.title === 'Programação ao Vivo') {
+            alert('Não é possível favoritar programação ao vivo');
+            return;
+        }
+
+        const wasAdded = await toggleFavorite(currentSong.artist, currentSong.title, {
+            cover: currentSong.cover
+        });
+
+        // Atualizar ícone do botão
+        if (isFavorite(currentSong.artist, currentSong.title)) {
+            favoriteBtn.classList.add('active');
+        } else {
+            favoriteBtn.classList.remove('active');
+        }
+
+        renderFavorites();
+    }
+
+    async function renderFavorites() {
+        const favorites = getFavorites();
+        console.log('Favoritos v2:', favorites);
+
+        favoritesList.innerHTML = '';
+
+        if (favorites.length === 0) {
+            // Ocultar player
+            document.getElementById('playlist-player').style.display = 'none';
+            favoritesList.innerHTML = '<p class="favorites-empty">Nenhuma música favorita ainda.<br>❤️ Favorite músicas para criar sua playlist!</p>';
+            return;
+        }
+
+        // Re-buscar previews que falharam ou não foram buscados ainda
+        favorites.forEach(fav => {
+            if (!fav.preview_url && !fav.preview_fetched) {
+                console.log('🔄 Re-buscando preview para:', fav.title);
+                fetchPreviewForSong(fav);
+            }
+        });
+
+        // Mostrar mini-player
+        document.getElementById('playlist-player').style.display = 'block';
+
+        // Renderizar lista de favoritos
+        favorites.forEach((fav, index) => {
+            const time = new Date(fav.timestamp);
+            const timeStr = time.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+
+            // Status do preview
+            const hasPreview = !!fav.preview_url;
+            const playBtnClass = hasPreview ? 'playlist-play-song-btn' : 'playlist-play-song-btn-disabled';
+            const playBtnTitle = hasPreview ? 'Tocar preview' : 'Preview não disponível';
+            const playBtnIcon = hasPreview ? 'fa-play' : 'fa-spinner fa-spin';
+
+            const item = document.createElement('div');
+            item.className = 'history-item';
+            item.dataset.index = index;
+            item.innerHTML = `
+                <div class="history-time">${timeStr}</div>
+                <div class="history-cover">
+                    ${fav.cover ? `<img src="${fav.cover}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 6px;">` : '<i class="fas fa-music"></i>'}
+                </div>
+                <div class="history-info">
+                    <div class="history-title">${escapeHtml(fav.title)}</div>
+                    <div class="history-artist">${escapeHtml(fav.artist)}</div>
+                </div>
+                <div class="history-actions">
+                    <button class="history-btn ${playBtnClass}" title="${playBtnTitle}" ${!hasPreview ? 'style="opacity: 0.5;"' : ''}>
+                        <i class="fas ${playBtnIcon}"></i>
+                    </button>
+                    <button class="history-btn favorite-btn-item favorited" data-artist="${escapeHtml(fav.artist)}" data-title="${escapeHtml(fav.title)}">
+                        <i class="fas fa-heart"></i>
+                    </button>
+                </div>
+            `;
+            favoritesList.appendChild(item);
+        });
+
+        // Event listeners para TODOS os botões de play (habilitados e desabilitados)
+        favoritesList.querySelectorAll('.playlist-play-song-btn, .playlist-play-song-btn-disabled').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const index = parseInt(this.closest('.history-item').dataset.index);
+                if (window.favoritesPlaylist) {
+                    window.favoritesPlaylist.playSongAtIndex(index);
+                    // Se o botão estava desabilitado mas agora tem preview, tocar
+                    const song = window.favoritesPlaylist.favorites[index];
+                    if (song && song.preview_url) {
+                        window.favoritesPlaylist.playPreview();
+                    }
+                }
+            });
+        });
+
+        favoritesList.querySelectorAll('.favorite-btn-item').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const artist = this.dataset.artist;
+                const title = this.dataset.title;
+                toggleFavorite(artist, title);
+                renderFavorites();
+                // Reiniciar playlist se foi removida música
+                if (window.favoritesPlaylist) {
+                    window.favoritesPlaylist.updatePlaylist(getFavorites());
+                }
+            });
+        });
+
+        favoritesList.querySelectorAll('.history-item').forEach(item => {
+            item.addEventListener('click', function(e) {
+                // Não disparar se clicou em botão
+                if (e.target.closest('button')) return;
+
+                const index = parseInt(this.dataset.index);
+                if (window.favoritesPlaylist) {
+                    window.favoritesPlaylist.playSongAtIndex(index);
+                }
+            });
+        });
+
+        // Inicializar playlist se não existir
+        if (!window.favoritesPlaylist) {
+            window.favoritesPlaylist = new FavoritesPlaylist(favorites);
+        } else {
+            window.favoritesPlaylist.updatePlaylist(favorites);
+        }
+    }
+
+    favoriteBtn.addEventListener('click', toggleCurrentFavorite);
+
+    // ============ COMPARTILHAMENTO ============
+    function shareOnSocial(song = currentSong) {
+        const text = `🎵 Estou ouvindo "${song.title}" por ${song.artist} na Rádio Entre Rios 105.5 FM! 📻`;
+        const url = 'https://radioentrerios.com.br';
+
+        if (navigator.share) {
+            navigator.share({
+                title: 'Rádio Entre Rios - Agora Tocando',
+                text: text,
+                url: url
+            }).catch(err => console.log('Erro ao compartilhar:', err));
+        } else {
+            // Fallback: copiar para clipboard
+            const fullText = `${text}\n${url}`;
+            navigator.clipboard.writeText(fullText).then(() => {
+                alert('Link copiado para a área de transferência!');
+            });
+        }
+    }
+
+    shareBtn.addEventListener('click', () => shareOnSocial());
+
+    // ============ EXPANDIR/COLAPSAR PAINEL ============
+    historyBtn.addEventListener('click', function() {
+        const player = document.querySelector('.modern-radio-player');
+        const isExpanded = player.classList.contains('expanded');
+
+        if (isExpanded && document.querySelector('[data-tab="history"]').classList.contains('active')) {
+            // Se já está expandido e mostrando histórico, colapsa
+            player.classList.remove('expanded');
+            this.classList.remove('active');
+        } else {
+            // Expande e mostra histórico
+            player.classList.add('expanded');
+            this.classList.add('active');
+            switchTab('history');
+            renderHistory(); // Atualiza histórico ao abrir
+        }
+    });
+
+    lyricsBtn.addEventListener('click', function() {
+        const player = document.querySelector('.modern-radio-player');
+        const isExpanded = player.classList.contains('expanded');
+
+        if (isExpanded && document.querySelector('[data-tab="lyrics"]').classList.contains('active')) {
+            // Se já está expandido e mostrando letra, colapsa
+            player.classList.remove('expanded');
+            historyBtn.classList.remove('active');
+        } else {
+            // Expande e mostra letra
+            player.classList.add('expanded');
+            historyBtn.classList.add('active');
+            switchTab('lyrics');
+        }
+    });
+
+    // ============ TABS ============
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const tab = this.dataset.tab;
+            switchTab(tab);
+        });
+    });
+
+    function switchTab(tabName) {
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        document.querySelectorAll('.tab-content').forEach(content => {
+            content.classList.remove('active');
+        });
+
+        document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+        document.getElementById(`${tabName}-tab`).classList.add('active');
+    }
+
+    // ============ API DE METADATA ============
+    const API_URL = 'https://www.radioentrerios.com.br/wp-content/noticias/radio_metadata_api.php';
+    let lastSongTitle = '';
+    let currentLyrics = null;
+
+    async function fetchCurrentSong() {
+        try {
+            const response = await fetch(`${API_URL}?action=current&t=${Date.now()}`);
+            const result = await response.json();
+
+            if (result.success && result.data) {
+                const metadata = result.data;
+                const fullTitle = metadata.full || `${metadata.artist} - ${metadata.title}`;
+
+                // Detectar mudança de música
+                if (fullTitle !== lastSongTitle && metadata.artist !== 'Rádio Entre Rios') {
+                    lastSongTitle = fullTitle;
+
+                    currentSong = {
+                        title: metadata.title,
+                        artist: metadata.artist,
+                        cover: metadata.cover,
+                        timestamp: Date.now()
+                    };
+
+                    // Atualizar interface
+                    songTitle.textContent = metadata.title;
+                    songArtist.textContent = metadata.artist;
+
+                    // Atualizar capa
+                    const coverElement = document.querySelector('.song-cover');
+                    if (metadata.cover) {
+                        coverElement.innerHTML = `<img src="${metadata.cover}" alt="Capa">`;
+                    } else {
+                        coverElement.innerHTML = '<i class="fas fa-music"></i>';
+                    }
+
+                    // Buscar letra
+                    fetchLyrics(metadata.artist, metadata.title);
+                }
+            }
+        } catch (error) {
+            console.log('Erro ao buscar metadata:', error);
+        }
+    }
+
+    async function fetchLyrics(artist, title) {
+        try {
+            const response = await fetch(`${API_URL}?action=lyrics&artist=${encodeURIComponent(artist)}&title=${encodeURIComponent(title)}`);
+            const result = await response.json();
+
+            if (result.success && result.data) {
+                currentLyrics = result.data;
+                showLyrics(result.data);
+            } else {
+                currentLyrics = null;
+                hideLyrics();
+            }
+        } catch (error) {
+            console.log('Erro ao buscar letra:', error);
+            hideLyrics();
+        }
+    }
+
+    // ============ EXIBIÇÃO DE LETRA ============
+    function showLyrics(lyrics) {
+        // Mostrar botão e tab de letra
+        lyricsBtn.style.display = 'flex';
+        document.querySelector('[data-tab="lyrics"]').style.display = 'flex';
+
+        // Atualizar conteúdo
+        const lyricsHeader = document.getElementById('lyrics-header');
+        const lyricsSong = document.getElementById('lyrics-song');
+        const lyricsArtist = document.getElementById('lyrics-artist');
+        const lyricsContent = document.getElementById('lyrics-content');
+
+        lyricsSong.textContent = lyrics.song_title || currentSong.title;
+        lyricsArtist.textContent = lyrics.artist || currentSong.artist;
+        lyricsHeader.style.display = 'block';
+
+        // Exibir texto completo da letra
+        if (lyrics.text) {
+            lyricsContent.textContent = lyrics.text;
+        } else if (lyrics.lines) {
+            lyricsContent.textContent = lyrics.lines.join('\n');
+        } else {
+            lyricsContent.innerHTML = '<p class="lyrics-notice">Letra não disponível</p>';
+        }
+    }
+
+    function hideLyrics() {
+        // Esconder botão e tab de letra
+        lyricsBtn.style.display = 'none';
+        document.querySelector('[data-tab="lyrics"]').style.display = 'none';
+
+        // Limpar conteúdo
+        const lyricsContent = document.getElementById('lyrics-content');
+        lyricsContent.innerHTML = '<p class="lyrics-notice">Letra não encontrada</p>';
+    }
+
+    function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
+    // ============ PLAYLIST DE FAVORITOS ============
+    class FavoritesPlaylist {
+        constructor(favorites) {
+            this.favorites = favorites;
+            this.currentIndex = -1;
+            this.isPlaying = false;
+            this.audio = new Audio();
+            this.shuffleMode = false;
+            this.originalOrder = [...favorites];
+
+            // Elementos DOM
+            this.playBtn = document.getElementById('playlist-play');
+            this.prevBtn = document.getElementById('playlist-prev');
+            this.nextBtn = document.getElementById('playlist-next');
+            this.shuffleBtn = document.getElementById('playlist-shuffle');
+            this.progressBar = document.getElementById('playlist-progress-bar');
+            this.titleEl = document.getElementById('playlist-title');
+            this.artistEl = document.getElementById('playlist-artist');
+            this.coverEl = document.getElementById('playlist-cover');
+            this.youtubeBtn = document.getElementById('playlist-youtube-btn');
+            this.spotifyBtn = document.getElementById('playlist-spotify-btn');
+            this.previewBtn = document.getElementById('playlist-preview-btn');
+
+            // Event listeners
+            this.audio.addEventListener('timeupdate', () => this.updateProgress());
+            this.audio.addEventListener('ended', () => this.playNext());
+            this.audio.addEventListener('error', (e) => this.handleError(e));
+
+            this.playBtn.addEventListener('click', () => this.togglePlay());
+            this.prevBtn.addEventListener('click', () => this.playPrev());
+            this.nextBtn.addEventListener('click', () => this.playNext());
+            this.shuffleBtn.addEventListener('click', () => this.toggleShuffle());
+            this.previewBtn.addEventListener('click', () => this.playPreview());
+
+            console.log('🎵 FavoritesPlaylist inicializada com', favorites.length, 'músicas');
+        }
+
+        playSongAtIndex(index) {
+            if (index < 0 || index >= this.favorites.length) return;
+
+            this.currentIndex = index;
+            const song = this.favorites[index];
+
+            console.log('Tocando:', song.title, 'by', song.artist);
+
+            // Atualizar UI
+            this.updateUI(song);
+            this.updateActiveItem();
+
+            // Parar áudio atual
+            this.audio.pause();
+            this.isPlaying = false;
+
+            // Habilitar/Desabilitar botões
+            this.updateButtons();
+        }
+
+        updateUI(song) {
+            this.titleEl.textContent = song.title;
+            this.artistEl.textContent = song.artist;
+
+            if (song.cover) {
+                this.coverEl.innerHTML = `<img src="${song.cover}" alt="Capa">`;
+            } else {
+                this.coverEl.innerHTML = '<i class="fas fa-music"></i>';
+            }
+
+            // Atualizar link do YouTube
+            const youtubeQuery = encodeURIComponent(`${song.artist} ${song.title}`);
+            this.youtubeBtn.href = `https://www.youtube.com/results?search_query=${youtubeQuery}`;
+
+            // Configurar link do Spotify
+            const spotifyQuery = `${song.artist} ${song.title}`;
+            this.spotifyBtn.onclick = () => this.openInSpotify(spotifyQuery);
+            this.spotifyBtn.disabled = false;
+        }
+
+        updateActiveItem() {
+            document.querySelectorAll('#favorites-list .history-item').forEach((item, idx) => {
+                if (idx === this.currentIndex) {
+                    item.classList.add('playing');
+                } else {
+                    item.classList.remove('playing');
+                }
+            });
+        }
+
+        updateButtons() {
+            this.prevBtn.disabled = this.currentIndex <= 0;
+            this.nextBtn.disabled = this.currentIndex >= this.favorites.length - 1;
+
+            // Atualizar ícone do play/pause
+            const icon = this.playBtn.querySelector('i');
+            if (this.isPlaying) {
+                icon.classList.remove('fa-play');
+                icon.classList.add('fa-pause');
+            } else {
+                icon.classList.remove('fa-pause');
+                icon.classList.add('fa-play');
+            }
+        }
+
+        playPreview() {
+            if (this.currentIndex < 0) {
+                console.warn('Nenhuma música selecionada');
+                alert('Selecione uma música primeiro');
+                return;
+            }
+
+            const song = this.favorites[this.currentIndex];
+            console.log('🎵 Tentando tocar:', song);
+
+            if (!song.preview_url) {
+                console.warn('⚠️ Preview não disponível ainda para:', song.title);
+                alert('Preview ainda não disponível para esta música. Tente novamente em alguns segundos.');
+                return;
+            }
+
+            console.log('▶️ Iniciando reprodução:', song.preview_url);
+
+            // Tocar preview
+            this.audio.src = song.preview_url;
+            this.audio.play().then(() => {
+                console.log('✅ Reprodução iniciada com sucesso!');
+                this.isPlaying = true;
+                this.updateButtons();
+            }).catch(err => {
+                console.error('❌ Erro ao reproduzir:', err);
+                alert('Erro ao reproduzir preview: ' + err.message);
+            });
+        }
+
+        togglePlay() {
+            if (this.currentIndex < 0) {
+                // Se nenhuma música selecionada, tocar a primeira
+                this.playSongAtIndex(0);
+                this.playPreview();
+                return;
+            }
+
+            if (this.isPlaying) {
+                this.audio.pause();
+                this.isPlaying = false;
+            } else {
+                if (this.audio.src) {
+                    this.audio.play();
+                    this.isPlaying = true;
+                } else {
+                    this.playPreview();
+                }
+            }
+
+            this.updateButtons();
+        }
+
+        playNext() {
+            if (this.currentIndex < this.favorites.length - 1) {
+                this.playSongAtIndex(this.currentIndex + 1);
+                if (this.isPlaying || this.audio.src) {
+                    this.playPreview();
+                }
+            }
+        }
+
+        playPrev() {
+            if (this.currentIndex > 0) {
+                this.playSongAtIndex(this.currentIndex - 1);
+                if (this.isPlaying || this.audio.src) {
+                    this.playPreview();
+                }
+            }
+        }
+
+        toggleShuffle() {
+            this.shuffleMode = !this.shuffleMode;
+
+            if (this.shuffleMode) {
+                this.shuffleBtn.classList.add('active');
+                console.log('Modo aleatório: ON');
+            } else {
+                this.shuffleBtn.classList.remove('active');
+                console.log('Modo aleatório: OFF');
+            }
+        }
+
+        openInSpotify(query) {
+            // Tentar abrir no app do Spotify instalado
+            const spotifyUri = `spotify:search:${encodeURIComponent(query)}`;
+            const spotifyWebUrl = `https://open.spotify.com/search/${encodeURIComponent(query)}`;
+
+            console.log('🎵 Abrindo no Spotify:', query);
+
+            // Criar link temporário para tentar abrir o app
+            const tempLink = document.createElement('a');
+            tempLink.href = spotifyUri;
+            tempLink.style.display = 'none';
+            document.body.appendChild(tempLink);
+            tempLink.click();
+            document.body.removeChild(tempLink);
+
+            // Fallback para web após 1 segundo (se o app não abrir)
+            setTimeout(() => {
+                console.log('📱 Abrindo Spotify Web como fallback');
+                window.open(spotifyWebUrl, '_blank');
+            }, 1000);
+        }
+
+        updateProgress() {
+            if (!this.audio.duration) return;
+
+            const percent = (this.audio.currentTime / this.audio.duration) * 100;
+            this.progressBar.style.width = percent + '%';
+        }
+
+        handleError(e) {
+            console.error('Erro ao reproduzir áudio:', e);
+            alert('Não foi possível reproduzir esta música. Tentando próxima...');
+            this.playNext();
+        }
+
+        updatePlaylist(newFavorites) {
+            this.favorites = newFavorites;
+            this.originalOrder = [...newFavorites];
+
+            // Se a música atual foi removida, parar
+            if (this.currentIndex >= newFavorites.length) {
+                this.audio.pause();
+                this.currentIndex = -1;
+                this.isPlaying = false;
+                this.updateButtons();
+            }
+
+            console.log('Playlist atualizada:', newFavorites.length, 'músicas');
+        }
+    }
+
+    // ============ ATUALIZAÇÃO PERIÓDICA ============
+    let pollingInterval = null;
+    let lastUpdateTime = Date.now();
+    let consecutiveErrors = 0;
+    const MAX_ERRORS = 3;
+    const POLLING_INTERVAL = 10000; // 10 segundos
+    const HEARTBEAT_CHECK = 30000; // 30 segundos
+
+    function startMetadataPolling() {
+        // Limpar intervalo anterior se existir
+        if (pollingInterval) {
+            clearInterval(pollingInterval);
+        }
+
+        // Buscar imediatamente
+        fetchCurrentSongWithErrorHandling();
+
+        // Atualizar a cada 10 segundos
+        pollingInterval = setInterval(() => {
+            fetchCurrentSongWithErrorHandling();
+        }, POLLING_INTERVAL);
+
+        console.log('🎵 Polling iniciado');
+    }
+
+    async function fetchCurrentSongWithErrorHandling() {
+        try {
+            await fetchCurrentSong();
+            lastUpdateTime = Date.now();
+            consecutiveErrors = 0;
+        } catch (error) {
+            consecutiveErrors++;
+            console.error(`Erro no polling (${consecutiveErrors}/${MAX_ERRORS}):`, error);
+
+            // Se muitos erros consecutivos, reiniciar polling
+            if (consecutiveErrors >= MAX_ERRORS) {
+                console.warn('⚠️ Muitos erros consecutivos, reiniciando polling...');
+                stopMetadataPolling();
+                setTimeout(startMetadataPolling, 5000); // Espera 5s antes de reiniciar
+            }
+        }
+    }
+
+    function stopMetadataPolling() {
+        if (pollingInterval) {
+            clearInterval(pollingInterval);
+            pollingInterval = null;
+            console.log('🛑 Polling parado');
+        }
+    }
+
+    // Heartbeat: verifica se o polling está realmente funcionando
+    function startHeartbeat() {
+        setInterval(() => {
+            const timeSinceLastUpdate = Date.now() - lastUpdateTime;
+
+            // Se passou muito tempo sem atualização, reiniciar
+            if (timeSinceLastUpdate > HEARTBEAT_CHECK) {
+                console.warn('💔 Heartbeat falhou, reiniciando polling...');
+                stopMetadataPolling();
+                startMetadataPolling();
+            }
+        }, HEARTBEAT_CHECK);
+    }
+
+    // Detectar quando a aba fica visível novamente
+    document.addEventListener('visibilitychange', function() {
+        if (!document.hidden) {
+            console.log('👁️ Aba visível, forçando atualização...');
+            fetchCurrentSongWithErrorHandling();
+
+            // Verificar se o polling ainda está rodando
+            if (!pollingInterval) {
+                console.warn('⚠️ Polling estava parado, reiniciando...');
+                startMetadataPolling();
+            }
+        }
+    });
+
+    // Detectar quando a janela volta ao foco
+    window.addEventListener('focus', function() {
+        console.log('🎯 Janela em foco, forçando atualização...');
+        fetchCurrentSongWithErrorHandling();
+    });
+
+    // ============ INICIALIZAÇÃO ============
+    renderHistory();
+    renderFavorites();
+    startMetadataPolling();
+    startHeartbeat();
+
+    console.log('🎵 Player de Rádio 2.0 carregado com sucesso!');
+});
+</script>

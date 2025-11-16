@@ -1,0 +1,458 @@
+{% extends "base.html" %}
+
+{% block title %}Insumos Agrícolas - CropLink{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col">
+            <h1 class="display-6">
+                <i class="fas fa-seedling text-success"></i>
+                Insumos Agrícolas - Aplicação
+            </h1>
+            <p class="text-muted">Defensivos, fertilizantes e sementes para aplicação no campo</p>
+        </div>
+        <div class="col-auto">
+            <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalAdicionarInsumo">
+                <i class="fas fa-plus"></i> Adicionar Insumo
+            </button>
+        </div>
+    </div>
+
+    <!-- Filtros -->
+    <div class="card shadow mb-4">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-4">
+                    <select class="form-select" id="filtroCategoria">
+                        <option value="">Todas as Categorias</option>
+                        <option value="Herbicida">Herbicida</option>
+                        <option value="Fungicida">Fungicida</option>
+                        <option value="Inseticida">Inseticida</option>
+                        <option value="Fertilizante">Fertilizante</option>
+                        <option value="Semente">Semente</option>
+                        <option value="Outros">Outros</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Lista de Insumos Agrícolas -->
+    <div class="card shadow">
+        <div class="card-body">
+            {% if insumos %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead class="table-success">
+                            <tr>
+                                <th>Nome</th>
+                                <th>Categoria</th>
+                                <th>Quantidade</th>
+                                <th>Unidade</th>
+                                <th>Observação</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for insumo in insumos %}
+                            <tr data-categoria="{{ insumo.categoria }}">
+                                <td>{{ insumo.nome }}</td>
+                                <td>
+                                    <span class="badge 
+                                        {% if insumo.categoria == 'Herbicida' %}bg-danger
+                                        {% elif insumo.categoria == 'Fungicida' %}bg-warning
+                                        {% elif insumo.categoria == 'Inseticida' %}bg-info
+                                        {% elif insumo.categoria == 'Fertilizante' %}bg-success
+                                        {% elif insumo.categoria == 'Semente' %}bg-primary
+                                        {% else %}bg-secondary{% endif %}">
+                                        {{ insumo.categoria }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="{% if insumo.quantidade < 10 %}text-danger{% elif insumo.quantidade < 50 %}text-warning{% else %}text-success{% endif %}">
+                                        {{ insumo.quantidade }}
+                                    </span>
+                                </td>
+                                <td>{{ insumo.unidade }}</td>
+                                <td>
+                                    {% if insumo.observacao %}
+                                        <small class="text-muted">{{ insumo.observacao[:50] }}{% if insumo.observacao|length > 50 %}...{% endif %}</small>
+                                    {% else %}
+                                        <small class="text-muted">-</small>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <div class="btn-group flex-wrap" role="group">
+                                        <button class="btn btn-sm btn-primary" onclick="aplicarInsumo({{ insumo.id }}, '{{ insumo.nome }}')" title="Aplicar no campo">
+                                            <i class="fas fa-spray-can"></i> Aplicar
+                                        </button>
+                                        <button class="btn btn-sm btn-success" onclick="adicionarEstoque({{ insumo.id }}, '{{ insumo.nome }}')" title="Adicionar ao estoque">
+                                            <i class="fas fa-plus"></i> Estoque
+                                        </button>
+                                        <button class="btn btn-sm btn-warning" onclick="darBaixa({{ insumo.id }}, '{{ insumo.nome }}')" title="Dar baixa no estoque">
+                                            <i class="fas fa-minus"></i> Baixa
+                                        </button>
+                                        <button class="btn btn-sm btn-info" onclick="editarInsumoAgricola({{ insumo.id }}, '{{ insumo.nome }}', {{ insumo.quantidade }}, '{{ insumo.unidade }}', '{{ insumo.categoria }}', '{{ insumo.observacao|e }}')" title="Editar insumo">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-danger" onclick="excluirInsumoAgricola({{ insumo.id }}, '{{ insumo.nome }}')" title="Excluir insumo">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="text-center py-5">
+                    <i class="fas fa-seedling fa-3x text-muted mb-3"></i>
+                    <p class="text-muted">Nenhum insumo agrícola cadastrado ainda.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Modal Adicionar Insumo -->
+<div class="modal fade" id="modalAdicionarInsumo" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Adicionar Insumo Agrícola</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="POST" action="{{ url_for('adicionar_insumo_agricola') }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <label for="nome" class="form-label">Nome do Insumo</label>
+                            <input type="text" class="form-control" id="nome" name="nome" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="categoria" class="form-label">Categoria</label>
+                            <select class="form-select" id="categoria" name="categoria" required>
+                                <option value="Herbicida">Herbicida</option>
+                                <option value="Fungicida">Fungicida</option>
+                                <option value="Inseticida">Inseticida</option>
+                                <option value="Fertilizante">Fertilizante</option>
+                                <option value="Semente">Semente</option>
+                                <option value="Outros">Outros</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-8">
+                            <label for="quantidade" class="form-label">Quantidade Inicial</label>
+                            <input type="number" class="form-control" id="quantidade" name="quantidade" step="0.01" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="unidade" class="form-label">Unidade</label>
+                            <select class="form-select" id="unidade" name="unidade" required>
+                                <option value="L">L (Litros)</option>
+                                <option value="kg">kg (Quilos)</option>
+                                <option value="g">g (Gramas)</option>
+                                <option value="mL">mL (Mililitros)</option>
+                                <option value="ha">ha (Hectares)</option>
+                                <option value="un">un (Unidades)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="observacao" class="form-label">Observação</label>
+                        <textarea class="form-control" id="observacao" name="observacao" rows="3" placeholder="Informações adicionais sobre o insumo..."></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-success">Adicionar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Adicionar Estoque -->
+<div class="modal fade" id="modalAdicionarEstoque" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Adicionar Estoque</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="formAdicionarEstoque" method="POST">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Insumo</label>
+                        <input type="text" class="form-control" id="nomeInsumoEstoque" readonly>
+                    </div>
+                    <div class="mb-3">
+                        <label for="quantidadeEstoque" class="form-label">Quantidade a Adicionar</label>
+                        <input type="number" class="form-control" id="quantidadeEstoque" name="quantidade" step="0.01" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="observacaoEstoque" class="form-label">Observação</label>
+                        <textarea class="form-control" id="observacaoEstoque" name="observacao" rows="3" placeholder="Ex: Compra de fornecedor X, lote Y..."></textarea>
+                    </div>
+                    <input type="hidden" name="tipo" value="Entrada">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-success">Adicionar Estoque</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Dar Baixa -->
+<div class="modal fade" id="modalDarBaixa" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Dar Baixa no Estoque</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="formDarBaixa" method="POST">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Insumo</label>
+                        <input type="text" class="form-control" id="nomeInsumoBaixa" readonly>
+                    </div>
+                    <div class="mb-3">
+                        <label for="quantidadeBaixa" class="form-label">Quantidade a Baixar</label>
+                        <input type="number" class="form-control" id="quantidadeBaixa" name="quantidade" step="0.01" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="motivoBaixa" class="form-label">Motivo da Baixa</label>
+                        <select class="form-select" id="motivoBaixa" name="motivo" required>
+                            <option value="">Selecione o motivo</option>
+                            <option value="Vencimento">Vencimento do produto</option>
+                            <option value="Avaria">Avaria/Danos</option>
+                            <option value="Perda">Perda operacional</option>
+                            <option value="Descarte">Descarte por segurança</option>
+                            <option value="Outros">Outros</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="observacaoBaixa" class="form-label">Observação</label>
+                        <textarea class="form-control" id="observacaoBaixa" name="observacao" rows="3" placeholder="Detalhe o motivo da baixa..."></textarea>
+                    </div>
+                    <input type="hidden" name="tipo" value="Saída">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-warning">Dar Baixa</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Aplicar Insumo -->
+<div class="modal fade" id="modalAplicar" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Aplicar Insumo</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="formAplicar" method="POST">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Insumo</label>
+                        <input type="text" class="form-control" id="nomeInsumoAplicar" readonly>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label for="quantidadeAplicar" class="form-label">Quantidade Aplicada</label>
+                            <input type="number" class="form-control" id="quantidadeAplicar" name="quantidade" step="0.01" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="talhao" class="form-label">Talhão</label>
+                            <input type="text" class="form-control" id="talhao" name="talhao">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label for="dose_aplicada" class="form-label">Dose Aplicada</label>
+                            <input type="number" class="form-control" id="dose_aplicada" name="dose_aplicada" step="0.01">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="unidade_dose" class="form-label">Unidade da Dose</label>
+                            <select class="form-select" id="unidade_dose" name="unidade_dose">
+                                <option value="L/ha">L/ha</option>
+                                <option value="kg/ha">kg/ha</option>
+                                <option value="g/ha">g/ha</option>
+                                <option value="mL/ha">mL/ha</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="condicao_aplicacao" class="form-label">Condição de Aplicação</label>
+                        <select class="form-select" id="condicao_aplicacao" name="condicao_aplicacao">
+                            <option value="Clima seco">Clima seco</option>
+                            <option value="Clima úmido">Clima úmido</option>
+                            <option value="Pós-chuva">Pós-chuva</option>
+                            <option value="Vento calmo">Vento calmo</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="observacaoAplicacao" class="form-label">Observação</label>
+                        <textarea class="form-control" id="observacaoAplicacao" name="observacao" rows="3"></textarea>
+                    </div>
+                    <input type="hidden" name="tipo" value="Saída">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Aplicar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Editar Insumo Agrícola -->
+<div class="modal fade" id="modalEditarInsumoAgricola" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Editar Insumo Agrícola</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="formEditarAgricola" method="POST">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <label for="nomeEditarAgricola" class="form-label">Nome do Insumo</label>
+                            <input type="text" class="form-control" id="nomeEditarAgricola" name="nome" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="categoriaEditarAgricola" class="form-label">Categoria</label>
+                            <select class="form-select" id="categoriaEditarAgricola" name="categoria" required>
+                                <option value="Herbicida">Herbicida</option>
+                                <option value="Fungicida">Fungicida</option>
+                                <option value="Inseticida">Inseticida</option>
+                                <option value="Fertilizante">Fertilizante</option>
+                                <option value="Semente">Semente</option>
+                                <option value="Outros">Outros</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-8">
+                            <label for="quantidadeEditarAgricola" class="form-label">Quantidade</label>
+                            <input type="number" class="form-control" id="quantidadeEditarAgricola" name="quantidade" step="0.01" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="unidadeEditarAgricola" class="form-label">Unidade</label>
+                            <select class="form-select" id="unidadeEditarAgricola" name="unidade" required>
+                                <option value="L">L (Litros)</option>
+                                <option value="kg">kg (Quilos)</option>
+                                <option value="g">g (Gramas)</option>
+                                <option value="mL">mL (Mililitros)</option>
+                                <option value="ha">ha (Hectares)</option>
+                                <option value="un">un (Unidades)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="observacaoEditarAgricola" class="form-label">Observação</label>
+                        <textarea class="form-control" id="observacaoEditarAgricola" name="observacao" rows="3"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-info">Atualizar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Confirmar Exclusão Insumo Agrícola -->
+<div class="modal fade" id="modalExcluirInsumoAgricola" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title">Confirmar Exclusão</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="formExcluirAgricola" method="POST">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                <div class="modal-body">
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <strong>Atenção!</strong> Esta ação não pode ser desfeita.
+                    </div>
+                    <p>Deseja realmente excluir o insumo agrícola <strong id="nomeInsumoExcluirAgricola"></strong>?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-danger">Sim, Excluir</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function aplicarInsumo(id, nome) {
+    document.getElementById('nomeInsumoAplicar').value = nome;
+    document.getElementById('formAplicar').action = '/insumos-agricolas/movimentar/' + id;
+    new bootstrap.Modal(document.getElementById('modalAplicar')).show();
+}
+
+function adicionarEstoque(id, nome) {
+    document.getElementById('nomeInsumoEstoque').value = nome;
+    document.getElementById('formAdicionarEstoque').action = '/insumos-agricolas/movimentar/' + id;
+    new bootstrap.Modal(document.getElementById('modalAdicionarEstoque')).show();
+}
+
+function darBaixa(id, nome) {
+    document.getElementById('nomeInsumoBaixa').value = nome;
+    document.getElementById('formDarBaixa').action = '/insumos-agricolas/movimentar/' + id;
+    new bootstrap.Modal(document.getElementById('modalDarBaixa')).show();
+}
+
+function editarInsumoAgricola(id, nome, quantidade, unidade, categoria, observacao) {
+    document.getElementById('nomeEditarAgricola').value = nome;
+    document.getElementById('quantidadeEditarAgricola').value = quantidade;
+    document.getElementById('unidadeEditarAgricola').value = unidade;
+    document.getElementById('categoriaEditarAgricola').value = categoria;
+    document.getElementById('observacaoEditarAgricola').value = observacao;
+    document.getElementById('formEditarAgricola').action = '/insumos-agricolas/editar/' + id;
+    new bootstrap.Modal(document.getElementById('modalEditarInsumoAgricola')).show();
+}
+
+function excluirInsumoAgricola(id, nome) {
+    document.getElementById('nomeInsumoExcluirAgricola').textContent = nome;
+    document.getElementById('formExcluirAgricola').action = '/insumos-agricolas/excluir/' + id;
+    new bootstrap.Modal(document.getElementById('modalExcluirInsumoAgricola')).show();
+}
+
+// Filtro por categoria
+document.getElementById('filtroCategoria').addEventListener('change', function() {
+    const categoria = this.value;
+    const linhas = document.querySelectorAll('tbody tr');
+    
+    linhas.forEach(linha => {
+        if (categoria === '' || linha.dataset.categoria === categoria) {
+            linha.style.display = '';
+        } else {
+            linha.style.display = 'none';
+        }
+    });
+});
+</script>
+{% endblock %}

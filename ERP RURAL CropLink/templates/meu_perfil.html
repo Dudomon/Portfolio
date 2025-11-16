@@ -1,0 +1,176 @@
+{% extends "base.html" %}
+
+{% block title %}Meu Perfil - CropLink{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col">
+            <h1 class="display-6">
+                <i class="fas fa-user-circle text-success"></i>
+                Meu Perfil
+            </h1>
+            <p class="text-muted">Gerencie suas informações pessoais e configurações de conta</p>
+        </div>
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ 'success' if category == 'success' else 'danger' }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <div class="row">
+        <div class="col-lg-8">
+            <!-- Informações do Perfil -->
+            <div class="card shadow mb-4">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0"><i class="fas fa-user"></i> Informações Pessoais</h5>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{{ url_for('atualizar_perfil') }}">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="nome_completo" class="form-label">Nome Completo</label>
+                                <input type="text" class="form-control" id="nome_completo" name="nome_completo"
+                                       value="{{ current_user.nome_completo }}" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="username" class="form-label">Usuário</label>
+                                <input type="text" class="form-control" id="username"
+                                       value="{{ current_user.username }}" disabled>
+                                <small class="text-muted">O nome de usuário não pode ser alterado</small>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="email" class="form-label">E-mail</label>
+                            <input type="email" class="form-control" id="email" name="email"
+                                   value="{{ current_user.email }}" required>
+                        </div>
+
+                        <div class="d-flex justify-content-end">
+                            <button type="submit" class="btn btn-success">
+                                <i class="fas fa-save"></i> Salvar Alterações
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Alterar Senha -->
+            <div class="card shadow">
+                <div class="card-header bg-warning text-dark">
+                    <h5 class="mb-0"><i class="fas fa-lock"></i> Alterar Senha</h5>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{{ url_for('alterar_senha') }}" id="formAlterarSenha">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+                        <div class="mb-3">
+                            <label for="senha_atual" class="form-label">Senha Atual</label>
+                            <input type="password" class="form-control" id="senha_atual"
+                                   name="senha_atual" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="senha_nova" class="form-label">Nova Senha</label>
+                            <input type="password" class="form-control" id="senha_nova"
+                                   name="senha_nova" required minlength="6">
+                            <small class="text-muted">Mínimo de 6 caracteres</small>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="senha_confirmacao" class="form-label">Confirmar Nova Senha</label>
+                            <input type="password" class="form-control" id="senha_confirmacao"
+                                   name="senha_confirmacao" required minlength="6">
+                        </div>
+
+                        <div class="d-flex justify-content-end">
+                            <button type="submit" class="btn btn-warning">
+                                <i class="fas fa-key"></i> Alterar Senha
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Informações da Conta -->
+        <div class="col-lg-4">
+            <div class="card shadow">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0"><i class="fas fa-info-circle"></i> Informações da Conta</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <strong>Usuário:</strong>
+                        <p class="text-muted">{{ current_user.username }}</p>
+                    </div>
+
+                    <div class="mb-3">
+                        <strong>E-mail:</strong>
+                        <p class="text-muted">{{ current_user.email }}</p>
+                    </div>
+
+                    <div class="mb-3">
+                        <strong>Perfil:</strong>
+                        <p class="text-muted">
+                            {% if current_user.is_admin %}
+                                <span class="badge bg-danger">Administrador</span>
+                            {% else %}
+                                <span class="badge bg-primary">Usuário</span>
+                            {% endif %}
+                        </p>
+                    </div>
+
+                    <div class="mb-3">
+                        <strong>Status:</strong>
+                        <p class="text-muted">
+                            {% if current_user.ativo %}
+                                <span class="badge bg-success">Ativo</span>
+                            {% else %}
+                                <span class="badge bg-secondary">Inativo</span>
+                            {% endif %}
+                        </p>
+                    </div>
+
+                    <hr>
+
+                    <div class="text-center">
+                        <a href="{{ url_for('esqueci_senha') }}" class="btn btn-sm btn-outline-secondary">
+                            <i class="fas fa-question-circle"></i> Esqueci minha senha
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.getElementById('formAlterarSenha').addEventListener('submit', function(e) {
+    const senhaNew = document.getElementById('senha_nova').value;
+    const senhaConfirm = document.getElementById('senha_confirmacao').value;
+
+    if (senhaNew !== senhaConfirm) {
+        e.preventDefault();
+        alert('As senhas não coincidem. Por favor, verifique.');
+        return false;
+    }
+
+    if (senhaNew.length < 6) {
+        e.preventDefault();
+        alert('A senha deve ter no mínimo 6 caracteres.');
+        return false;
+    }
+});
+</script>
+{% endblock %}

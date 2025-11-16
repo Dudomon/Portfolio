@@ -1,0 +1,362 @@
+{% extends "base.html" %}
+
+{% block title %}Gerenciar Clientes - CropLink{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col">
+            <h1 class="display-6">
+                <i class="fas fa-handshake text-success"></i>
+                Gerenciar Clientes
+            </h1>
+            <p class="text-muted">Controle completo de clientes e informações financeiras</p>
+        </div>
+        <div class="col-auto">
+            <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalAdicionarCliente">
+                <i class="fas fa-plus"></i> Adicionar Cliente
+            </button>
+        </div>
+    </div>
+
+    <!-- Filtros e Estatísticas -->
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <input type="text" class="form-control" id="filtroNome" placeholder="Filtrar por nome...">
+                        </div>
+                        <div class="col-md-4">
+                            <select class="form-select" id="filtroStatus">
+                                <option value="">Todos os Status</option>
+                                <option value="Ativo">Ativo</option>
+                                <option value="Inativo">Inativo</option>
+                                <option value="Pendente">Pendente</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <select class="form-select" id="filtroCategoria">
+                                <option value="">Todas as Categorias</option>
+                                <option value="Fornecedor">Fornecedor</option>
+                                <option value="Comprador">Comprador</option>
+                                <option value="Prestador de Serviço">Prestador de Serviço</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card shadow bg-success text-white">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col">
+                            <div class="h5 mb-0">{{ clientes|length }}</div>
+                            <div class="small">Total de Clientes</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-users fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Lista de Clientes -->
+    <div class="card shadow">
+        <div class="card-body">
+            {% if clientes %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead class="table-success">
+                            <tr>
+                                <th>Nome/Empresa</th>
+                                <th>Categoria</th>
+                                <th>Contato</th>
+                                <th>Status</th>
+                                <th>Valor Total</th>
+                                <th>Última Transação</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabelaClientes">
+                            {% for cliente in clientes %}
+                            <tr data-nome="{{ cliente.nome|lower }}" data-status="{{ cliente.status }}" data-categoria="{{ cliente.categoria }}">
+                                <td>
+                                    <div>
+                                        <strong>{{ cliente.nome }}</strong>
+                                        {% if cliente.empresa %}
+                                            <br><small class="text-muted">{{ cliente.empresa }}</small>
+                                        {% endif %}
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="badge 
+                                        {% if cliente.categoria == 'Fornecedor' %}bg-primary
+                                        {% elif cliente.categoria == 'Comprador' %}bg-success
+                                        {% elif cliente.categoria == 'Prestador de Serviço' %}bg-info
+                                        {% else %}bg-secondary{% endif %}">
+                                        {{ cliente.categoria }}
+                                    </span>
+                                </td>
+                                <td>
+                                    {% if cliente.telefone %}
+                                        <div><i class="fas fa-phone"></i> {{ cliente.telefone }}</div>
+                                    {% endif %}
+                                    {% if cliente.email %}
+                                        <div><i class="fas fa-envelope"></i> {{ cliente.email }}</div>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <span class="badge 
+                                        {% if cliente.status == 'Ativo' %}bg-success
+                                        {% elif cliente.status == 'Inativo' %}bg-danger
+                                        {% elif cliente.status == 'Pendente' %}bg-warning
+                                        {% else %}bg-secondary{% endif %}">
+                                        {{ cliente.status }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <strong class="{% if cliente.valor_total > 0 %}text-success{% elif cliente.valor_total < 0 %}text-danger{% else %}text-muted{% endif %}">
+                                        R$ {{ "{:,.2f}".format(cliente.valor_total).replace(',', 'X').replace('.', ',').replace('X', '.') }}
+                                    </strong>
+                                </td>
+                                <td>
+                                    {% if cliente.ultima_transacao %}
+                                        {{ cliente.ultima_transacao.strftime('%d/%m/%Y') }}
+                                    {% else %}
+                                        <span class="text-muted">-</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <div class="btn-group" role="group">
+                                        <button class="btn btn-sm btn-primary" onclick="editarCliente({{ cliente.id }})" title="Editar">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-info" onclick="verDetalhes({{ cliente.id }})" title="Ver Detalhes">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-success" onclick="adicionarTransacao({{ cliente.id }})" title="Nova Transação">
+                                            <i class="fas fa-dollar-sign"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="text-center py-5">
+                    <i class="fas fa-handshake fa-3x text-muted mb-3"></i>
+                    <p class="text-muted">Nenhum cliente cadastrado ainda.</p>
+                    <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalAdicionarCliente">
+                        <i class="fas fa-plus"></i> Cadastrar Primeiro Cliente
+                    </button>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Modal Adicionar Cliente -->
+<div class="modal fade" id="modalAdicionarCliente" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Adicionar Cliente</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="POST" action="{{ url_for('adicionar_cliente') }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <label for="nome" class="form-label">Nome / Razão Social</label>
+                            <input type="text" class="form-control" id="nome" name="nome" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="categoria" class="form-label">Categoria</label>
+                            <select class="form-select" id="categoria" name="categoria" required>
+                                <option value="Fornecedor">Fornecedor</option>
+                                <option value="Comprador">Comprador</option>
+                                <option value="Prestador de Serviço">Prestador de Serviço</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label for="empresa" class="form-label">Empresa (opcional)</label>
+                            <input type="text" class="form-control" id="empresa" name="empresa">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="documento" class="form-label">CPF/CNPJ</label>
+                            <input type="text" class="form-control" id="documento" name="documento">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label for="telefone" class="form-label">Telefone</label>
+                            <input type="tel" class="form-control" id="telefone" name="telefone">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="email" name="email">
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="endereco" class="form-label">Endereço</label>
+                        <textarea class="form-control" id="endereco" name="endereco" rows="2" placeholder="Endereço completo..."></textarea>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label for="status" class="form-label">Status</label>
+                            <select class="form-select" id="status" name="status" required>
+                                <option value="Ativo">Ativo</option>
+                                <option value="Inativo">Inativo</option>
+                                <option value="Pendente">Pendente</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="valor_inicial" class="form-label">Valor Inicial (R$)</label>
+                            <input type="number" class="form-control" id="valor_inicial" name="valor_inicial" step="0.01" value="0.00">
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="observacoes" class="form-label">Observações</label>
+                        <textarea class="form-control" id="observacoes" name="observacoes" rows="3" placeholder="Informações adicionais..."></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-success">Adicionar Cliente</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Detalhes do Cliente -->
+<div class="modal fade" id="modalDetalhes" tabindex="-1">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Detalhes do Cliente</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div id="conteudoDetalhes">
+                    <!-- Conteúdo carregado via AJAX -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Nova Transação -->
+<div class="modal fade" id="modalTransacao" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Nova Transação</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="formTransacao" method="POST">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Cliente</label>
+                        <input type="text" class="form-control" id="nomeClienteTransacao" readonly>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label for="tipoTransacao" class="form-label">Tipo</label>
+                            <select class="form-select" id="tipoTransacao" name="tipo" required>
+                                <option value="Recebimento">Recebimento</option>
+                                <option value="Pagamento">Pagamento</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="valorTransacao" class="form-label">Valor (R$)</label>
+                            <input type="number" class="form-control" id="valorTransacao" name="valor" step="0.01" required>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="descricaoTransacao" class="form-label">Descrição</label>
+                        <textarea class="form-control" id="descricaoTransacao" name="descricao" rows="3" required></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-success">Adicionar Transação</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Filtros de busca
+document.getElementById('filtroNome').addEventListener('input', filtrarClientes);
+document.getElementById('filtroStatus').addEventListener('change', filtrarClientes);
+document.getElementById('filtroCategoria').addEventListener('change', filtrarClientes);
+
+function filtrarClientes() {
+    const nome = document.getElementById('filtroNome').value.toLowerCase();
+    const status = document.getElementById('filtroStatus').value;
+    const categoria = document.getElementById('filtroCategoria').value;
+    
+    const linhas = document.querySelectorAll('#tabelaClientes tr');
+    
+    linhas.forEach(linha => {
+        const nomeCliente = linha.dataset.nome;
+        const statusCliente = linha.dataset.status;
+        const categoriaCliente = linha.dataset.categoria;
+        
+        const mostrarlinha = 
+            (nome === '' || nomeCliente.includes(nome)) &&
+            (status === '' || statusCliente === status) &&
+            (categoria === '' || categoriaCliente === categoria);
+            
+        linha.style.display = mostrarlinha ? '' : 'none';
+    });
+}
+
+// Funções para ações dos clientes
+function editarCliente(id) {
+    // Implementar edição de cliente
+    alert('Funcionalidade de edição em desenvolvimento');
+}
+
+function verDetalhes(id) {
+    // Carregar detalhes via AJAX
+    fetch(`/admin/clientes/${id}/detalhes`)
+        .then(response => response.text())
+        .then(html => {
+            document.getElementById('conteudoDetalhes').innerHTML = html;
+            new bootstrap.Modal(document.getElementById('modalDetalhes')).show();
+        })
+        .catch(error => {
+            console.error('Erro ao carregar detalhes:', error);
+            alert('Erro ao carregar detalhes do cliente');
+        });
+}
+
+function adicionarTransacao(id) {
+    // Buscar nome do cliente e configurar modal
+    const linha = document.querySelector(`tr:has(button[onclick="adicionarTransacao(${id})"])`);
+    const nomeCliente = linha.querySelector('strong').textContent;
+    
+    document.getElementById('nomeClienteTransacao').value = nomeCliente;
+    document.getElementById('formTransacao').action = `/admin/clientes/${id}/transacao`;
+    
+    new bootstrap.Modal(document.getElementById('modalTransacao')).show();
+}
+</script>
+{% endblock %}

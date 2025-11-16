@@ -1,0 +1,601 @@
+{% extends "base.html" %}
+
+{% block title %}Diaristas - CropLink{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1 class="page-title">
+        <i class="fas fa-user-clock text-green me-3"></i>
+        Gestão de Diaristas
+    </h1>
+    <p class="page-subtitle">Controle de trabalhadores diaristas da fazenda</p>
+</div>
+
+<!-- Botão Adicionar -->
+<div class="row mb-4">
+    <div class="col-12">
+        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addDiaristaModal">
+            <i class="fas fa-plus me-2"></i>
+            Adicionar Diarista
+        </button>
+    </div>
+</div>
+
+<!-- Lista de Diaristas -->
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title mb-4">
+                    <i class="fas fa-list me-2"></i>
+                    Lista de Diaristas
+                </h5>
+                
+                {% if diaristas %}
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Nome Completo</th>
+                                <th>CPF</th>
+                                <th>Telefone</th>
+                                <th>Valor Diária</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for diarista in diaristas %}
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <i class="fas fa-user-clock text-green me-2"></i>
+                                        {{ diarista.nome_completo }}
+                                    </div>
+                                </td>
+                                <td>{{ diarista.cpf or '-' }}</td>
+                                <td>{{ diarista.telefone or '-' }}</td>
+                                <td>
+                                    <span class="text-success fw-bold">
+                                        R$ {{ "%.2f"|format(diarista.valor_diaria) }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="btn-group" role="group">
+                                        <button class="btn btn-sm btn-outline-success me-1" 
+                                                data-bs-toggle="modal" 
+                                                data-bs-target="#registrosDiaristModal"
+                                                onclick="abrirRegistros({{ diarista.id }}, '{{ diarista.nome_completo }}')">
+                                            <i class="fas fa-receipt"></i> Recibos
+                                        </button>
+                                        <button class="btn btn-sm btn-outline-primary me-1" 
+                                                data-bs-toggle="modal" 
+                                                data-bs-target="#editDiaristaModal"
+                                                onclick="editDiarista({{ diarista.id }}, '{{ diarista.nome_completo }}', '{{ diarista.cpf }}', '{{ diarista.telefone }}', {{ diarista.valor_diaria }})">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-outline-danger" 
+                                                onclick="confirmDelete({{ diarista.id }}, '{{ diarista.nome_completo }}')">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="text-center py-5">
+                    <i class="fas fa-user-clock fa-3x text-muted mb-3"></i>
+                    <h5 class="text-muted">Nenhum diarista cadastrado</h5>
+                    <p class="text-muted">Clique no botão "Adicionar Diarista" para começar.</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Adicionar Diarista -->
+<div class="modal fade" id="addDiaristaModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-plus me-2"></i>
+                    Adicionar Diarista
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="POST" action="{{ url_for('adicionar_diarista') }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-12 mb-3">
+                            <label class="form-label">Nome Completo *</label>
+                            <input type="text" class="form-control" name="nome_completo" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">CPF</label>
+                            <input type="text" class="form-control" name="cpf" placeholder="000.000.000-00">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Telefone</label>
+                            <input type="text" class="form-control" name="telefone" placeholder="(00) 00000-0000">
+                        </div>
+                        <div class="col-12 mb-3">
+                            <label class="form-label">Valor da Diária (R$) *</label>
+                            <input type="number" class="form-control" name="valor_diaria" step="0.01" min="0" required>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save me-2"></i>
+                        Salvar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Editar Diarista -->
+<div class="modal fade" id="editDiaristaModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-edit me-2"></i>
+                    Editar Diarista
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="POST" id="editDiaristaForm">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-12 mb-3">
+                            <label class="form-label">Nome Completo *</label>
+                            <input type="text" class="form-control" name="nome_completo" id="edit_nome_completo" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">CPF</label>
+                            <input type="text" class="form-control" name="cpf" id="edit_cpf" placeholder="000.000.000-00">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Telefone</label>
+                            <input type="text" class="form-control" name="telefone" id="edit_telefone" placeholder="(00) 00000-0000">
+                        </div>
+                        <div class="col-12 mb-3">
+                            <label class="form-label">Valor da Diária (R$) *</label>
+                            <input type="number" class="form-control" name="valor_diaria" id="edit_valor_diaria" step="0.01" min="0" required>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save me-2"></i>
+                        Atualizar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Registros e Recibos -->
+<div class="modal fade" id="registrosDiaristModal" tabindex="-1">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-receipt me-2"></i>
+                    Registros e Recibos - <span id="modalDiaristaNome"></span>
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                
+                <!-- Abas para organizar conteúdo -->
+                <ul class="nav nav-tabs" id="recibosTab" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="registrar-tab" data-bs-toggle="tab" data-bs-target="#registrar" type="button" role="tab">
+                            <i class="fas fa-plus me-2"></i>Registrar Dia
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="historico-tab" data-bs-toggle="tab" data-bs-target="#historico" type="button" role="tab">
+                            <i class="fas fa-history me-2"></i>Histórico
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="recibos-tab" data-bs-toggle="tab" data-bs-target="#recibos" type="button" role="tab">
+                            <i class="fas fa-file-invoice me-2"></i>Gerar Recibos
+                        </button>
+                    </li>
+                </ul>
+
+                <div class="tab-content mt-3" id="recibosTabContent">
+                    
+                    <!-- Aba Registrar Dia -->
+                    <div class="tab-pane fade show active" id="registrar" role="tabpanel">
+                        <form id="registrarDiaForm" onsubmit="registrarDia(event)">
+                            <input type="hidden" id="diarista_id" name="diarista_id">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Data *</label>
+                                    <input type="date" class="form-control" name="data" required>
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <label class="form-label">Horário Entrada</label>
+                                    <input type="time" class="form-control" name="horario_entrada">
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <label class="form-label">Horário Saída</label>
+                                    <input type="time" class="form-control" name="horario_saida">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-12 mb-3">
+                                    <label class="form-label">Descrição do Trabalho</label>
+                                    <textarea class="form-control" name="descricao_trabalho" rows="3" placeholder="Descreva as atividades realizadas..."></textarea>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-12 mb-3">
+                                    <label class="form-label">Observações</label>
+                                    <textarea class="form-control" name="observacoes" rows="2" placeholder="Observações adicionais..."></textarea>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-success">
+                                <i class="fas fa-save me-2"></i>Registrar Dia
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Aba Histórico -->
+                    <div class="tab-pane fade" id="historico" role="tabpanel">
+                        <!-- Resumo Financeiro -->
+                        <div id="resumoFinanceiro" class="row mb-4" style="display: none;">
+                            <div class="col-md-3">
+                                <div class="card bg-primary text-white">
+                                    <div class="card-body text-center">
+                                        <h5 class="card-title mb-0" id="quantidadeDias">0</h5>
+                                        <small>Dias Trabalhados</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="card bg-success text-white">
+                                    <div class="card-body text-center">
+                                        <h5 class="card-title mb-0" id="valorDiaria">R$ 0,00</h5>
+                                        <small>Valor Diária</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="card bg-warning text-white">
+                                    <div class="card-body text-center">
+                                        <h5 class="card-title mb-0" id="totalMes">R$ 0,00</h5>
+                                        <small>Total do Mês</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="card bg-danger text-white">
+                                    <div class="card-body text-center">
+                                        <h5 class="card-title mb-0" id="totalGeral">R$ 0,00</h5>
+                                        <small>Total Geral</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div id="historicoRegistros">
+                            <div class="text-center py-4">
+                                <i class="fas fa-spinner fa-spin fa-2x text-muted"></i>
+                                <p class="text-muted mt-2">Carregando registros...</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Aba Gerar Recibos -->
+                    <div class="tab-pane fade" id="recibos" role="tabpanel">
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <label class="form-label">Período para Recibo</label>
+                                <select class="form-select" id="periodoRecibo" onchange="atualizarPeriodoRecibo()">
+                                    <option value="mes">Recibo Mensal</option>
+                                    <option value="dias">Dias Específicos</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6" id="seletorMes">
+                                <label class="form-label">Mês/Ano</label>
+                                <input type="month" class="form-control" id="mesAno" name="mes_ano">
+                            </div>
+                        </div>
+
+                        <div class="row" id="seletorDias" style="display: none;">
+                            <div class="col-12">
+                                <label class="form-label">Selecionar Dias Trabalhados</label>
+                                <div id="diasDisponiveis" class="border rounded p-3" style="max-height: 200px; overflow-y: auto;">
+                                    <!-- Checkboxes dos dias serão inseridos aqui via JavaScript -->
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mt-4">
+                            <div class="col-12">
+                                <button class="btn btn-primary me-2" onclick="visualizarRecibo()">
+                                    <i class="fas fa-eye me-2"></i>Visualizar Recibo
+                                </button>
+                                <button class="btn btn-success" onclick="gerarRecibo()">
+                                    <i class="fas fa-file-pdf me-2"></i>Gerar Recibo Final
+                                </button>
+                            </div>
+                        </div>
+
+                        <div id="previewRecibo" class="mt-4" style="display: none;">
+                            <!-- Preview do recibo será mostrado aqui -->
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+let diaristaAtual = null;
+
+function editDiarista(id, nome, cpf, telefone, valor_diaria) {
+    document.getElementById('edit_nome_completo').value = nome;
+    document.getElementById('edit_cpf').value = cpf || '';
+    document.getElementById('edit_telefone').value = telefone || '';
+    document.getElementById('edit_valor_diaria').value = valor_diaria;
+    document.getElementById('editDiaristaForm').action = `/diaristas/editar/${id}`;
+}
+
+function confirmDelete(id, nome) {
+    if (confirm(`Tem certeza que deseja excluir o diarista "${nome}"?`)) {
+        // Criar formulário para submeter POST com CSRF token
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = `/diaristas/excluir/${id}`;
+        form.style.display = 'none';
+        
+        // Adicionar CSRF token
+        const csrfToken = document.querySelector('meta[name=csrf-token]');
+        if (csrfToken) {
+            const csrfInput = document.createElement('input');
+            csrfInput.type = 'hidden';
+            csrfInput.name = 'csrf_token';
+            csrfInput.value = csrfToken.getAttribute('content');
+            form.appendChild(csrfInput);
+        }
+        
+        document.body.appendChild(form);
+        form.submit();
+    }
+}
+
+function abrirRegistros(diaristaId, nome) {
+    diaristaAtual = diaristaId;
+    document.getElementById('modalDiaristaNome').textContent = nome;
+    document.getElementById('diarista_id').value = diaristaId;
+    
+    // Definir data atual como padrão
+    const hoje = new Date().toISOString().split('T')[0];
+    document.querySelector('input[name="data"]').value = hoje;
+    
+    // Definir mês atual como padrão
+    const mesAtual = new Date().toISOString().slice(0, 7);
+    document.getElementById('mesAno').value = mesAtual;
+    
+    // Carregar histórico
+    carregarHistorico(diaristaId);
+    carregarDiasDisponiveis(diaristaId);
+}
+
+function registrarDia(event) {
+    event.preventDefault();
+    const formData = new FormData(event.target);
+    
+    fetch('/diaristas/registrar-dia', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('Dia registrado com sucesso!');
+            event.target.reset();
+            document.querySelector('input[name="data"]').value = new Date().toISOString().split('T')[0];
+            carregarHistorico(diaristaAtual);
+            carregarDiasDisponiveis(diaristaAtual);
+        } else {
+            alert('Erro: ' + data.message);
+        }
+    })
+    .catch(error => {
+        alert('Erro ao registrar dia: ' + error);
+    });
+}
+
+function carregarHistorico(diaristaId) {
+    fetch(`/diaristas/${diaristaId}/registros`)
+    .then(response => response.json())
+    .then(data => {
+        const container = document.getElementById('historicoRegistros');
+        const resumoDiv = document.getElementById('resumoFinanceiro');
+        
+        // Se retornou o novo formato com registros separados
+        const registros = data.registros || data;
+        const totalGeral = data.total_geral || 0;
+        const quantidadeDias = data.quantidade_dias || registros.length;
+        const valorDiaria = data.valor_diaria_atual || 0;
+        
+        if (registros.length === 0) {
+            container.innerHTML = `
+                <div class="text-center py-4">
+                    <i class="fas fa-calendar-times fa-3x text-muted mb-3"></i>
+                    <h5 class="text-muted">Nenhum registro encontrado</h5>
+                    <p class="text-muted">Registre o primeiro dia de trabalho na aba "Registrar Dia"</p>
+                </div>
+            `;
+            resumoDiv.style.display = 'none';
+        } else {
+            // Atualizar resumo financeiro
+            document.getElementById('quantidadeDias').textContent = quantidadeDias;
+            document.getElementById('valorDiaria').textContent = `R$ ${valorDiaria.toFixed(2).replace('.', ',')}`;
+            document.getElementById('totalGeral').textContent = `R$ ${totalGeral.toFixed(2).replace('.', ',')}`;
+            
+            // Calcular total do mês atual
+            const mesAtual = new Date().getMonth() + 1;
+            const anoAtual = new Date().getFullYear();
+            const totalMesAtual = registros
+                .filter(reg => {
+                    const dataReg = new Date(reg.data);
+                    return dataReg.getMonth() + 1 === mesAtual && dataReg.getFullYear() === anoAtual;
+                })
+                .reduce((acc, reg) => acc + (reg.valor_diaria || 0), 0);
+            
+            document.getElementById('totalMes').textContent = `R$ ${totalMesAtual.toFixed(2).replace('.', ',')}`;
+            resumoDiv.style.display = 'flex';
+            
+            // Criar tabela com valores
+            let html = '<div class="table-responsive"><table class="table table-striped"><thead><tr>';
+            html += '<th>Data</th><th>Entrada</th><th>Saída</th><th>Trabalho</th><th>Valor Diária</th><th>Ações</th></tr></thead><tbody>';
+            
+            registros.forEach(registro => {
+                const valorDiariaReg = registro.valor_diaria || valorDiaria;
+                html += `<tr>
+                    <td>${new Date(registro.data).toLocaleDateString('pt-BR')}</td>
+                    <td>${registro.horario_entrada || '-'}</td>
+                    <td>${registro.horario_saida || '-'}</td>
+                    <td>${registro.descricao_trabalho || '-'}</td>
+                    <td class="text-success fw-bold">R$ ${valorDiariaReg.toFixed(2).replace('.', ',')}</td>
+                    <td>
+                        <button class="btn btn-sm btn-outline-primary" onclick="gerarReciboIndividual(${registro.id})">
+                            <i class="fas fa-receipt"></i> Recibo
+                        </button>
+                    </td>
+                </tr>`;
+            });
+            
+            html += '</tbody></table></div>';
+            container.innerHTML = html;
+        }
+    })
+    .catch(error => {
+        document.getElementById('historicoRegistros').innerHTML = `
+            <div class="alert alert-danger">
+                <i class="fas fa-exclamation-triangle me-2"></i>
+                Erro ao carregar histórico: ${error}
+            </div>
+        `;
+        document.getElementById('resumoFinanceiro').style.display = 'none';
+    });
+}
+
+function carregarDiasDisponiveis(diaristaId) {
+    fetch(`/diaristas/${diaristaId}/registros`)
+    .then(response => response.json())
+    .then(data => {
+        const container = document.getElementById('diasDisponiveis');
+        
+        // Se retornou o novo formato com registros separados
+        const registros = data.registros || data;
+        const valorDiaria = data.valor_diaria_atual || 0;
+        
+        if (registros.length === 0) {
+            container.innerHTML = '<p class="text-muted">Nenhum dia trabalhado encontrado</p>';
+        } else {
+            let html = '';
+            registros.forEach(registro => {
+                const dataFormatada = new Date(registro.data).toLocaleDateString('pt-BR');
+                const valorDiariaReg = registro.valor_diaria || valorDiaria;
+                html += `
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="${registro.id}" id="dia_${registro.id}">
+                        <label class="form-check-label" for="dia_${registro.id}">
+                            ${dataFormatada} - ${registro.descricao_trabalho || 'Trabalho geral'} 
+                            <span class="text-success fw-bold">(R$ ${valorDiariaReg.toFixed(2).replace('.', ',')})</span>
+                        </label>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+        }
+    });
+}
+
+function atualizarPeriodoRecibo() {
+    const periodo = document.getElementById('periodoRecibo').value;
+    const seletorMes = document.getElementById('seletorMes');
+    const seletorDias = document.getElementById('seletorDias');
+    
+    if (periodo === 'mes') {
+        seletorMes.style.display = 'block';
+        seletorDias.style.display = 'none';
+    } else {
+        seletorMes.style.display = 'none';
+        seletorDias.style.display = 'block';
+    }
+}
+
+function visualizarRecibo() {
+    const periodo = document.getElementById('periodoRecibo').value;
+    let url = `/diaristas/${diaristaAtual}/recibo-preview?periodo=${periodo}`;
+    
+    if (periodo === 'mes') {
+        const mesAno = document.getElementById('mesAno').value;
+        url += `&mes_ano=${mesAno}`;
+    } else {
+        const diasSelecionados = Array.from(document.querySelectorAll('#diasDisponiveis input:checked')).map(cb => cb.value);
+        if (diasSelecionados.length === 0) {
+            alert('Selecione pelo menos um dia');
+            return;
+        }
+        url += `&dias=${diasSelecionados.join(',')}`;
+    }
+    
+    fetch(url)
+    .then(response => response.text())
+    .then(html => {
+        document.getElementById('previewRecibo').innerHTML = html;
+        document.getElementById('previewRecibo').style.display = 'block';
+    })
+    .catch(error => {
+        alert('Erro ao gerar preview: ' + error);
+    });
+}
+
+function gerarRecibo() {
+    const periodo = document.getElementById('periodoRecibo').value;
+    let url = `/diaristas/${diaristaAtual}/recibo?periodo=${periodo}`;
+    
+    if (periodo === 'mes') {
+        const mesAno = document.getElementById('mesAno').value;
+        url += `&mes_ano=${mesAno}`;
+    } else {
+        const diasSelecionados = Array.from(document.querySelectorAll('#diasDisponiveis input:checked')).map(cb => cb.value);
+        if (diasSelecionados.length === 0) {
+            alert('Selecione pelo menos um dia');
+            return;
+        }
+        url += `&dias=${diasSelecionados.join(',')}`;
+    }
+    
+    window.open(url, '_blank');
+}
+
+function gerarReciboIndividual(registroId) {
+    window.open(`/registro-diaria/${registroId}/recibo`, '_blank');
+}
+</script>
+{% endblock %}

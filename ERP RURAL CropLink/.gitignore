@@ -1,0 +1,97 @@
+# Arquivos de segurança - NUNCA versionar
+cookies.txt
+cookies2.txt
+cookiefile.txt
+headers.txt
+.env
+*.env
+.env.*
+
+# Replit local files
+.local/
+
+# Logs e arquivos temporários
+logs/
+*.log
+tmp/
+temp/
+
+# Dados sensíveis
+secrets/
+keys/
+certs/
+
+# Arquivos gerados automaticamente pelo sistema
+attached_assets/
+generated_images/
+image_*.png
+image_*.jpg
+image_*.jpeg
+*_[0-9]*.png
+*_[0-9]*.jpg
+
+# Cache e arquivos temporários do Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual environments
+venv/
+env/
+ENV/
+.venv/
+.ENV/
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Database files (development)
+*.db
+*.sqlite
+*.sqlite3
+
+# Backup files
+*.bak
+*.backup
+*.old
+
+# Configuration overrides
+config/local.py
+config/production.py
+local_settings.py
+
+# Screenshots originais (mantemos apenas screenshots/)
+Screenshot_*.png
+Screenshot_*.jpg
+gps *.jpeg
+*.pdf

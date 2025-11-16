@@ -1,0 +1,71 @@
+// sienge.jsw - Módulo de Backend para API Sienge
+
+import { fetch } from 'wix-fetch';
+
+const user = 'ari-prd-ari-properties';
+const pass = 'c3a2a335-359a-4876-88a2-8a90e44cf0de';
+const basicAuth = 'Basic ' + Buffer.from(user + ':' + pass).toString('base64');
+
+// Função para buscar os detalhes dos boletos (faturas)
+// Esta função pode ser chamada pelo código da página.
+export async function buscarBoletos(cpfCnpj) {
+    console.log(`Backend: Recebido pedido para buscar boletos para o CPF/CNPJ: ${cpfCnpj}`);
+    
+    if (!cpfCnpj) {
+        return { success: false, error: 'CPF/CNPJ não fornecido.' };
+    }
+
+    const url = `https://api.sienge.com.br/ari-prd/api/v1/bills-receivable/customer/${cpfCnpj}`;
+
+    try {
+        const response = await fetch(url, {
+            method: 'GET',
+            headers: {
+                'Authorization': basicAuth,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error(`Backend: Erro da API Sienge ao buscar boletos: ${response.status} - ${errorText}`);
+            throw new Error(`Erro na API Sienge: ${response.status}`);
+        }
+
+        const data = await response.json();
+        console.log('Backend: Boletos recebidos com sucesso.');
+        return { success: true, data: data };
+
+    } catch (error) {
+        console.error('Backend: Falha catastrófica ao buscar boletos:', error);
+        return { success: false, error: error.message };
+    }
+}
+
+// Função para gerar a segunda via
+export async function gerarSegundaVia(billReceivableId, installmentId) {
+    console.log(`Backend: Recebido pedido para gerar 2ª via para billId: ${billReceivableId}, instId: ${installmentId}`);
+
+    const url = `https://api.sienge.com.br/ari-prd/api/v1/bills-receivable/${billReceivableId}/installments/${installmentId}/billet`;
+
+    try {
+        const response = await fetch(url, {
+            method: 'GET',
+            headers: { 'Authorization': basicAuth }
+        });
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error(`Backend: Erro da API Sienge ao gerar 2ª via: ${response.status} - ${errorText}`);
+            throw new Error(`Erro na API Sienge: ${response.status}`);
+        }
+
+        const data = await response.json();
+        console.log('Backend: URL da 2ª via gerada com sucesso.');
+        return { success: true, url: data.url };
+
+    } catch (error) {
+        console.error('Backend: Falha catastrófica ao gerar 2ª via:', error);
+        return { success: false, error: error.message };
+    }
+}

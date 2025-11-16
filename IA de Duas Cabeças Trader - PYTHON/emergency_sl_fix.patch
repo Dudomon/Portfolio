@@ -1,0 +1,51 @@
+# EMERGENCY SL FIX - Aplicar no daytrader.py
+
+# LOCALIZAÇÃO: Função step(), logo após "# 🚀 VERIFICAR SL/TP AUTOMÁTICO"
+
+# SUBSTITUIR:
+for pos in self.positions[:]:  # Usar slice para evitar modificação durante iteração
+    should_close = False
+    close_reason = ""
+    
+    if 'sl' in pos and pos['sl'] > 0:
+        if pos['type'] == 'long' and current_price <= pos['sl']:
+            should_close = True
+            close_reason = "SL hit"
+        elif pos['type'] == 'short' and current_price >= pos['sl']:
+            should_close = True
+            close_reason = "SL hit"
+
+# POR:
+for pos in self.positions[:]:  # Usar slice para evitar modificação durante iteração
+    should_close = False
+    close_reason = ""
+    
+    # 🚨 EMERGENCY FIX: Verificação extra de SL
+    if 'sl' not in pos or pos['sl'] <= 0:
+        print(f"🚨 POSIÇÃO SEM SL VÁLIDO: {pos.get('type', 'unknown')} entry={pos.get('entry_price', 'N/A')}")
+        # Fechar posição por segurança
+        should_close = True
+        close_reason = "Emergency close - no SL"
+    else:
+        # Verificação normal de SL
+        if pos['type'] == 'long' and current_price <= pos['sl']:
+            should_close = True
+            close_reason = "SL hit"
+        elif pos['type'] == 'short' and current_price >= pos['sl']:
+            should_close = True
+            close_reason = "SL hit"
+        
+        # 🚨 EMERGENCY FIX: PnL safety check
+        current_pnl = self._get_position_pnl(pos, current_price)
+        max_loss_allowed = 10 * pos.get('lot_size', 0.01) * 100  # 10 pontos máx
+        
+        if current_pnl < -max_loss_allowed:
+            print(f"🚨 EMERGENCY STOP: PnL=${current_pnl:.2f} > Max=${max_loss_allowed:.2f}")
+            should_close = True
+            close_reason = "Emergency stop - excessive loss"
+
+# ADICIONAR TAMBÉM no final da verificação:
+    if should_close:
+        print(f"🎯 Fechando posição: {close_reason}, PnL=${self._get_position_pnl(pos, current_price):.2f}")
+        self._close_position(pos, self.current_step)
+        action_taken = True

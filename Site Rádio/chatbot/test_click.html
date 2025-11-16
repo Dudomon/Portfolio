@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Teste Click Chatbot</title>
+    <link rel="stylesheet" href="chatbot.css">
+    <style>
+        body {
+            padding: 20px;
+            background: #f0f0f0;
+        }
+        #debug {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: #000;
+            color: #0f0;
+            padding: 20px;
+            border-radius: 10px;
+            font-family: monospace;
+            max-width: 400px;
+            z-index: 99999;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        .event { margin: 5px 0; }
+        .error { color: #f00; }
+        .success { color: #0f0; }
+        .warning { color: #ff0; }
+    </style>
+</head>
+<body>
+    <div id="debug">
+        <h3 style="color: #0ff;">🔍 Debug do Click</h3>
+        <div id="log"></div>
+    </div>
+
+    <h1>Teste de Click do Chatbot</h1>
+    <p>Clique no ícone laranja no canto inferior direito</p>
+
+    <script src="chatbot.js"></script>
+    <script>
+        const log = document.getElementById('log');
+
+        function addLog(msg, type = 'info') {
+            const div = document.createElement('div');
+            div.className = 'event ' + type;
+            div.innerHTML = `[${new Date().toLocaleTimeString()}] ${msg}`;
+            log.appendChild(div);
+            log.scrollTop = log.scrollHeight;
+        }
+
+        addLog('Página carregada');
+
+        // Aguarda DOM carregar
+        document.addEventListener('DOMContentLoaded', function() {
+            addLog('DOMContentLoaded disparado');
+
+            try {
+                // Inicializa chatbot
+                if (typeof RadioChatbot !== 'undefined') {
+                    addLog('✓ RadioChatbot encontrado', 'success');
+
+                    window.chatbotInstance = new RadioChatbot({
+                        apiUrl: '/chatbot/chat_api.php',
+                        botName: 'Chatinho',
+                        position: 'bottom-right',
+                        debug: true
+                    });
+
+                    addLog('✓ Chatbot inicializado', 'success');
+
+                    // Aguarda um pouco e verifica o botão
+                    setTimeout(() => {
+                        const toggle = document.getElementById('chatbot-toggle');
+                        const chatbot = document.getElementById('radio-chatbot');
+
+                        if (toggle) {
+                            addLog('✓ Botão #chatbot-toggle encontrado', 'success');
+                            addLog(`Dimensões: ${toggle.offsetWidth}x${toggle.offsetHeight}px`);
+                            addLog(`Visível: ${toggle.offsetParent !== null ? 'SIM' : 'NÃO'}`);
+
+                            // Adiciona listener de click manual
+                            toggle.addEventListener('click', function(e) {
+                                addLog('🖱️ CLICK DETECTADO!', 'warning');
+                                addLog(`Event target: ${e.target.tagName}`);
+                                addLog(`Classes: ${chatbot.className}`);
+
+                                // Força abertura manual
+                                if (chatbot.classList.contains('open')) {
+                                    addLog('Chatbot está ABERTO, fechando...', 'warning');
+                                    chatbot.classList.remove('open');
+                                } else {
+                                    addLog('Chatbot está FECHADO, abrindo...', 'warning');
+                                    chatbot.classList.add('open');
+                                }
+                            });
+
+                            addLog('✓ Event listener de click adicionado', 'success');
+
+                        } else {
+                            addLog('❌ Botão #chatbot-toggle NÃO encontrado!', 'error');
+                        }
+
+                        if (chatbot) {
+                            addLog('✓ Container #radio-chatbot encontrado', 'success');
+                            addLog(`Classes: ${chatbot.className}`);
+                        } else {
+                            addLog('❌ Container #radio-chatbot NÃO encontrado!', 'error');
+                        }
+
+                    }, 1000);
+
+                } else {
+                    addLog('❌ RadioChatbot NÃO definido!', 'error');
+                }
+
+            } catch (error) {
+                addLog('❌ ERRO: ' + error.message, 'error');
+                addLog('Stack: ' + error.stack, 'error');
+            }
+        });
+
+        // Captura todos os erros JS
+        window.addEventListener('error', function(e) {
+            addLog('❌ JS Error: ' + e.message, 'error');
+            addLog(`Linha: ${e.lineno}, Coluna: ${e.colno}`, 'error');
+        });
+
+        // Captura todos os clicks na página
+        document.addEventListener('click', function(e) {
+            if (e.target.closest('#chatbot-toggle')) {
+                addLog('🖱️ Click no botão do chatbot!', 'warning');
+            }
+        }, true); // useCapture = true para pegar antes de bubbling
+
+    </script>
+</body>
+</html>

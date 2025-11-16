@@ -1,0 +1,58 @@
+
+# 🚨 ULTRA-AGGRESSIVE DEBUG PATCH
+# Adicionar no INÍCIO do método step() em daytrader.py
+
+def step(self, action):
+    """Executa um passo no ambiente."""
+    
+    # 🚨 ULTRA DEBUG: Log TODA ação recebida
+    print(f"\n🔍 [ULTRA DEBUG] AÇÃO RECEBIDA:")
+    print(f"   Raw: {action}")
+    print(f"   Type: {type(action)}")
+    print(f"   Shape: {getattr(action, 'shape', 'N/A')}")
+    print(f"   Is scalar: {np.isscalar(action)}")
+    if hasattr(action, 'shape'):
+        print(f"   Shape == (): {action.shape == ()}")
+    
+    # 🚨 FORÇAR ANÁLISE DETALHADA
+    if hasattr(action, '__len__') and len(action) > 0:
+        print(f"   É array com {len(action)} elementos")
+        print(f"   Primeiro elemento: {action[0]} (entry_decision)")
+        
+        # FORÇAR CONVERSÃO PARA INT E ANÁLISE
+        try:
+            entry_decision = int(action[0])
+            actions_names = ['HOLD', 'LONG', 'SHORT']
+            action_name = actions_names[entry_decision] if 0 <= entry_decision <= 2 else 'INVALID'
+            print(f"   Entry Decision: {entry_decision} ({action_name})")
+            
+            # CONTADOR FORÇADO DE AÇÕES
+            if not hasattr(self, '_forced_action_counter'):
+                self._forced_action_counter = {'HOLD': 0, 'LONG': 0, 'SHORT': 0, 'INVALID': 0}
+            
+            if action_name in self._forced_action_counter:
+                self._forced_action_counter[action_name] += 1
+            else:
+                self._forced_action_counter['INVALID'] += 1
+            
+            # LOG A CADA 50 AÇÕES
+            total_actions = sum(self._forced_action_counter.values())
+            if total_actions % 50 == 0:
+                print(f"\n📊 [FORCED COUNTER] {total_actions} ações processadas:")
+                for action_type, count in self._forced_action_counter.items():
+                    pct = (count / total_actions) * 100
+                    print(f"   {action_type}: {count} ({pct:.1f}%)")
+                
+                if self._forced_action_counter['SHORT'] == 0:
+                    print(f"   🚨 ALERTA: AINDA ZERO SHORT APÓS {total_actions} AÇÕES!")
+                else:
+                    print(f"   ✅ SHORT DETECTADO: {self._forced_action_counter['SHORT']} vezes")
+        
+        except Exception as e:
+            print(f"   ❌ ERRO ao processar entry_decision: {e}")
+    
+    else:
+        print(f"   🚨 AÇÃO É SCALAR OU VAZIA!")
+        # Aplicar correção scalar aqui...
+    
+    # Continuar com o código original...

@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste Direto - Chatbot Standalone</title>
+
+    <!-- CARREGA CSS DIRETO -->
+    <link rel="stylesheet" href="chatbot.css">
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #f0f0f0;
+        }
+        .info {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .status {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-weight: bold;
+            margin: 5px;
+        }
+        .ok { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+    </style>
+</head>
+<body>
+    <div class="info">
+        <h1>🧪 Teste Direto - Chatbot Standalone</h1>
+        <p>Este teste carrega o chatbot DIRETAMENTE sem WordPress.</p>
+
+        <h3>Status de Carregamento:</h3>
+        <div id="status-container"></div>
+
+        <h3>Instruções:</h3>
+        <ol>
+            <li>Se o ícone laranja aparecer → Arquivos OK, problema no WordPress</li>
+            <li>Se o ícone NÃO aparecer → Arquivos não estão no servidor</li>
+            <li>Tente clicar no ícone e conversar com o chatbot</li>
+        </ol>
+    </div>
+
+    <!-- CARREGA JS DIRETO -->
+    <script src="chatbot.js"></script>
+
+    <!-- FIX DO CLICK REMOVIDO - chatbot.js já funciona -->
+
+    <script>
+        const statusContainer = document.getElementById('status-container');
+
+        function addStatus(message, isOk) {
+            const span = document.createElement('span');
+            span.className = `status ${isOk ? 'ok' : 'error'}`;
+            span.textContent = (isOk ? '✅ ' : '❌ ') + message;
+            statusContainer.appendChild(span);
+            statusContainer.appendChild(document.createElement('br'));
+        }
+
+        // Verifica se chatbot.js carregou
+        setTimeout(() => {
+            console.log('Verificando carregamento...');
+
+            // Verifica classe RadioChatbot
+            if (typeof RadioChatbot !== 'undefined') {
+                addStatus('chatbot.js carregado', true);
+
+                // Tenta inicializar
+                try {
+                    window.chatbotInstance = new RadioChatbot({
+                        apiUrl: '/chatbot/chat_api.php',
+                        botName: 'Chatinho',
+                        position: 'bottom-right',
+                        debug: true
+                    });
+                    addStatus('Chatbot inicializado', true);
+
+                    // Verifica se elementos foram criados
+                    setTimeout(() => {
+                        const toggle = document.getElementById('chatbot-toggle');
+                        const container = document.getElementById('radio-chatbot');
+
+                        if (toggle) {
+                            addStatus('Botão toggle criado', true);
+                        } else {
+                            addStatus('Botão toggle NÃO criado', false);
+                        }
+
+                        if (container) {
+                            addStatus('Container criado', true);
+                        } else {
+                            addStatus('Container NÃO criado', false);
+                        }
+
+                        // Adiciona listener manual extra
+                        if (toggle) {
+                            toggle.addEventListener('click', () => {
+                                console.log('🖱️ CLICK MANUAL DETECTADO!');
+                            });
+                        }
+                    }, 500);
+
+                } catch (error) {
+                    addStatus('Erro ao inicializar: ' + error.message, false);
+                    console.error('Erro:', error);
+                }
+
+            } else {
+                addStatus('chatbot.js NÃO carregado', false);
+                addStatus('Verifique se arquivo está no servidor', false);
+            }
+
+            // Verifica CSS
+            const links = document.querySelectorAll('link[href*="chatbot.css"]');
+            if (links.length > 0) {
+                addStatus('chatbot.css carregado', true);
+            } else {
+                addStatus('chatbot.css NÃO carregado', false);
+            }
+
+        }, 1000);
+    </script>
+</body>
+</html>

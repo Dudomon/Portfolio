@@ -1,0 +1,112 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual environments
+venv/
+env/
+ENV/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# Machine Learning
+*.pkl
+*.joblib
+*.h5
+*.hdf5
+*.model
+*.pth
+*.pt
+*.ckpt
+*.zip
+
+# Logs
+logs/
+*.log
+
+# Data files
+*.csv
+*.parquet
+*.json
+*.db
+*.sqlite
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.temp
+*~
+
+# Optuna
+optuna_storage_*.db
+studies/
+
+# Specific to this project
+optimization_results/
+data_cache/
+backup_checkpoints_*/
+*_backup/
+Best Model/
+test_*/
+
+# SEGURANÇA - Credenciais e API Keys
+reset_bin_passwords.py
+gerenciar_usuarios_online.py
+online_system_real.py
+online_login_ander.py
+*_credentials.py
+*_secrets.py
+usuarios.db
+*.bin
+
+# Modelos Treinados (muito grandes para GitHub)
+*.zip
+Modelos para testar/
+Modelo daytrade/
+models/*/
+checkpoints/
+
+# Arquivos de build compilados
+*.build/
+*.dist/
+*.exe
+robotlogin_lite.build/
+
+# Dados sensíveis de trading
+*.db
+*.sqlite
+usuarios.json
+
+# Claude local settings
+.claude/settings.local.json
+
+# Imagens originais (mantemos apenas screenshots/)
+Imagens pro github/ 

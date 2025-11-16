@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste do Chatbot - Rádio Entre Rios</title>
+    <link rel="stylesheet" href="chatbot.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .test-container {
+            max-width: 800px;
+            width: 100%;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 40px;
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .logo h1 {
+            color: #FF6B00;
+            font-size: 32px;
+            margin-bottom: 8px;
+        }
+
+        .logo p {
+            color: #666;
+            font-size: 18px;
+        }
+
+        .info-section {
+            background: #F8F9FA;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+
+        .info-section h2 {
+            color: #333;
+            font-size: 20px;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .info-section h2::before {
+            content: '✓';
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            background: #FF6B00;
+            color: white;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 24px;
+            font-size: 14px;
+        }
+
+        .info-section ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .info-section li {
+            padding: 8px 0;
+            padding-left: 32px;
+            position: relative;
+            color: #555;
+        }
+
+        .info-section li::before {
+            content: '→';
+            position: absolute;
+            left: 12px;
+            color: #FF6B00;
+        }
+
+        .code-block {
+            background: #1E1E1E;
+            color: #D4D4D4;
+            border-radius: 8px;
+            padding: 16px;
+            overflow-x: auto;
+            margin-top: 12px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+        }
+
+        .code-block code {
+            color: #9CDCFE;
+        }
+
+        .alert {
+            background: #FFF3CD;
+            border-left: 4px solid #FFC107;
+            border-radius: 4px;
+            padding: 16px;
+            margin-top: 24px;
+        }
+
+        .alert h3 {
+            color: #856404;
+            margin-bottom: 8px;
+            font-size: 16px;
+        }
+
+        .alert p {
+            color: #856404;
+            margin: 0;
+            line-height: 1.6;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: #FF6B00;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #E55F00;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255, 107, 0, 0.3);
+        }
+
+        .btn-secondary {
+            background: #6C757D;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #5A6268;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-left: 8px;
+        }
+
+        .status-ready {
+            background: #28A745;
+            color: white;
+        }
+
+        .status-pending {
+            background: #FFC107;
+            color: #333;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 32px;
+            padding-top: 24px;
+            border-top: 1px solid #E0E0E0;
+            color: #666;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <div class="logo">
+            <h1>🎙️ Rádio Entre Rios FM 99.1</h1>
+            <p>Teste do Chatbot Inteligente</p>
+        </div>
+
+        <div class="info-section">
+            <h2>Status da Instalação</h2>
+            <ul>
+                <li>Widget HTML/CSS/JS <span class="status-badge status-ready">Pronto</span></li>
+                <li>Backend PHP <span class="status-badge status-ready">Pronto</span></li>
+                <li>Context API <span class="status-badge status-ready">Pronto</span></li>
+                <li>Integração Gemini <span class="status-badge status-pending">Requer API Key</span></li>
+            </ul>
+        </div>
+
+        <div class="info-section">
+            <h2>Como Testar</h2>
+            <ul>
+                <li>Clique no botão laranja flutuante no canto inferior direito</li>
+                <li>Digite qualquer mensagem para conversar com o Assis</li>
+                <li>Teste perguntas sobre programação, horários, contato, etc.</li>
+                <li>Verifique se as respostas estão de acordo com o contexto da rádio</li>
+            </ul>
+        </div>
+
+        <div class="info-section">
+            <h2>Exemplos de Perguntas</h2>
+            <ul>
+                <li>"Qual a frequência da rádio?"</li>
+                <li>"Como ouvir online?"</li>
+                <li>"Qual o telefone para contato?"</li>
+                <li>"Onde fica a rádio?"</li>
+                <li>"Como fazer pedido musical?"</li>
+                <li>"Quero ver as notícias locais"</li>
+            </ul>
+        </div>
+
+        <div class="alert">
+            <h3>⚠️ Configuração Necessária</h3>
+            <p>
+                <strong>Antes de usar o chatbot, você precisa:</strong><br><br>
+                1. Obter uma chave da API do Google Gemini em:
+                <a href="https://makersuite.google.com/app/apikey" target="_blank" style="color: #FF6B00;">
+                    makersuite.google.com/app/apikey
+                </a><br>
+                2. Adicionar a chave no arquivo <code style="background: #FFF; padding: 2px 6px; border-radius: 3px;">chatbot/config.php</code><br>
+                3. Procure pela linha: <code style="background: #FFF; padding: 2px 6px; border-radius: 3px;">define('GEMINI_API_KEY', '');</code><br>
+                4. Cole sua chave entre as aspas
+            </p>
+        </div>
+
+        <div class="button-group">
+            <button class="btn btn-primary" onclick="openChatbot()">
+                Abrir Chatbot
+            </button>
+            <button class="btn btn-secondary" onclick="clearHistory()">
+                Limpar Histórico
+            </button>
+            <a href="https://makersuite.google.com/app/apikey" target="_blank" class="btn btn-secondary">
+                Obter API Key
+            </a>
+        </div>
+
+        <footer>
+            <p>Desenvolvido com ❤️ usando Google Gemini AI</p>
+            <p style="margin-top: 8px; font-size: 12px;">
+                © 2025 Rádio Entre Rios FM - Todos os direitos reservados
+            </p>
+        </footer>
+    </div>
+
+    <!-- Incluir o chatbot -->
+    <script src="chatbot.js"></script>
+
+    <script>
+        function openChatbot() {
+            if (window.radioChatbot && !window.radioChatbot.isOpen) {
+                window.radioChatbot.toggleChat();
+            } else {
+                alert('O chatbot já está aberto! Procure o ícone no canto inferior direito.');
+            }
+        }
+
+        function clearHistory() {
+            if (window.radioChatbot) {
+                if (confirm('Tem certeza que deseja limpar o histórico de conversas?')) {
+                    window.radioChatbot.clearHistory();
+                    alert('Histórico limpo com sucesso!');
+                }
+            }
+        }
+
+        // Verificar se a API key está configurada
+        setTimeout(() => {
+            fetch('/chatbot/chat_api.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message: 'test' })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.error && data.error.includes('API Key')) {
+                    console.warn('⚠️ API Key não configurada. Configure em chatbot/config.php');
+                }
+            })
+            .catch(err => console.log('Chatbot backend ready'));
+        }, 1000);
+    </script>
+</body>
+</html>

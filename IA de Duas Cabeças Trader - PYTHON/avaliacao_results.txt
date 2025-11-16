@@ -1,0 +1,1213 @@
+[JSONL] RealTimeLogger importado com sucesso
+OK Sistemas de rewards importados com sucesso
+OK Sistemas de rewards importados com sucesso
+OK Utilitários importados
+OK Configurações padrão importadas
+ Trading Framework v2.2.0 carregado com sucesso!
+ TwoHeadV2Policy otimizada para trading 48h disponível!
+ Sistema de reward simples disponível!
+ VecNormalize configurado: obs=True, reward=True
+🚀 CONVERGENCE OPTIMIZATION SYSTEM
+==================================================
+🔥 FILOSOFIA: VOLATILITY = OPPORTUNITY
+💰 VOLATILIDADE AGORA É SUA ALIADA!
+📈 SISTEMA PRONTO PARA MAXIMIZAR LUCROS!
+==================================================
+🚀 CONVERGENCE OPTIMIZATION SYSTEM CARREGADO!
+🔥 NOVA FILOSOFIA: VOLATILIDADE = OPORTUNIDADE!
+============================================================
+CALCULANDO OBSERVATION SPACE DAYTRADER V7 TEMPORAL (DAYTRADER)
+============================================================
+📊 BASE FEATURES: 19 x 2 timeframes = 38
+📊 HIGH QUALITY: 9 features
+🔥 MARKET REAL: 16 features
+📊 POSITIONS: 3 pos x 9 features = 27
+📊 INTELLIGENT V7: 37 features (V7 Intuition usa Unified Backbone)
+📊 FEATURES PER BAR: 129 features
+🔥 SEQUENCE LENGTH: 20 barras históricas (TEMPORAL REAL)
+🎯 OBSERVATION SPACE: 129 x 20 = 2580 dimensões
+============================================================
+✅ DAYTRADER V7 TEMPORAL CONFIGURADO: 2580 DIMENSÕES
+============================================================
+[CLEANUP] Nenhum arquivo JSONL antigo encontrado
+[FIRE] RealTimeLogger iniciado - Session: 20250814_111652_50252_59652e2b
+[FOLDER] Diretorio: D:\Projeto\avaliacoes
+[JSONL] RealTimeLogger ativado para convergence monitoring
+ AMP (Automatic Mixed Precision) ATIVADO - GPU RTX 4070ti DETECTADA!
+OK RTX 4070ti (12GB) confirmada - Configurações otimizadas aplicadas
+2025-08-14 11:16:52,542 - daytrader - INFO - GPU disponível: NVIDIA GeForce RTX 4070 Ti
+2025-08-14 11:16:52,542 - daytrader - INFO - Usando GPU: cuda:0
+2025-08-14 11:16:52,542 - daytrader - INFO - CUDA versão: 11.8
+2025-08-14 11:16:52,542 - daytrader - INFO - Teste CUDA: cuda:0
+[MAINPPO1] TwoHeadPolicy importada do framework modularizado
+✅ Imports carregados
+🔍 Checkpoints DAYTRADER encontrados:
+   1. DAYTRADER_phase3noisehandlingfixed_4800000_steps_20250814_111420.zip (89.6MB, ? steps) - 2025-08-14 11:14:20
+   2. DAYTRADER_phase3noisehandlingfixed_4800000_steps_20250814_111420.zip (89.6MB, ? steps) - 2025-08-14 11:14:20
+   3. DAYTRADER_phase3noisehandlingfixed_4750000_steps_20250814_110738.zip (89.6MB, ? steps) - 2025-08-14 11:07:39
+   4. DAYTRADER_phase3noisehandlingfixed_4750000_steps_20250814_110738.zip (89.6MB, ? steps) - 2025-08-14 11:07:39
+   5. DAYTRADER_phase3noisehandlingfixed_4700000_steps_20250814_110104.zip (89.6MB, ? steps) - 2025-08-14 11:01:04
+📂 Usando checkpoint: DAYTRADER_phase3noisehandlingfixed_4800000_steps_20250814_111420.zip
+📊 Carregando dataset para teste...
+✅ Dataset V3 carregado: 1,118,165 barras totais
+📅 Período completo: 2010-01-04 00:00:00 até 2025-07-03 23:55:00
+🎯 Configurado para 2 episódios de 3000 steps cada
+✅ Parâmetros de trading configurados
+🤖 Carregando modelo DAYTRADER 8M...
+TwoHeadV7Intuition inicializando - BACKBONE UNIFICADO!
+   Action Space: Box([ 0.  0. -1.  0. -1. -3. -3. -3. -3. -3. -3.], [2. 1. 1. 1. 1. 3. 3. 3. 3. 3. 3.], (11,), float32)
+   Action Dimensions: 11
+   Shared Backbone Dim: 512
+   Gradient Mixing: True (strength: 0.1)
+   Interference Monitor: True
+   Adaptive Sharing: True
+🚀 TwoHeadV7Enhanced inicializando...
+   📊 Regime Detection: True
+   💾 Enhanced Memory: True
+   ⚖️ Gradient Balancing: True
+   🫁 Breathing Monitor: True
+   🔄 Update Ratio: Actor 2x, Critic 1x
+V7Simple UNIFICADA inicializando:
+   LSTM Hidden: 256
+   Features Dim: 256
+   [ALERT] LSTM Critic DESABILITADO (enable_critic_lstm=False)
+[INFO] Temporal regularization SKIPPED - Critic usa MLP (sem vanishing gradients)
+[V7] [FIX] V6 FIX APLICADO: 0 ReLUs → LeakyReLU (resolve 50-53% zeros)
+[INFO] Gradient Keeper SKIPPED no critic (usa MLP, não LSTM)
+[FIX] Gradient Keeper aplicado no v7_actor_lstm
+[TARGET] Inicializando LSTMs separados com estratégias diferenciadas...
+[OK] LSTMs separados inicializados: ACTOR(conservador) vs CRITIC(agressivo)
+   [EMOJI] Actor: gain=1.0, bias=zeros
+   [TARGET] Critic: weight_hh_l0 especializado, forget_bias=1.0, noise_bias=±0.1
+V7Simple REVOLUCIONARIA: MLP + Memory Buffer + Gates + LeakyReLU!
+   ✅ Market Regime Detector inicializado
+   ✅ Enhanced Memory Bank inicializado (10000 memories)
+   ✅ Gradient Balancer inicializado (ratio 2:1)
+   ✅ Neural Breathing Monitor inicializado
+🚀 V7 UPGRADE MANAGER inicializado:
+   📊 Market Regime Detection
+   💾 Enhanced Memory Bank (10k memories)
+   ⚖️ Gradient Balancing System
+   🫁 Neural Breathing Monitor
+   🔄 Update Frequency Controller
+🎯 TwoHeadV7Enhanced PRONTA - V7 turbinada com todos os enhancements!
+   ✅ Gradient Mixer inicializado
+   ✅ Interference Monitor inicializado
+🔧 [INIT FIX] Aplicando inicialização adequada ao actor_head...
+✅ [INIT FIX DEFINITIVO] Inicialização diferenciada por ação - Entry Quality range conservador
+🎯 TwoHeadV7Intuition PRONTA - Visão Unificada + Processamento Especializado!
+✅ Carregamento normal bem-sucedido
+✅ Modelo carregado em cuda
+🚀 Iniciando 2 episódios de trading (3000 steps cada)...
+
+🎮 EPISÓDIO 1/2
+==================================================
+📊 Dataset episódio: 3,100 barras
+📅 Período: 2010-01-04 00:00:00 até 2010-01-19 19:00:00
+[TRADING ENV] Modo treinamento: 3,100 barras (DATASET COMPLETO 100%)
+[PREPARE DATA] Iniciando processamento otimizado...
+[PREPARE DATA] AVISO Calculando 6 features ausentes...
+[FALLBACK] Calculando features técnicas ausentes...
+[HIGH QUALITY] Calculando features de alta qualidade...
+🔧 [HIGH QUALITY] Forçando criação de 'price_position'
+🔧 [HIGH QUALITY] Forçando criação de 'breakout_strength'
+🔧 [HIGH QUALITY] Forçando criação de 'trend_consistency'
+🔧 [HIGH QUALITY] Forçando criação de 'support_resistance'
+🔧 [HIGH QUALITY] Forçando criação de 'volatility_regime'
+🔧 [HIGH QUALITY] Forçando criação de 'market_structure'
+[HIGH QUALITY] OK Features calculadas em 0.004s: 10 features
+[FALLBACK] OK Features ausentes calculadas
+[PREPARE DATA] CORREÇÃO: 3100 zeros encontrados e substituídos
+[PREPARE DATA] OK Processamento concluído em 0.007s
+[PREPARE DATA] Shape final: (3100, 16)
+✅ V7 TEMPORAL OBSERVATION SPACE: 2580 dimensões (seq_len=20 × features_per_bar=129)
+   🔥 MANTÉM 1480 ORIGINAL: Sequência REAL ao invés de artificial
+🎯 Unified Reward Components: Base=0.8, Timing=0.1, Mgmt=0.1
+[TRADING ENV]  PARÂMETROS OTIMIZADOS (TRIAL SCORE 0.967) CONFIGURADOS:
+  SL Range: 2.0-8.0 pontos (Otimizado: mais agressivo e flexível)
+  TP Range: 3.0-15.0 pontos (Mantido: já ótimo)
+  Target Trades/Dia: 18 (Otimizado: +12.5% atividade)
+  Portfolio Weight: 0.788 (Otimizado)
+  Max DD Tolerance: 0.338 (Otimizado)
+  Volatility: 0.000-0.016 (Otimizado: mais permissiva)
+2025-08-14 11:16:56,065 - root - INFO - 🧠 [CURIOSITY V2] Curiosity integrada ao reward system
+2025-08-14 11:16:56,065 - root - INFO - BalancedDayTradingRewardCalculator V2.0 inicializado
+2025-08-14 11:16:56,065 - root - INFO - 🎯 [ACTIVITY] Activity Enhancement System inicializado
+[TRADING ENV]  Sistema SL/TP realista ativado com valores otimizados (Score 0.967)
+[REWARD SYSTEM] Sistema balanceado V2.0 ativado (risk-adjusted + anti-gaming + fases progressivas)
+[ACTIVITY SYSTEM] 🎯 Activity Enhancement ativado (timeout: 25 candles, SL/TP dinâmicos)
+🔄 Volatilidade ajustada para: 0.5x (Episódio 0)
+🔄 Cache dos dados originais criado: 3100 barras
+🔄 Volatilidade 0.5x aplicada a 4 colunas
+[CACHE] Configurando cache inteligente para analyzers...
+[CACHE] OK Cache configurado em 0.000s
+[TRADING ENV] NOVO EPISÓDIO - Dataset: 3,100 barras, Step inicial: 248, EPISÓDIO INFINITO PARA TREINAMENTO
+    [ENTRY APPROVED] Decision=2, Quality=1.000 >= 0.4
+    [ENV STATE] Positions: 1, Portfolio: $500.00
+  🟢 NEW POSITION OPENED at step 3! Total positions: 2
+  🟢 NEW POSITION OPENED at step 4! Total positions: 3
+  💼 Trade #1: unknown PnL=$0.37
+  💼 Trade #2: unknown PnL=$0.27
+  💼 Trade #3: unknown PnL=$-0.56
+  💼 Trade #4: unknown PnL=$-0.22
+  🟢 NEW POSITION OPENED at step 29! Total positions: 1
+  🟢 NEW POSITION OPENED at step 33! Total positions: 2
+  🟢 NEW POSITION OPENED at step 34! Total positions: 3
+  💼 Trade #5: unknown PnL=$-1.47
+  💼 Trade #6: unknown PnL=$-1.00
+  💼 Trade #7: unknown PnL=$-1.19
+  💼 Trade #8: unknown PnL=$-0.32
+  🟢 NEW POSITION OPENED at step 61! Total positions: 1
+  🟢 NEW POSITION OPENED at step 62! Total positions: 2
+  🟢 NEW POSITION OPENED at step 63! Total positions: 3
+  💼 Trade #9: unknown PnL=$0.22
+  💼 Trade #10: unknown PnL=$-0.19
+  💼 Trade #11: unknown PnL=$0.23
+  💼 Trade #12: unknown PnL=$0.02
+  🟢 NEW POSITION OPENED at step 89! Total positions: 1
+  🟢 NEW POSITION OPENED at step 90! Total positions: 2
+  🟢 NEW POSITION OPENED at step 93! Total positions: 3
+  💼 Trade #13: unknown PnL=$0.40
+  💼 Trade #14: unknown PnL=$-0.03
+  💼 Trade #15: unknown PnL=$0.57
+  💼 Trade #16: unknown PnL=$-0.22
+  🟢 NEW POSITION OPENED at step 117! Total positions: 1
+  🟢 NEW POSITION OPENED at step 118! Total positions: 2
+  🟢 NEW POSITION OPENED at step 120! Total positions: 3
+  💼 Trade #17: unknown PnL=$0.48
+  💼 Trade #18: unknown PnL=$1.07
+  💼 Trade #19: unknown PnL=$0.74
+  💼 Trade #20: unknown PnL=$-1.00
+  💼 Trade #21: unknown PnL=$0.36
+  💼 Trade #22: unknown PnL=$0.50
+  🟢 NEW POSITION OPENED at step 147! Total positions: 1
+  🟢 NEW POSITION OPENED at step 148! Total positions: 2
+  🟢 NEW POSITION OPENED at step 150! Total positions: 3
+  💼 Trade #23: unknown PnL=$0.19
+  💼 Trade #24: unknown PnL=$1.26
+  💼 Trade #25: unknown PnL=$-0.06
+  🟢 NEW POSITION OPENED at step 174! Total positions: 1
+  🟢 NEW POSITION OPENED at step 175! Total positions: 2
+  🟢 NEW POSITION OPENED at step 176! Total positions: 3
+  💼 Trade #26: unknown PnL=$0.41
+  💼 Trade #27: unknown PnL=$0.72
+  💼 Trade #28: unknown PnL=$0.69
+  🟢 NEW POSITION OPENED at step 202! Total positions: 1
+  🟢 NEW POSITION OPENED at step 205! Total positions: 2
+  🟢 NEW POSITION OPENED at step 207! Total positions: 3
+  💼 Trade #29: unknown PnL=$0.21
+  💼 Trade #30: unknown PnL=$0.49
+  💼 Trade #31: unknown PnL=$0.00
+  💼 Trade #32: unknown PnL=$-0.12
+  🟢 NEW POSITION OPENED at step 232! Total positions: 1
+  🟢 NEW POSITION OPENED at step 236! Total positions: 2
+  🟢 NEW POSITION OPENED at step 237! Total positions: 3
+  💼 Trade #33: unknown PnL=$0.76
+  💼 Trade #34: unknown PnL=$0.11
+  💼 Trade #35: unknown PnL=$0.11
+  🟢 NEW POSITION OPENED at step 259! Total positions: 1
+  🟢 NEW POSITION OPENED at step 260! Total positions: 2
+  🟢 NEW POSITION OPENED at step 261! Total positions: 3
+  💼 Trade #36: unknown PnL=$-0.09
+  💼 Trade #37: unknown PnL=$-0.57
+  💼 Trade #38: unknown PnL=$0.64
+  💼 Trade #39: unknown PnL=$-0.27
+  💼 Trade #40: unknown PnL=$1.03
+  🟢 NEW POSITION OPENED at step 294! Total positions: 1
+  🟢 NEW POSITION OPENED at step 295! Total positions: 2
+  🟢 NEW POSITION OPENED at step 297! Total positions: 3
+  💼 Trade #41: unknown PnL=$0.10
+  💼 Trade #42: unknown PnL=$-0.57
+  💼 Trade #43: unknown PnL=$0.67
+  💼 Trade #44: unknown PnL=$0.23
+  🟢 NEW POSITION OPENED at step 322! Total positions: 1
+  💼 Trade #45: short PnL=$-36.70
+  🟢 NEW POSITION OPENED at step 325! Total positions: 2
+  🟢 NEW POSITION OPENED at step 326! Total positions: 3
+  💼 Trade #46: unknown PnL=$0.30
+  💼 Trade #47: unknown PnL=$0.66
+  💼 Trade #48: unknown PnL=$0.38
+  🟢 NEW POSITION OPENED at step 351! Total positions: 1
+  🟢 NEW POSITION OPENED at step 353! Total positions: 2
+  🟢 NEW POSITION OPENED at step 354! Total positions: 3
+  💼 Trade #49: unknown PnL=$-0.16
+  💼 Trade #50: unknown PnL=$0.27
+  💼 Trade #51: unknown PnL=$-0.18
+  💼 Trade #52: unknown PnL=$-0.21
+  💼 Trade #53: unknown PnL=$0.02
+  🟢 NEW POSITION OPENED at step 381! Total positions: 1
+  🟢 NEW POSITION OPENED at step 383! Total positions: 2
+  🟢 NEW POSITION OPENED at step 384! Total positions: 3
+  💼 Trade #54: unknown PnL=$-0.04
+  💼 Trade #55: unknown PnL=$-0.22
+  💼 Trade #56: unknown PnL=$-0.21
+  🟢 NEW POSITION OPENED at step 409! Total positions: 1
+  🟢 NEW POSITION OPENED at step 410! Total positions: 2
+  🟢 NEW POSITION OPENED at step 411! Total positions: 3
+  💼 Trade #57: unknown PnL=$-0.05
+  💼 Trade #58: unknown PnL=$-0.18
+  💼 Trade #59: unknown PnL=$-0.03
+  🟢 NEW POSITION OPENED at step 436! Total positions: 1
+  🟢 NEW POSITION OPENED at step 438! Total positions: 2
+  🟢 NEW POSITION OPENED at step 441! Total positions: 3
+  💼 Trade #60: unknown PnL=$-1.42
+  💼 Trade #61: unknown PnL=$-1.37
+  💼 Trade #62: unknown PnL=$-0.69
+  🟢 NEW POSITION OPENED at step 463! Total positions: 1
+  🟢 NEW POSITION OPENED at step 464! Total positions: 2
+  🟢 NEW POSITION OPENED at step 465! Total positions: 3
+  💼 Trade #63: unknown PnL=$1.64
+  💼 Trade #64: unknown PnL=$-0.91
+  💼 Trade #65: unknown PnL=$0.53
+  💼 Trade #66: unknown PnL=$-1.70
+  🟢 NEW POSITION OPENED at step 492! Total positions: 1
+  🟢 NEW POSITION OPENED at step 493! Total positions: 2
+  🟢 NEW POSITION OPENED at step 494! Total positions: 3
+    [ENTRY APPROVED] Decision=2, Quality=1.000 >= 0.4
+    [ENV STATE] Positions: 3, Portfolio: $463.86
+  💼 Trade #67: unknown PnL=$-0.42
+  💼 Trade #68: unknown PnL=$0.29
+  💼 Trade #69: unknown PnL=$0.36
+  🟢 NEW POSITION OPENED at step 523! Total positions: 1
+  🟢 NEW POSITION OPENED at step 528! Total positions: 2
+  🟢 NEW POSITION OPENED at step 529! Total positions: 3
+  💼 Trade #70: unknown PnL=$-0.59
+  💼 Trade #71: unknown PnL=$-0.11
+  💼 Trade #72: unknown PnL=$-1.04
+  🟢 NEW POSITION OPENED at step 551! Total positions: 1
+  🟢 NEW POSITION OPENED at step 555! Total positions: 2
+  🟢 NEW POSITION OPENED at step 559! Total positions: 3
+  💼 Trade #73: unknown PnL=$-0.72
+  💼 Trade #74: unknown PnL=$-1.87
+  💼 Trade #75: unknown PnL=$-0.42
+  💼 Trade #76: unknown PnL=$0.44
+  🟢 NEW POSITION OPENED at step 580! Total positions: 1
+  🟢 NEW POSITION OPENED at step 582! Total positions: 2
+  🟢 NEW POSITION OPENED at step 583! Total positions: 3
+  💼 Trade #77: unknown PnL=$0.15
+  💼 Trade #78: unknown PnL=$0.15
+  💼 Trade #79: unknown PnL=$0.44
+  💼 Trade #80: unknown PnL=$-0.88
+  💼 Trade #81: unknown PnL=$0.87
+  🟢 NEW POSITION OPENED at step 609! Total positions: 1
+  🟢 NEW POSITION OPENED at step 612! Total positions: 2
+  🟢 NEW POSITION OPENED at step 613! Total positions: 3
+  💼 Trade #82: unknown PnL=$7.81
+  💼 Trade #83: unknown PnL=$0.61
+  💼 Trade #84: unknown PnL=$0.54
+  🟢 NEW POSITION OPENED at step 636! Total positions: 1
+  🟢 NEW POSITION OPENED at step 641! Total positions: 2
+  🟢 NEW POSITION OPENED at step 643! Total positions: 3
+  💼 Trade #85: unknown PnL=$-0.03
+  💼 Trade #86: unknown PnL=$0.39
+  💼 Trade #87: unknown PnL=$-0.21
+  🟢 NEW POSITION OPENED at step 666! Total positions: 1
+  🟢 NEW POSITION OPENED at step 667! Total positions: 2
+  🟢 NEW POSITION OPENED at step 671! Total positions: 3
+  💼 Trade #88: unknown PnL=$0.01
+  💼 Trade #89: unknown PnL=$-0.57
+  💼 Trade #90: unknown PnL=$0.00
+  🟢 NEW POSITION OPENED at step 693! Total positions: 1
+  🟢 NEW POSITION OPENED at step 694! Total positions: 2
+  🟢 NEW POSITION OPENED at step 695! Total positions: 3
+  💼 Trade #91: unknown PnL=$0.09
+  💼 Trade #92: unknown PnL=$-0.24
+  💼 Trade #93: unknown PnL=$0.27
+  🟢 NEW POSITION OPENED at step 722! Total positions: 1
+  🟢 NEW POSITION OPENED at step 731! Total positions: 2
+  🟢 NEW POSITION OPENED at step 734! Total positions: 3
+  💼 Trade #94: unknown PnL=$0.20
+  💼 Trade #95: unknown PnL=$-0.47
+  💼 Trade #96: unknown PnL=$0.38
+  💼 Trade #97: unknown PnL=$0.58
+[QUALITY FILTER] Entry rejected: quality=0.00 < 0.4
+  🟢 NEW POSITION OPENED at step 755! Total positions: 1
+  🟢 NEW POSITION OPENED at step 756! Total positions: 2
+  🟢 NEW POSITION OPENED at step 758! Total positions: 3
+  💼 Trade #98: unknown PnL=$0.49
+  💼 Trade #99: unknown PnL=$0.31
+  💼 Trade #100: unknown PnL=$0.03
+  🟢 NEW POSITION OPENED at step 785! Total positions: 1
+  🟢 NEW POSITION OPENED at step 787! Total positions: 2
+  🟢 NEW POSITION OPENED at step 790! Total positions: 3
+  💼 Trade #101: unknown PnL=$-1.04
+  💼 Trade #102: unknown PnL=$-0.06
+  💼 Trade #103: unknown PnL=$-0.64
+  🟢 NEW POSITION OPENED at step 814! Total positions: 1
+  🟢 NEW POSITION OPENED at step 818! Total positions: 2
+  🟢 NEW POSITION OPENED at step 819! Total positions: 3
+  💼 Trade #104: unknown PnL=$0.51
+  💼 Trade #105: unknown PnL=$0.81
+  💼 Trade #106: unknown PnL=$0.30
+  💼 Trade #107: unknown PnL=$-0.04
+  🟢 NEW POSITION OPENED at step 845! Total positions: 1
+  🟢 NEW POSITION OPENED at step 848! Total positions: 2
+  🟢 NEW POSITION OPENED at step 850! Total positions: 3
+  💼 Trade #108: unknown PnL=$0.39
+  💼 Trade #109: unknown PnL=$-0.26
+  💼 Trade #110: unknown PnL=$0.08
+  🟢 NEW POSITION OPENED at step 872! Total positions: 1
+  🟢 NEW POSITION OPENED at step 877! Total positions: 2
+  🟢 NEW POSITION OPENED at step 882! Total positions: 3
+  💼 Trade #111: unknown PnL=$0.03
+  💼 Trade #112: unknown PnL=$0.57
+  💼 Trade #113: unknown PnL=$0.53
+  🟢 NEW POSITION OPENED at step 902! Total positions: 1
+  🟢 NEW POSITION OPENED at step 905! Total positions: 2
+  🟢 NEW POSITION OPENED at step 909! Total positions: 3
+  💼 Trade #114: unknown PnL=$-0.16
+  💼 Trade #115: unknown PnL=$0.74
+  💼 Trade #116: unknown PnL=$0.11
+  💼 Trade #117: unknown PnL=$-0.49
+  🟢 NEW POSITION OPENED at step 932! Total positions: 1
+  🟢 NEW POSITION OPENED at step 935! Total positions: 2
+  🟢 NEW POSITION OPENED at step 941! Total positions: 3
+  💼 Trade #118: unknown PnL=$-0.04
+  💼 Trade #119: unknown PnL=$0.47
+  💼 Trade #120: unknown PnL=$-0.35
+  💼 Trade #121: unknown PnL=$-0.07
+  🟢 NEW POSITION OPENED at step 960! Total positions: 1
+  🟢 NEW POSITION OPENED at step 967! Total positions: 2
+  🟢 NEW POSITION OPENED at step 968! Total positions: 3
+  💼 Trade #122: unknown PnL=$-0.05
+  💼 Trade #123: unknown PnL=$-0.16
+  💼 Trade #124: unknown PnL=$-0.18
+  🟢 NEW POSITION OPENED at step 990! Total positions: 1
+  🟢 NEW POSITION OPENED at step 991! Total positions: 2
+  🟢 NEW POSITION OPENED at step 993! Total positions: 3
+2025-08-14 11:17:01,845 - root - INFO - 🧠 [CURIOSITY V2] Step 1000: extrinsic=0.4983, intrinsic=0.0000, total=0.4983
+  Step 1000/3000 - Portfolio: $473.82
+    Positions: 3 | Realized: $472.56 | Unrealized: $0.09
+    [QUALITY FILTER] Entry rejected: decision=2, quality=0.000 < 0.4
+    [ENV STATE] Positions: 3, Portfolio: $472.65
+  💼 Trade #125: unknown PnL=$0.68
+  💼 Trade #126: unknown PnL=$0.54
+  💼 Trade #127: unknown PnL=$0.90
+  💼 Trade #128: unknown PnL=$-0.82
+  🟢 NEW POSITION OPENED at step 1019! Total positions: 1
+  🟢 NEW POSITION OPENED at step 1021! Total positions: 2
+  🟢 NEW POSITION OPENED at step 1026! Total positions: 3
+  💼 Trade #129: unknown PnL=$0.32
+  💼 Trade #130: unknown PnL=$-0.48
+  💼 Trade #131: unknown PnL=$0.15
+  🟢 NEW POSITION OPENED at step 1048! Total positions: 1
+  🟢 NEW POSITION OPENED at step 1050! Total positions: 2
+  🟢 NEW POSITION OPENED at step 1056! Total positions: 3
+  💼 Trade #132: unknown PnL=$0.04
+  💼 Trade #133: unknown PnL=$-0.13
+  💼 Trade #134: unknown PnL=$0.63
+  💼 Trade #135: unknown PnL=$-0.31
+  💼 Trade #136: unknown PnL=$1.62
+  🟢 NEW POSITION OPENED at step 1078! Total positions: 1
+  🟢 NEW POSITION OPENED at step 1079! Total positions: 2
+  🟢 NEW POSITION OPENED at step 1080! Total positions: 3
+  💼 Trade #137: unknown PnL=$0.35
+  💼 Trade #138: unknown PnL=$-0.19
+  💼 Trade #139: unknown PnL=$0.74
+  🟢 NEW POSITION OPENED at step 1106! Total positions: 1
+  🟢 NEW POSITION OPENED at step 1108! Total positions: 2
+  🟢 NEW POSITION OPENED at step 1110! Total positions: 3
+  💼 Trade #140: unknown PnL=$-0.32
+  💼 Trade #141: unknown PnL=$-0.10
+  💼 Trade #142: unknown PnL=$0.84
+  🟢 NEW POSITION OPENED at step 1135! Total positions: 1
+  🟢 NEW POSITION OPENED at step 1144! Total positions: 2
+  🟢 NEW POSITION OPENED at step 1148! Total positions: 3
+  💼 Trade #143: unknown PnL=$-0.28
+  💼 Trade #144: unknown PnL=$-0.21
+  💼 Trade #145: unknown PnL=$-0.34
+  💼 Trade #146: unknown PnL=$-0.42
+  💼 Trade #147: unknown PnL=$0.04
+  🟢 NEW POSITION OPENED at step 1165! Total positions: 1
+  🟢 NEW POSITION OPENED at step 1166! Total positions: 2
+  🟢 NEW POSITION OPENED at step 1167! Total positions: 3
+  💼 Trade #148: short PnL=$-40.82
+  💼 Trade #149: short PnL=$-27.12
+  💼 Trade #150: short PnL=$-27.47
+  🟢 NEW POSITION OPENED at step 1189! Total positions: 1
+  🟢 NEW POSITION OPENED at step 1193! Total positions: 2
+  🟢 NEW POSITION OPENED at step 1196! Total positions: 3
+  💼 Trade #151: unknown PnL=$0.33
+  💼 Trade #152: unknown PnL=$0.09
+  💼 Trade #153: unknown PnL=$0.44
+  💼 Trade #154: unknown PnL=$-0.30
+  🟢 NEW POSITION OPENED at step 1218! Total positions: 1
+  🟢 NEW POSITION OPENED at step 1222! Total positions: 2
+  🟢 NEW POSITION OPENED at step 1227! Total positions: 3
+  💼 Trade #155: unknown PnL=$0.10
+  💼 Trade #156: unknown PnL=$-0.13
+  💼 Trade #157: unknown PnL=$-0.05
+  💼 Trade #158: unknown PnL=$-0.05
+  💼 Trade #159: unknown PnL=$0.17
+  🟢 NEW POSITION OPENED at step 1247! Total positions: 1
+  🟢 NEW POSITION OPENED at step 1248! Total positions: 2
+  🟢 NEW POSITION OPENED at step 1249! Total positions: 3
+  💼 Trade #160: unknown PnL=$-0.16
+  💼 Trade #161: unknown PnL=$0.12
+  💼 Trade #162: unknown PnL=$-0.14
+  🟢 NEW POSITION OPENED at step 1274! Total positions: 1
+  🟢 NEW POSITION OPENED at step 1277! Total positions: 2
+  🟢 NEW POSITION OPENED at step 1280! Total positions: 3
+  💼 Trade #163: unknown PnL=$0.71
+  💼 Trade #164: unknown PnL=$0.56
+  💼 Trade #165: unknown PnL=$0.91
+  🟢 NEW POSITION OPENED at step 1301! Total positions: 1
+  🟢 NEW POSITION OPENED at step 1312! Total positions: 2
+  🟢 NEW POSITION OPENED at step 1313! Total positions: 3
+  💼 Trade #166: unknown PnL=$-0.23
+  💼 Trade #167: unknown PnL=$-0.28
+  💼 Trade #168: unknown PnL=$-0.44
+  🟢 NEW POSITION OPENED at step 1328! Total positions: 1
+  🟢 NEW POSITION OPENED at step 1331! Total positions: 2
+  🟢 NEW POSITION OPENED at step 1334! Total positions: 3
+  💼 Trade #169: unknown PnL=$0.37
+  💼 Trade #170: unknown PnL=$0.24
+  💼 Trade #171: unknown PnL=$1.03
+  💼 Trade #172: unknown PnL=$-0.73
+  💼 Trade #173: unknown PnL=$0.25
+  💼 Trade #174: unknown PnL=$0.11
+  🟢 NEW POSITION OPENED at step 1358! Total positions: 1
+  🟢 NEW POSITION OPENED at step 1361! Total positions: 2
+  🟢 NEW POSITION OPENED at step 1364! Total positions: 3
+  💼 Trade #175: unknown PnL=$0.44
+  💼 Trade #176: unknown PnL=$1.62
+  💼 Trade #177: unknown PnL=$0.73
+  🟢 NEW POSITION OPENED at step 1385! Total positions: 1
+  🟢 NEW POSITION OPENED at step 1389! Total positions: 2
+  🟢 NEW POSITION OPENED at step 1394! Total positions: 3
+  💼 Trade #178: unknown PnL=$0.02
+  💼 Trade #179: unknown PnL=$0.37
+  💼 Trade #180: unknown PnL=$0.16
+  💼 Trade #181: unknown PnL=$-0.53
+  🟢 NEW POSITION OPENED at step 1415! Total positions: 1
+  🟢 NEW POSITION OPENED at step 1417! Total positions: 2
+  🟢 NEW POSITION OPENED at step 1419! Total positions: 3
+  💼 Trade #182: unknown PnL=$0.22
+  💼 Trade #183: unknown PnL=$0.31
+  💼 Trade #184: unknown PnL=$-0.51
+  🟢 NEW POSITION OPENED at step 1442! Total positions: 1
+  🟢 NEW POSITION OPENED at step 1444! Total positions: 2
+  🟢 NEW POSITION OPENED at step 1445! Total positions: 3
+  💼 Trade #185: unknown PnL=$0.18
+  💼 Trade #186: unknown PnL=$1.33
+  💼 Trade #187: unknown PnL=$-0.18
+  🟢 NEW POSITION OPENED at step 1469! Total positions: 1
+  🟢 NEW POSITION OPENED at step 1472! Total positions: 2
+  🟢 NEW POSITION OPENED at step 1474! Total positions: 3
+  💼 Trade #188: short PnL=$45.08
+  💼 Trade #189: short PnL=$46.06
+  💼 Trade #190: short PnL=$68.52
+  🟢 NEW POSITION OPENED at step 1476! Total positions: 1
+  🟢 NEW POSITION OPENED at step 1477! Total positions: 2
+  🟢 NEW POSITION OPENED at step 1482! Total positions: 3
+    [ENV STATE] Positions: 3, Portfolio: $546.79
+  💼 Trade #191: unknown PnL=$-0.46
+  💼 Trade #192: unknown PnL=$-0.32
+  💼 Trade #193: unknown PnL=$-0.14
+  🟢 NEW POSITION OPENED at step 1503! Total positions: 1
+  🟢 NEW POSITION OPENED at step 1506! Total positions: 2
+  🟢 NEW POSITION OPENED at step 1510! Total positions: 3
+  💼 Trade #194: unknown PnL=$-0.20
+  💼 Trade #195: unknown PnL=$-0.33
+  💼 Trade #196: unknown PnL=$0.04
+  🟢 NEW POSITION OPENED at step 1530! Total positions: 1
+  🟢 NEW POSITION OPENED at step 1531! Total positions: 2
+  🟢 NEW POSITION OPENED at step 1534! Total positions: 3
+  💼 Trade #197: unknown PnL=$-0.10
+  💼 Trade #198: unknown PnL=$0.16
+  💼 Trade #199: unknown PnL=$-0.61
+  💼 Trade #200: unknown PnL=$0.84
+  💼 Trade #201: unknown PnL=$-0.45
+  💼 Trade #202: unknown PnL=$-0.04
+  💼 Trade #203: unknown PnL=$0.02
+  💼 Trade #204: unknown PnL=$-0.07
+  💼 Trade #205: unknown PnL=$0.09
+  🟢 NEW POSITION OPENED at step 1566! Total positions: 1
+  🟢 NEW POSITION OPENED at step 1567! Total positions: 2
+  🟢 NEW POSITION OPENED at step 1569! Total positions: 3
+  💼 Trade #206: unknown PnL=$0.04
+  💼 Trade #207: unknown PnL=$-0.47
+  💼 Trade #208: unknown PnL=$-0.10
+  🟢 NEW POSITION OPENED at step 1594! Total positions: 1
+  🟢 NEW POSITION OPENED at step 1598! Total positions: 2
+  🟢 NEW POSITION OPENED at step 1604! Total positions: 3
+  💼 Trade #209: unknown PnL=$-1.92
+  💼 Trade #210: unknown PnL=$-0.26
+  💼 Trade #211: unknown PnL=$0.77
+  💼 Trade #212: unknown PnL=$0.55
+  🟢 NEW POSITION OPENED at step 1622! Total positions: 1
+  🟢 NEW POSITION OPENED at step 1624! Total positions: 2
+  🟢 NEW POSITION OPENED at step 1629! Total positions: 3
+  💼 Trade #213: unknown PnL=$-0.61
+  💼 Trade #214: unknown PnL=$0.10
+  💼 Trade #215: unknown PnL=$-0.01
+  💼 Trade #216: unknown PnL=$-0.28
+  💼 Trade #217: unknown PnL=$0.23
+  🟢 NEW POSITION OPENED at step 1651! Total positions: 1
+  🟢 NEW POSITION OPENED at step 1652! Total positions: 2
+  🟢 NEW POSITION OPENED at step 1658! Total positions: 3
+  💼 Trade #218: unknown PnL=$-0.56
+  💼 Trade #219: unknown PnL=$1.63
+  💼 Trade #220: unknown PnL=$-0.78
+  💼 Trade #221: unknown PnL=$1.09
+  🟢 NEW POSITION OPENED at step 1680! Total positions: 1
+  🟢 NEW POSITION OPENED at step 1681! Total positions: 2
+  🟢 NEW POSITION OPENED at step 1686! Total positions: 3
+  💼 Trade #222: unknown PnL=$1.24
+  💼 Trade #223: unknown PnL=$0.61
+  💼 Trade #224: unknown PnL=$0.94
+  🟢 NEW POSITION OPENED at step 1708! Total positions: 1
+  🟢 NEW POSITION OPENED at step 1709! Total positions: 2
+  🟢 NEW POSITION OPENED at step 1714! Total positions: 3
+  💼 Trade #225: unknown PnL=$-0.84
+  💼 Trade #226: unknown PnL=$-0.76
+  💼 Trade #227: unknown PnL=$-1.06
+  💼 Trade #228: unknown PnL=$1.04
+  💼 Trade #229: unknown PnL=$0.19
+  🟢 NEW POSITION OPENED at step 1738! Total positions: 1
+  🟢 NEW POSITION OPENED at step 1741! Total positions: 2
+  🟢 NEW POSITION OPENED at step 1742! Total positions: 3
+  💼 Trade #230: short PnL=$-17.55
+  💼 Trade #231: short PnL=$-17.20
+  💼 Trade #232: short PnL=$-17.66
+  🟢 NEW POSITION OPENED at step 1766! Total positions: 1
+  🟢 NEW POSITION OPENED at step 1768! Total positions: 2
+  🟢 NEW POSITION OPENED at step 1769! Total positions: 3
+  💼 Trade #233: unknown PnL=$0.82
+  💼 Trade #234: unknown PnL=$0.35
+  💼 Trade #235: unknown PnL=$-0.07
+  🟢 NEW POSITION OPENED at step 1794! Total positions: 1
+  🟢 NEW POSITION OPENED at step 1795! Total positions: 2
+  🟢 NEW POSITION OPENED at step 1797! Total positions: 3
+  💼 Trade #236: unknown PnL=$0.37
+  💼 Trade #237: unknown PnL=$0.26
+  💼 Trade #238: unknown PnL=$0.09
+  🟢 NEW POSITION OPENED at step 1823! Total positions: 1
+  🟢 NEW POSITION OPENED at step 1825! Total positions: 2
+  🟢 NEW POSITION OPENED at step 1826! Total positions: 3
+  💼 Trade #239: unknown PnL=$-0.23
+  💼 Trade #240: unknown PnL=$-0.16
+  💼 Trade #241: unknown PnL=$-0.29
+  💼 Trade #242: unknown PnL=$0.41
+  💼 Trade #243: unknown PnL=$-0.42
+  💼 Trade #244: unknown PnL=$0.13
+  🟢 NEW POSITION OPENED at step 1853! Total positions: 1
+  🟢 NEW POSITION OPENED at step 1854! Total positions: 2
+  🟢 NEW POSITION OPENED at step 1855! Total positions: 3
+  💼 Trade #245: unknown PnL=$-0.16
+  💼 Trade #246: unknown PnL=$0.15
+  💼 Trade #247: unknown PnL=$-0.28
+  🟢 NEW POSITION OPENED at step 1880! Total positions: 1
+  🟢 NEW POSITION OPENED at step 1881! Total positions: 2
+  🟢 NEW POSITION OPENED at step 1882! Total positions: 3
+  💼 Trade #248: unknown PnL=$0.58
+  💼 Trade #249: unknown PnL=$1.02
+  💼 Trade #250: unknown PnL=$0.76
+  🟢 NEW POSITION OPENED at step 1907! Total positions: 1
+  🟢 NEW POSITION OPENED at step 1908! Total positions: 2
+  🟢 NEW POSITION OPENED at step 1909! Total positions: 3
+  💼 Trade #251: unknown PnL=$0.46
+  💼 Trade #252: unknown PnL=$-0.20
+  💼 Trade #253: unknown PnL=$0.71
+  🟢 NEW POSITION OPENED at step 1935! Total positions: 1
+  🟢 NEW POSITION OPENED at step 1936! Total positions: 2
+  🟢 NEW POSITION OPENED at step 1938! Total positions: 3
+  💼 Trade #254: unknown PnL=$-0.45
+  💼 Trade #255: unknown PnL=$-0.47
+  💼 Trade #256: unknown PnL=$-0.23
+  🟢 NEW POSITION OPENED at step 1963! Total positions: 1
+  🟢 NEW POSITION OPENED at step 1965! Total positions: 2
+  🟢 NEW POSITION OPENED at step 1967! Total positions: 3
+  💼 Trade #257: unknown PnL=$0.34
+  💼 Trade #258: unknown PnL=$0.73
+  💼 Trade #259: unknown PnL=$-0.51
+  🟢 NEW POSITION OPENED at step 1994! Total positions: 1
+  🟢 NEW POSITION OPENED at step 1997! Total positions: 2
+2025-08-14 11:17:07,204 - root - INFO - 🧠 [CURIOSITY V2] Step 2000: extrinsic=0.0950, intrinsic=0.0000, total=0.0950
+  💼 Trade #260: short PnL=$-1.76
+  💼 Trade #261: short PnL=$-0.95
+  Step 2000/3000 - Portfolio: $494.92
+    Positions: 0 | Realized: $494.92 | Unrealized: $0.00
+✅ Episódio 1: $500.00 → $494.92 (-1.02%)
+   Trades executados: 261
+   Win Rate: 52.9%
+
+🎮 EPISÓDIO 2/2
+==================================================
+📊 Dataset episódio: 3,100 barras
+📅 Período: 2010-01-28 10:50:00 até 2010-02-12 06:10:00
+[TRADING ENV] Modo treinamento: 3,100 barras (DATASET COMPLETO 100%)
+[PREPARE DATA] Iniciando processamento otimizado...
+[PREPARE DATA] AVISO Calculando 6 features ausentes...
+[FALLBACK] Calculando features técnicas ausentes...
+[HIGH QUALITY] Calculando features de alta qualidade...
+🔧 [HIGH QUALITY] Forçando criação de 'price_position'
+🔧 [HIGH QUALITY] Forçando criação de 'breakout_strength'
+🔧 [HIGH QUALITY] Forçando criação de 'trend_consistency'
+🔧 [HIGH QUALITY] Forçando criação de 'support_resistance'
+🔧 [HIGH QUALITY] Forçando criação de 'volatility_regime'
+🔧 [HIGH QUALITY] Forçando criação de 'market_structure'
+[HIGH QUALITY] OK Features calculadas em 0.002s: 10 features
+[FALLBACK] OK Features ausentes calculadas
+[PREPARE DATA] CORREÇÃO: 3100 zeros encontrados e substituídos
+[PREPARE DATA] OK Processamento concluído em 0.006s
+[PREPARE DATA] Shape final: (3100, 16)
+✅ V7 TEMPORAL OBSERVATION SPACE: 2580 dimensões (seq_len=20 × features_per_bar=129)
+   🔥 MANTÉM 1480 ORIGINAL: Sequência REAL ao invés de artificial
+🎯 Unified Reward Components: Base=0.8, Timing=0.1, Mgmt=0.1
+[TRADING ENV]  PARÂMETROS OTIMIZADOS (TRIAL SCORE 0.967) CONFIGURADOS:
+  SL Range: 2.0-8.0 pontos (Otimizado: mais agressivo e flexível)
+  TP Range: 3.0-15.0 pontos (Mantido: já ótimo)
+  Target Trades/Dia: 18 (Otimizado: +12.5% atividade)
+  Portfolio Weight: 0.788 (Otimizado)
+  Max DD Tolerance: 0.338 (Otimizado)
+  Volatility: 0.000-0.016 (Otimizado: mais permissiva)
+2025-08-14 11:17:07,217 - root - INFO - 🧠 [CURIOSITY V2] Curiosity integrada ao reward system
+2025-08-14 11:17:07,217 - root - INFO - BalancedDayTradingRewardCalculator V2.0 inicializado
+2025-08-14 11:17:07,217 - root - INFO - 🎯 [ACTIVITY] Activity Enhancement System inicializado
+[TRADING ENV]  Sistema SL/TP realista ativado com valores otimizados (Score 0.967)
+[REWARD SYSTEM] Sistema balanceado V2.0 ativado (risk-adjusted + anti-gaming + fases progressivas)
+[ACTIVITY SYSTEM] 🎯 Activity Enhancement ativado (timeout: 25 candles, SL/TP dinâmicos)
+🔄 Volatilidade ajustada para: 0.5x (Episódio 0)
+🔄 Cache dos dados originais criado: 3100 barras
+🔄 Volatilidade 0.5x aplicada a 4 colunas
+[CACHE] Configurando cache inteligente para analyzers...
+[CACHE] OK Cache configurado em 0.000s
+[TRADING ENV] NOVO EPISÓDIO - Dataset: 3,100 barras, Step inicial: 71, EPISÓDIO INFINITO PARA TREINAMENTO
+    [QUALITY FILTER] Entry rejected: decision=2, quality=0.000 < 0.4
+    [ENV STATE] Positions: 0, Portfolio: $500.00
+  🟢 NEW POSITION OPENED at step 3! Total positions: 1
+  🟢 NEW POSITION OPENED at step 7! Total positions: 2
+  🟢 NEW POSITION OPENED at step 9! Total positions: 3
+  💼 Trade #1: unknown PnL=$-0.13
+  💼 Trade #2: unknown PnL=$0.04
+  💼 Trade #3: unknown PnL=$0.71
+  🟢 NEW POSITION OPENED at step 37! Total positions: 1
+  🟢 NEW POSITION OPENED at step 42! Total positions: 2
+  🟢 NEW POSITION OPENED at step 44! Total positions: 3
+  💼 Trade #4: unknown PnL=$-0.07
+  💼 Trade #5: unknown PnL=$-0.40
+  💼 Trade #6: unknown PnL=$0.11
+  💼 Trade #7: unknown PnL=$-0.43
+  🟢 NEW POSITION OPENED at step 67! Total positions: 1
+  🟢 NEW POSITION OPENED at step 69! Total positions: 2
+  🟢 NEW POSITION OPENED at step 72! Total positions: 3
+  💼 Trade #8: unknown PnL=$4.13
+  💼 Trade #9: unknown PnL=$2.46
+  💼 Trade #10: unknown PnL=$2.57
+  💼 Trade #11: unknown PnL=$-0.27
+  💼 Trade #12: unknown PnL=$0.21
+  🟢 NEW POSITION OPENED at step 96! Total positions: 1
+  🟢 NEW POSITION OPENED at step 99! Total positions: 2
+  🟢 NEW POSITION OPENED at step 100! Total positions: 3
+  💼 Trade #13: unknown PnL=$-0.46
+  💼 Trade #14: unknown PnL=$-0.22
+  💼 Trade #15: unknown PnL=$0.44
+  🟢 NEW POSITION OPENED at step 125! Total positions: 1
+  🟢 NEW POSITION OPENED at step 126! Total positions: 2
+  🟢 NEW POSITION OPENED at step 127! Total positions: 3
+  💼 Trade #16: unknown PnL=$-0.18
+  💼 Trade #17: unknown PnL=$-0.45
+  💼 Trade #18: unknown PnL=$-0.47
+  🟢 NEW POSITION OPENED at step 152! Total positions: 1
+  🟢 NEW POSITION OPENED at step 153! Total positions: 2
+  🟢 NEW POSITION OPENED at step 155! Total positions: 3
+  💼 Trade #19: unknown PnL=$-0.28
+  💼 Trade #20: unknown PnL=$-0.75
+  💼 Trade #21: unknown PnL=$-0.11
+  💼 Trade #22: unknown PnL=$-0.09
+  🟢 NEW POSITION OPENED at step 182! Total positions: 1
+  🟢 NEW POSITION OPENED at step 184! Total positions: 2
+  🟢 NEW POSITION OPENED at step 187! Total positions: 3
+  💼 Trade #23: unknown PnL=$-0.61
+  💼 Trade #24: unknown PnL=$-0.26
+  💼 Trade #25: unknown PnL=$-0.49
+  💼 Trade #26: unknown PnL=$-0.13
+  🟢 NEW POSITION OPENED at step 210! Total positions: 1
+  🟢 NEW POSITION OPENED at step 213! Total positions: 2
+  🟢 NEW POSITION OPENED at step 214! Total positions: 3
+  💼 Trade #27: unknown PnL=$-0.18
+  💼 Trade #28: unknown PnL=$-0.61
+  💼 Trade #29: unknown PnL=$-0.21
+  🟢 NEW POSITION OPENED at step 239! Total positions: 1
+  🟢 NEW POSITION OPENED at step 241! Total positions: 2
+  🟢 NEW POSITION OPENED at step 243! Total positions: 3
+  💼 Trade #30: unknown PnL=$-0.11
+  💼 Trade #31: unknown PnL=$-0.30
+  💼 Trade #32: unknown PnL=$-0.43
+  💼 Trade #33: unknown PnL=$-0.50
+  🟢 NEW POSITION OPENED at step 275! Total positions: 1
+  🟢 NEW POSITION OPENED at step 276! Total positions: 2
+  🟢 NEW POSITION OPENED at step 278! Total positions: 3
+  💼 Trade #34: unknown PnL=$0.17
+  💼 Trade #35: unknown PnL=$0.22
+  💼 Trade #36: unknown PnL=$0.89
+  🟢 NEW POSITION OPENED at step 303! Total positions: 1
+  🟢 NEW POSITION OPENED at step 304! Total positions: 2
+  🟢 NEW POSITION OPENED at step 307! Total positions: 3
+  💼 Trade #37: unknown PnL=$-0.09
+  💼 Trade #38: unknown PnL=$-0.72
+  💼 Trade #39: unknown PnL=$-0.28
+  🟢 NEW POSITION OPENED at step 331! Total positions: 1
+  🟢 NEW POSITION OPENED at step 335! Total positions: 2
+  🟢 NEW POSITION OPENED at step 336! Total positions: 3
+  💼 Trade #40: unknown PnL=$-0.09
+  💼 Trade #41: unknown PnL=$-0.44
+  💼 Trade #42: unknown PnL=$-0.62
+  💼 Trade #43: unknown PnL=$0.35
+  🟢 NEW POSITION OPENED at step 359! Total positions: 1
+  🟢 NEW POSITION OPENED at step 360! Total positions: 2
+  🟢 NEW POSITION OPENED at step 361! Total positions: 3
+  💼 Trade #44: short PnL=$-42.06
+  💼 Trade #45: short PnL=$-41.90
+  💼 Trade #46: short PnL=$-42.19
+  🟢 NEW POSITION OPENED at step 374! Total positions: 2
+  🟢 NEW POSITION OPENED at step 379! Total positions: 3
+  💼 Trade #47: unknown PnL=$-0.51
+  💼 Trade #48: unknown PnL=$-0.00
+  💼 Trade #49: unknown PnL=$0.06
+  💼 Trade #50: unknown PnL=$0.08
+  🟢 NEW POSITION OPENED at step 388! Total positions: 1
+  🟢 NEW POSITION OPENED at step 391! Total positions: 2
+  🟢 NEW POSITION OPENED at step 392! Total positions: 3
+  💼 Trade #51: unknown PnL=$0.08
+  💼 Trade #52: unknown PnL=$-0.64
+  💼 Trade #53: unknown PnL=$-0.25
+  🟢 NEW POSITION OPENED at step 415! Total positions: 1
+  🟢 NEW POSITION OPENED at step 416! Total positions: 2
+  🟢 NEW POSITION OPENED at step 418! Total positions: 3
+  💼 Trade #54: unknown PnL=$0.10
+  💼 Trade #55: unknown PnL=$0.45
+  💼 Trade #56: unknown PnL=$0.14
+  🟢 NEW POSITION OPENED at step 442! Total positions: 1
+  🟢 NEW POSITION OPENED at step 443! Total positions: 2
+  🟢 NEW POSITION OPENED at step 444! Total positions: 3
+  💼 Trade #57: unknown PnL=$-0.03
+  💼 Trade #58: unknown PnL=$0.59
+  💼 Trade #59: unknown PnL=$-0.05
+  🟢 NEW POSITION OPENED at step 469! Total positions: 1
+  🟢 NEW POSITION OPENED at step 472! Total positions: 2
+  🟢 NEW POSITION OPENED at step 473! Total positions: 3
+  💼 Trade #60: unknown PnL=$0.19
+  💼 Trade #61: unknown PnL=$1.19
+  💼 Trade #62: unknown PnL=$0.54
+    [ENV STATE] Positions: 0, Portfolio: $377.70
+  🟢 NEW POSITION OPENED at step 501! Total positions: 1
+  🟢 NEW POSITION OPENED at step 510! Total positions: 2
+  🟢 NEW POSITION OPENED at step 512! Total positions: 3
+  💼 Trade #63: unknown PnL=$-0.07
+  💼 Trade #64: unknown PnL=$0.02
+  💼 Trade #65: unknown PnL=$0.45
+  🟢 NEW POSITION OPENED at step 529! Total positions: 1
+  🟢 NEW POSITION OPENED at step 531! Total positions: 2
+  🟢 NEW POSITION OPENED at step 532! Total positions: 3
+  💼 Trade #66: unknown PnL=$-0.21
+  💼 Trade #67: unknown PnL=$0.26
+  💼 Trade #68: unknown PnL=$-0.47
+  💼 Trade #69: unknown PnL=$0.33
+  🟢 NEW POSITION OPENED at step 563! Total positions: 1
+  🟢 NEW POSITION OPENED at step 566! Total positions: 2
+  🟢 NEW POSITION OPENED at step 568! Total positions: 3
+  💼 Trade #70: unknown PnL=$0.08
+  💼 Trade #71: unknown PnL=$0.39
+  💼 Trade #72: unknown PnL=$0.88
+  🟢 NEW POSITION OPENED at step 600! Total positions: 1
+  🟢 NEW POSITION OPENED at step 604! Total positions: 2
+  🟢 NEW POSITION OPENED at step 607! Total positions: 3
+  💼 Trade #73: unknown PnL=$-0.24
+  💼 Trade #74: unknown PnL=$-0.35
+  💼 Trade #75: unknown PnL=$-0.08
+  💼 Trade #76: unknown PnL=$0.19
+  🟢 NEW POSITION OPENED at step 632! Total positions: 1
+  🟢 NEW POSITION OPENED at step 636! Total positions: 2
+  🟢 NEW POSITION OPENED at step 638! Total positions: 3
+  💼 Trade #77: unknown PnL=$-0.46
+  💼 Trade #78: unknown PnL=$0.40
+  💼 Trade #79: unknown PnL=$0.29
+  💼 Trade #80: unknown PnL=$-27.80
+  💼 Trade #81: unknown PnL=$0.53
+  🟢 NEW POSITION OPENED at step 665! Total positions: 1
+  🟢 NEW POSITION OPENED at step 666! Total positions: 2
+  🟢 NEW POSITION OPENED at step 670! Total positions: 3
+  💼 Trade #82: unknown PnL=$-0.68
+  💼 Trade #83: unknown PnL=$-0.36
+  💼 Trade #84: unknown PnL=$0.19
+  💼 Trade #85: unknown PnL=$-0.10
+  💼 Trade #86: unknown PnL=$-0.02
+  💼 Trade #87: unknown PnL=$0.89
+  🟢 NEW POSITION OPENED at step 695! Total positions: 1
+  🟢 NEW POSITION OPENED at step 703! Total positions: 2
+  🟢 NEW POSITION OPENED at step 705! Total positions: 3
+  💼 Trade #88: unknown PnL=$0.12
+  💼 Trade #89: unknown PnL=$0.16
+  💼 Trade #90: unknown PnL=$0.35
+  🟢 NEW POSITION OPENED at step 723! Total positions: 1
+  🟢 NEW POSITION OPENED at step 724! Total positions: 2
+  🟢 NEW POSITION OPENED at step 725! Total positions: 3
+  💼 Trade #91: unknown PnL=$0.23
+  💼 Trade #92: unknown PnL=$0.21
+  💼 Trade #93: unknown PnL=$-0.30
+  🟢 NEW POSITION OPENED at step 755! Total positions: 1
+  🟢 NEW POSITION OPENED at step 759! Total positions: 2
+  🟢 NEW POSITION OPENED at step 760! Total positions: 3
+  💼 Trade #94: unknown PnL=$-0.97
+  💼 Trade #95: unknown PnL=$-0.84
+  💼 Trade #96: unknown PnL=$0.31
+  🟢 NEW POSITION OPENED at step 785! Total positions: 1
+  🟢 NEW POSITION OPENED at step 786! Total positions: 2
+  🟢 NEW POSITION OPENED at step 787! Total positions: 3
+  💼 Trade #97: unknown PnL=$-0.88
+  💼 Trade #98: unknown PnL=$-0.28
+  💼 Trade #99: unknown PnL=$-0.22
+  💼 Trade #100: unknown PnL=$1.10
+  🟢 NEW POSITION OPENED at step 815! Total positions: 1
+  🟢 NEW POSITION OPENED at step 816! Total positions: 2
+  🟢 NEW POSITION OPENED at step 818! Total positions: 3
+  💼 Trade #101: unknown PnL=$-0.29
+  💼 Trade #102: unknown PnL=$-0.45
+  💼 Trade #103: unknown PnL=$1.10
+  🟢 NEW POSITION OPENED at step 845! Total positions: 1
+  🟢 NEW POSITION OPENED at step 848! Total positions: 2
+  🟢 NEW POSITION OPENED at step 849! Total positions: 3
+  💼 Trade #104: unknown PnL=$-0.43
+  💼 Trade #105: unknown PnL=$0.30
+  💼 Trade #106: unknown PnL=$0.63
+  🟢 NEW POSITION OPENED at step 874! Total positions: 1
+  🟢 NEW POSITION OPENED at step 876! Total positions: 2
+  🟢 NEW POSITION OPENED at step 877! Total positions: 3
+  💼 Trade #107: unknown PnL=$-0.64
+  💼 Trade #108: unknown PnL=$-0.90
+  💼 Trade #109: unknown PnL=$-2.25
+  🟢 NEW POSITION OPENED at step 901! Total positions: 1
+  🟢 NEW POSITION OPENED at step 902! Total positions: 2
+  🟢 NEW POSITION OPENED at step 909! Total positions: 3
+  💼 Trade #110: unknown PnL=$0.09
+  💼 Trade #111: unknown PnL=$1.69
+  💼 Trade #112: unknown PnL=$0.09
+  🟢 NEW POSITION OPENED at step 929! Total positions: 1
+  🟢 NEW POSITION OPENED at step 931! Total positions: 2
+  🟢 NEW POSITION OPENED at step 932! Total positions: 3
+  💼 Trade #113: short PnL=$14.36
+  🟢 NEW POSITION OPENED at step 953! Total positions: 3
+  💼 Trade #114: unknown PnL=$14.29
+  💼 Trade #115: unknown PnL=$13.17
+  💼 Trade #116: unknown PnL=$-0.41
+  🟢 NEW POSITION OPENED at step 956! Total positions: 1
+  🟢 NEW POSITION OPENED at step 959! Total positions: 2
+  🟢 NEW POSITION OPENED at step 960! Total positions: 3
+  💼 Trade #117: unknown PnL=$0.07
+  💼 Trade #118: unknown PnL=$0.63
+  💼 Trade #119: unknown PnL=$0.49
+  💼 Trade #120: unknown PnL=$-0.52
+  💼 Trade #121: unknown PnL=$0.41
+  🟢 NEW POSITION OPENED at step 987! Total positions: 1
+  🟢 NEW POSITION OPENED at step 989! Total positions: 2
+  🟢 NEW POSITION OPENED at step 990! Total positions: 3
+2025-08-14 11:17:12,605 - root - INFO - 🧠 [CURIOSITY V2] Step 1000: extrinsic=0.2140, intrinsic=0.0112, total=0.2252
+  Step 1000/3000 - Portfolio: $392.87
+    Positions: 3 | Realized: $392.18 | Unrealized: $0.04
+    [QUALITY FILTER] Entry rejected: decision=2, quality=0.000 < 0.4
+    [ENV STATE] Positions: 3, Portfolio: $392.22
+  💼 Trade #122: unknown PnL=$-0.07
+  💼 Trade #123: unknown PnL=$0.31
+  💼 Trade #124: unknown PnL=$0.14
+  💼 Trade #125: unknown PnL=$0.17
+  🟢 NEW POSITION OPENED at step 1015! Total positions: 1
+  🟢 NEW POSITION OPENED at step 1019! Total positions: 2
+  🟢 NEW POSITION OPENED at step 1027! Total positions: 3
+  💼 Trade #126: unknown PnL=$0.30
+  💼 Trade #127: unknown PnL=$-0.10
+  💼 Trade #128: unknown PnL=$0.02
+  🟢 NEW POSITION OPENED at step 1044! Total positions: 1
+  🟢 NEW POSITION OPENED at step 1048! Total positions: 2
+  🟢 NEW POSITION OPENED at step 1052! Total positions: 3
+  💼 Trade #129: unknown PnL=$0.12
+  💼 Trade #130: unknown PnL=$0.50
+  💼 Trade #131: unknown PnL=$0.78
+  🟢 NEW POSITION OPENED at step 1072! Total positions: 1
+  🟢 NEW POSITION OPENED at step 1074! Total positions: 2
+  🟢 NEW POSITION OPENED at step 1083! Total positions: 3
+  💼 Trade #132: unknown PnL=$-0.55
+  💼 Trade #133: unknown PnL=$-0.61
+  💼 Trade #134: unknown PnL=$-0.20
+  🟢 NEW POSITION OPENED at step 1101! Total positions: 1
+  🟢 NEW POSITION OPENED at step 1104! Total positions: 2
+  🟢 NEW POSITION OPENED at step 1105! Total positions: 3
+  💼 Trade #135: unknown PnL=$-1.13
+  💼 Trade #136: unknown PnL=$-0.44
+  💼 Trade #137: unknown PnL=$-0.26
+  🟢 NEW POSITION OPENED at step 1129! Total positions: 1
+  🟢 NEW POSITION OPENED at step 1130! Total positions: 2
+  🟢 NEW POSITION OPENED at step 1135! Total positions: 3
+  💼 Trade #138: unknown PnL=$-0.69
+  💼 Trade #139: unknown PnL=$-0.30
+  💼 Trade #140: unknown PnL=$-0.48
+  🟢 NEW POSITION OPENED at step 1157! Total positions: 1
+  🟢 NEW POSITION OPENED at step 1158! Total positions: 2
+  🟢 NEW POSITION OPENED at step 1160! Total positions: 3
+  💼 Trade #141: unknown PnL=$0.17
+  💼 Trade #142: unknown PnL=$0.82
+  💼 Trade #143: unknown PnL=$0.27
+  🟢 NEW POSITION OPENED at step 1184! Total positions: 1
+  🟢 NEW POSITION OPENED at step 1185! Total positions: 2
+  🟢 NEW POSITION OPENED at step 1187! Total positions: 3
+  💼 Trade #144: unknown PnL=$-0.05
+  💼 Trade #145: unknown PnL=$0.21
+  💼 Trade #146: unknown PnL=$-0.10
+  💼 Trade #147: unknown PnL=$0.22
+  🟢 NEW POSITION OPENED at step 1212! Total positions: 1
+  🟢 NEW POSITION OPENED at step 1216! Total positions: 2
+  🟢 NEW POSITION OPENED at step 1218! Total positions: 3
+  💼 Trade #148: short PnL=$55.62
+  💼 Trade #149: short PnL=$83.94
+  💼 Trade #150: short PnL=$55.66
+  🟢 NEW POSITION OPENED at step 1236! Total positions: 1
+  🟢 NEW POSITION OPENED at step 1240! Total positions: 2
+  🟢 NEW POSITION OPENED at step 1242! Total positions: 3
+  💼 Trade #151: unknown PnL=$-0.26
+  💼 Trade #152: unknown PnL=$0.26
+  💼 Trade #153: unknown PnL=$-0.26
+  💼 Trade #154: unknown PnL=$-0.56
+  💼 Trade #155: unknown PnL=$0.28
+  🟢 NEW POSITION OPENED at step 1266! Total positions: 1
+  🟢 NEW POSITION OPENED at step 1267! Total positions: 2
+  🟢 NEW POSITION OPENED at step 1268! Total positions: 3
+  💼 Trade #156: unknown PnL=$-0.09
+  💼 Trade #157: unknown PnL=$0.26
+  💼 Trade #158: unknown PnL=$-0.27
+  💼 Trade #159: unknown PnL=$0.14
+  💼 Trade #160: unknown PnL=$-0.20
+  🟢 NEW POSITION OPENED at step 1295! Total positions: 1
+  🟢 NEW POSITION OPENED at step 1296! Total positions: 2
+  🟢 NEW POSITION OPENED at step 1298! Total positions: 3
+  💼 Trade #161: unknown PnL=$-0.45
+  💼 Trade #162: unknown PnL=$-0.14
+  💼 Trade #163: unknown PnL=$0.34
+  💼 Trade #164: unknown PnL=$0.76
+  🟢 NEW POSITION OPENED at step 1326! Total positions: 1
+  🟢 NEW POSITION OPENED at step 1327! Total positions: 2
+  🟢 NEW POSITION OPENED at step 1330! Total positions: 3
+  💼 Trade #165: unknown PnL=$-0.66
+  💼 Trade #166: unknown PnL=$-0.43
+  💼 Trade #167: unknown PnL=$-0.58
+  💼 Trade #168: unknown PnL=$0.18
+  🟢 NEW POSITION OPENED at step 1354! Total positions: 1
+  🟢 NEW POSITION OPENED at step 1355! Total positions: 2
+  🟢 NEW POSITION OPENED at step 1356! Total positions: 3
+  💼 Trade #169: unknown PnL=$-0.57
+  💼 Trade #170: unknown PnL=$0.04
+  💼 Trade #171: unknown PnL=$0.31
+  🟢 NEW POSITION OPENED at step 1385! Total positions: 1
+  🟢 NEW POSITION OPENED at step 1389! Total positions: 2
+  🟢 NEW POSITION OPENED at step 1398! Total positions: 3
+  💼 Trade #172: unknown PnL=$0.52
+  💼 Trade #173: unknown PnL=$0.05
+  💼 Trade #174: unknown PnL=$0.67
+  🟢 NEW POSITION OPENED at step 1412! Total positions: 1
+  🟢 NEW POSITION OPENED at step 1413! Total positions: 2
+  🟢 NEW POSITION OPENED at step 1420! Total positions: 3
+  💼 Trade #175: unknown PnL=$0.24
+  💼 Trade #176: unknown PnL=$-0.29
+  💼 Trade #177: unknown PnL=$-0.13
+  🟢 NEW POSITION OPENED at step 1439! Total positions: 1
+  🟢 NEW POSITION OPENED at step 1440! Total positions: 2
+  🟢 NEW POSITION OPENED at step 1443! Total positions: 3
+  💼 Trade #178: unknown PnL=$-0.07
+  💼 Trade #179: unknown PnL=$-0.46
+  💼 Trade #180: unknown PnL=$-0.60
+  🟢 NEW POSITION OPENED at step 1466! Total positions: 1
+  🟢 NEW POSITION OPENED at step 1468! Total positions: 2
+  🟢 NEW POSITION OPENED at step 1469! Total positions: 3
+  💼 Trade #181: unknown PnL=$-0.57
+  💼 Trade #182: unknown PnL=$0.06
+  💼 Trade #183: unknown PnL=$-0.03
+  🟢 NEW POSITION OPENED at step 1499! Total positions: 1
+    [QUALITY FILTER] Entry rejected: decision=2, quality=0.000 < 0.4
+    [ENV STATE] Positions: 1, Portfolio: $583.71
+  🟢 NEW POSITION OPENED at step 1502! Total positions: 2
+  🟢 NEW POSITION OPENED at step 1506! Total positions: 3
+  💼 Trade #184: short PnL=$21.71
+  💼 Trade #185: unknown PnL=$21.70
+  💼 Trade #186: unknown PnL=$33.86
+  💼 Trade #187: unknown PnL=$0.31
+  🟢 NEW POSITION OPENED at step 1527! Total positions: 1
+  🟢 NEW POSITION OPENED at step 1531! Total positions: 2
+  🟢 NEW POSITION OPENED at step 1533! Total positions: 3
+  💼 Trade #188: unknown PnL=$-0.55
+  💼 Trade #189: unknown PnL=$0.10
+  💼 Trade #190: unknown PnL=$-0.02
+  🟢 NEW POSITION OPENED at step 1555! Total positions: 1
+  🟢 NEW POSITION OPENED at step 1557! Total positions: 2
+  🟢 NEW POSITION OPENED at step 1561! Total positions: 3
+  💼 Trade #191: unknown PnL=$0.49
+  💼 Trade #192: unknown PnL=$0.37
+  💼 Trade #193: unknown PnL=$-0.20
+  🟢 NEW POSITION OPENED at step 1582! Total positions: 1
+  🟢 NEW POSITION OPENED at step 1586! Total positions: 2
+  🟢 NEW POSITION OPENED at step 1589! Total positions: 3
+  💼 Trade #194: unknown PnL=$0.07
+  💼 Trade #195: unknown PnL=$-0.63
+  💼 Trade #196: unknown PnL=$-0.09
+  🟢 NEW POSITION OPENED at step 1611! Total positions: 1
+  🟢 NEW POSITION OPENED at step 1622! Total positions: 2
+  🟢 NEW POSITION OPENED at step 1624! Total positions: 3
+  💼 Trade #197: unknown PnL=$-0.44
+  💼 Trade #198: unknown PnL=$-0.72
+  💼 Trade #199: unknown PnL=$-0.10
+  💼 Trade #200: unknown PnL=$-0.29
+  💼 Trade #201: unknown PnL=$0.47
+  💼 Trade #202: unknown PnL=$-0.07
+  🟢 NEW POSITION OPENED at step 1642! Total positions: 1
+  🟢 NEW POSITION OPENED at step 1643! Total positions: 2
+  🟢 NEW POSITION OPENED at step 1648! Total positions: 3
+  💼 Trade #203: unknown PnL=$0.28
+  💼 Trade #204: unknown PnL=$-0.15
+  💼 Trade #205: unknown PnL=$0.10
+  🟢 NEW POSITION OPENED at step 1670! Total positions: 1
+  🟢 NEW POSITION OPENED at step 1673! Total positions: 2
+  🟢 NEW POSITION OPENED at step 1675! Total positions: 3
+  💼 Trade #206: unknown PnL=$0.37
+  💼 Trade #207: unknown PnL=$0.70
+  💼 Trade #208: unknown PnL=$0.95
+  🟢 NEW POSITION OPENED at step 1697! Total positions: 1
+  🟢 NEW POSITION OPENED at step 1702! Total positions: 2
+  🟢 NEW POSITION OPENED at step 1703! Total positions: 3
+  💼 Trade #209: unknown PnL=$0.32
+  💼 Trade #210: unknown PnL=$0.38
+  💼 Trade #211: unknown PnL=$-0.32
+  🟢 NEW POSITION OPENED at step 1725! Total positions: 1
+  🟢 NEW POSITION OPENED at step 1727! Total positions: 2
+  🟢 NEW POSITION OPENED at step 1728! Total positions: 3
+  💼 Trade #212: unknown PnL=$0.65
+  💼 Trade #213: unknown PnL=$0.60
+  💼 Trade #214: unknown PnL=$1.36
+  🟢 NEW POSITION OPENED at step 1752! Total positions: 1
+  🟢 NEW POSITION OPENED at step 1753! Total positions: 2
+  🟢 NEW POSITION OPENED at step 1756! Total positions: 3
+  💼 Trade #215: unknown PnL=$0.21
+  💼 Trade #216: unknown PnL=$-0.01
+  💼 Trade #217: unknown PnL=$0.08
+  🟢 NEW POSITION OPENED at step 1779! Total positions: 1
+  🟢 NEW POSITION OPENED at step 1781! Total positions: 2
+  🟢 NEW POSITION OPENED at step 1784! Total positions: 3
+  💼 Trade #218: unknown PnL=$0.32
+  💼 Trade #219: unknown PnL=$-0.06
+  💼 Trade #220: unknown PnL=$0.22
+  🟢 NEW POSITION OPENED at step 1807! Total positions: 1
+  💼 Trade #221: short PnL=$-28.56
+  🟢 NEW POSITION OPENED at step 1812! Total positions: 2
+  🟢 NEW POSITION OPENED at step 1813! Total positions: 3
+  💼 Trade #222: unknown PnL=$-0.17
+  💼 Trade #223: unknown PnL=$-0.21
+  💼 Trade #224: unknown PnL=$0.05
+  🟢 NEW POSITION OPENED at step 1834! Total positions: 1
+  🟢 NEW POSITION OPENED at step 1838! Total positions: 2
+  🟢 NEW POSITION OPENED at step 1839! Total positions: 3
+  💼 Trade #225: unknown PnL=$0.18
+  💼 Trade #226: unknown PnL=$-0.17
+  💼 Trade #227: unknown PnL=$0.14
+  💼 Trade #228: unknown PnL=$-0.15
+  🟢 NEW POSITION OPENED at step 1862! Total positions: 1
+  🟢 NEW POSITION OPENED at step 1863! Total positions: 2
+  🟢 NEW POSITION OPENED at step 1868! Total positions: 3
+  💼 Trade #229: unknown PnL=$0.11
+  💼 Trade #230: unknown PnL=$-0.09
+  💼 Trade #231: unknown PnL=$0.32
+  🟢 NEW POSITION OPENED at step 1889! Total positions: 1
+  🟢 NEW POSITION OPENED at step 1892! Total positions: 2
+  🟢 NEW POSITION OPENED at step 1893! Total positions: 3
+  💼 Trade #232: unknown PnL=$0.18
+  💼 Trade #233: unknown PnL=$0.62
+  💼 Trade #234: unknown PnL=$0.18
+  🟢 NEW POSITION OPENED at step 1918! Total positions: 1
+  🟢 NEW POSITION OPENED at step 1924! Total positions: 2
+  🟢 NEW POSITION OPENED at step 1927! Total positions: 3
+  💼 Trade #235: unknown PnL=$0.55
+  💼 Trade #236: unknown PnL=$0.78
+  💼 Trade #237: unknown PnL=$0.25
+  🟢 NEW POSITION OPENED at step 1945! Total positions: 1
+  🟢 NEW POSITION OPENED at step 1949! Total positions: 2
+  🟢 NEW POSITION OPENED at step 1950! Total positions: 3
+  💼 Trade #238: unknown PnL=$0.38
+  💼 Trade #239: unknown PnL=$-0.04
+  💼 Trade #240: unknown PnL=$-0.64
+  🟢 NEW POSITION OPENED at step 1972! Total positions: 1
+  🟢 NEW POSITION OPENED at step 1974! Total positions: 2
+  🟢 NEW POSITION OPENED at step 1978! Total positions: 3
+  💼 Trade #241: unknown PnL=$-0.15
+  💼 Trade #242: unknown PnL=$-0.45
+  💼 Trade #243: unknown PnL=$0.50
+2025-08-14 11:17:24,506 - root - INFO - 🧠 [CURIOSITY V2] Step 2000: extrinsic=0.1410, intrinsic=0.0018, total=0.1428
+  💼 Trade #244: unknown PnL=$1.13
+  Step 2000/3000 - Portfolio: $640.66
+    Positions: 0 | Realized: $640.66 | Unrealized: $0.00
+✅ Episódio 2: $500.00 → $640.66 (+28.13%)
+   Trades executados: 244
+   Win Rate: 50.0%
+
+================================================================================
+📊 RESULTADOS CONSOLIDADOS - 2 EPISÓDIOS V7INTUITION
+================================================================================
+💵 Portfolio Inicial por episódio: $500.00
+📈 Retorno Médio: +13.56%
+📊 Retorno Mediano: +13.56%
+📈 Melhor Episódio: +28.13%
+📉 Pior Episódio: -1.02%
+📊 Desvio Padrão: 14.57%
+🎯 Episódios Lucrativos: 1/2 (50.0%)
+
+📋 DETALHES POR EPISÓDIO:
+   🔴 Episódio 1: $500.00 → $494.92 (-1.02%) - 261 trades
+   🟢 Episódio 2: $500.00 → $640.66 (+28.13%) - 244 trades
+
+📊 ANÁLISE CONSOLIDADA DE TRADES:
+📊 Total de Trades (todos episódios): 505
+🎯 Win Rate Global: 51.5%
+💚 Trades Lucrativos: 260
+❌ Trades Perdedores: 245
+💰 Lucro Médio por Trade: $2.29
+📉 Perda Média por Trade: $-1.87
+💵 PnL Total (todos episódios): $135.58
+⚖️ Profit Factor Global: 1.30
+📈 Frequência de Trading: 8.42% dos steps
+📈 Trades por Episódio: 252.5
+
+🎮 ANÁLISE DAS AÇÕES V7INTUITION (11D):
+   📊 ENTRY HEAD (só usa action[0] e [1]):
+   ⚪ HOLD: 13.7%
+   🟢 LONG: 5.0%
+   🔴 SHORT: 81.3%
+   ⭐ Entry Quality Média: 0.435
+   📊 MANAGEMENT HEAD (action[2-10] - gates antigos sem uso):
+   🎯 Risk Appetite: 0.217
+   ⏱️ Temporal Signal: -0.562
+   📈 Market Bias: -0.251
+   🛑 SL Adjusts: -0.06, -0.95, -1.98
+   🎯 TP Adjusts: 0.61, -0.42, 1.53
+
+📉 Max Drawdown (último episódio): -32.21%
+
+🎖️ AVALIAÇÃO FINAL CONSOLIDADA (2 EPISÓDIOS):
+   🟢 EXCELENTE
+   Retorno Médio: +13.56% (σ=14.57%)
+   Consistência: ⚠️ MODERADAMENTE CONSISTENTE (1/2)
+   Melhor/Pior: +28.13% / -1.02%
+   Total Trades: 505 (Win Rate: 51.5%)
+   Trades/Episódio: 252.5
+   Sharpe Ratio: 0.93
+
+💡 RECOMENDAÇÃO:
+   ✅ Modelo promissor, considere mais testes
+
+✅ TESTE V7INTUITION CONCLUÍDO - 11:17:24
+2025-08-14 11:17:25,090 - ConvergenceLogger - INFO - [JSONL] RealTimeLogger fechado com sucesso
+🚀 INICIANDO TESTE V7INTUITION - 11:16:50
+💰 TESTE V7INTUITION - MODELOS DAYTRADER
+============================================================
+💵 Portfolio Inicial: $500.0
+📊 Base Lot: 0.02
+📊 Max Lot: 0.03
+🧠 Modo: INFERÊNCIA (não-determinístico)
+============================================================
+[LOCK] Fechando RealTimeLogger - Session: 20250814_111652_50252_59652e2b
+[CHECK] RealTimeLogger fechado com sucesso

@@ -1,0 +1,27 @@
+
+🧪 RELATÓRIO DE TESTES V11 HÍBRIDA
+═══════════════════════════════════════════════════════════
+
+📅 Data: 2025-08-22 02:00:29
+🖥️ Device: cuda
+📊 Taxa de Sucesso: 0.0%
+🎯 Recomendação: NÃO_RECOMENDADO
+
+RESULTADOS DETALHADOS:
+═══════════════════════════════════════════════════════════
+
+ARCHITECTURE: ❌ FALHOU
+  Erro: 'numpy.ndarray' object has no attribute 'values'
+
+FORWARD_PASS: ❌ FALHOU
+  Erro: 'numpy.ndarray' object has no attribute 'values'
+
+GRADIENT_FLOW: ❌ FALHOU
+  Erro: 'numpy.ndarray' object has no attribute 'values'
+
+TRAINING_STEP: ❌ FALHOU
+  Erro: 'numpy.ndarray' object has no attribute 'values'
+
+MEMORY_EFFICIENCY: ❌ FALHOU
+  Erro: 'numpy.ndarray' object has no attribute 'values'
+

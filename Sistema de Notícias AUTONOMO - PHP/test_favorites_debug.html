@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Debug Favoritos</title>
+    <style>
+        body {
+            font-family: monospace;
+            padding: 20px;
+            background: #1a1a1a;
+            color: #FFB580;
+        }
+        pre {
+            background: #2a2a2a;
+            padding: 15px;
+            border-radius: 8px;
+            overflow-x: auto;
+        }
+        button {
+            background: #FFB580;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #FF8C42;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔍 Debug Favoritos</h1>
+
+    <button onclick="showFavorites()">Ver Favoritos</button>
+    <button onclick="clearFavorites()">Limpar Favoritos</button>
+    <button onclick="testPreview()">Testar Preview</button>
+
+    <div id="output"></div>
+
+    <script>
+        function showFavorites() {
+            const favorites = localStorage.getItem('radio_favorites_v2');
+            const output = document.getElementById('output');
+
+            if (!favorites) {
+                output.innerHTML = '<h2>Nenhum favorito encontrado</h2>';
+                return;
+            }
+
+            const data = JSON.parse(favorites);
+            output.innerHTML = `
+                <h2>📊 Total: ${data.length} músicas</h2>
+                <pre>${JSON.stringify(data, null, 2)}</pre>
+            `;
+        }
+
+        function clearFavorites() {
+            if (confirm('Limpar todos os favoritos?')) {
+                localStorage.removeItem('radio_favorites_v2');
+                alert('Favoritos removidos!');
+                showFavorites();
+            }
+        }
+
+        async function testPreview() {
+            const artist = prompt('Nome do artista:', 'Henrique e Juliano');
+            const title = prompt('Nome da música:', 'Flor e o Beija-Flor');
+
+            if (!artist || !title) return;
+
+            const url = `https://www.radioentrerios.com.br/wp-content/noticias/radio_metadata_api.php?action=preview&artist=${encodeURIComponent(artist)}&title=${encodeURIComponent(title)}`;
+
+            console.log('Testando:', url);
+
+            try {
+                const response = await fetch(url);
+                const result = await response.json();
+
+                document.getElementById('output').innerHTML = `
+                    <h2>🎵 Resultado do Teste</h2>
+                    <pre>${JSON.stringify(result, null, 2)}</pre>
+                    ${result.preview_url ? `
+                    <h3>Testando reprodução:</h3>
+                    <audio controls src="${result.preview_url}"></audio>
+                    ` : ''}
+                `;
+            } catch (error) {
+                alert('Erro: ' + error.message);
+            }
+        }
+
+        // Auto-load ao abrir
+        window.onload = showFavorites;
+    </script>
+</body>
+</html>

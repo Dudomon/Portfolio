@@ -1,0 +1,266 @@
+{% extends "base.html" %}
+
+{% block title %}Import de Dados - Sistema CropLink{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col">
+            <h1 class="display-6">
+                <i class="fas fa-file-import text-success"></i>
+                Import de Dados ERP
+            </h1>
+            <p class="text-muted">Importação de dados de sistemas ERP externos para o sistema da fazenda</p>
+        </div>
+    </div>
+
+    <!-- Instruções -->
+    <div class="row mb-4">
+        <div class="col">
+            <div class="alert alert-info">
+                <h5><i class="fas fa-info-circle"></i> Como Funciona</h5>
+                <p class="mb-2">O sistema aceita dados em formato <strong>Excel (.xlsx, .xls)</strong> ou <strong>Texto (.txt, .csv)</strong> com estrutura padronizada.</p>
+                <p class="mb-0">Para garantir compatibilidade, baixe nosso modelo padrão e preencha com seus dados.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cards Principais -->
+    <div class="row">
+        <!-- Upload de Arquivo -->
+        <div class="col-lg-8 mb-4">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h6 class="mb-0">
+                        <i class="fas fa-cloud-upload-alt"></i> Upload de Arquivo
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{{ url_for('upload_dados') }}" enctype="multipart/form-data">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                        <div class="mb-4">
+                            <label for="arquivo" class="form-label">Selecione o arquivo de dados</label>
+                            <input type="file" class="form-control form-control-lg" id="arquivo" name="arquivo" 
+                                   accept=".xlsx,.xls,.txt,.csv" required>
+                            <div class="form-text">
+                                <strong>Formatos aceitos:</strong> .xlsx, .xls, .txt, .csv (Máximo 10MB)
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="confirmaModelo" required>
+                                <label class="form-check-label" for="confirmaModelo">
+                                    <strong>Confirmo que o arquivo segue o modelo padrão do sistema</strong>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-upload"></i> Importar Dados
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modelo e Instruções -->
+        <div class="col-lg-4 mb-4">
+            <div class="card shadow">
+                <div class="card-header bg-success text-white">
+                    <h6 class="mb-0">
+                        <i class="fas fa-download"></i> Modelo Padrão
+                    </h6>
+                </div>
+                <div class="card-body text-center">
+                    <i class="fas fa-file-alt fa-3x text-success mb-3"></i>
+                    <p class="mb-3">Baixe o modelo padrão com a estrutura correta para importação.</p>
+                    <a href="{{ url_for('download_template') }}" class="btn btn-success btn-sm">
+                        <i class="fas fa-download"></i> Baixar Modelo
+                    </a>
+                </div>
+            </div>
+
+            <!-- Status do Sistema -->
+            <div class="card shadow mt-3">
+                <div class="card-header bg-warning">
+                    <h6 class="mb-0">
+                        <i class="fas fa-exclamation-triangle"></i> Status do Sistema
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-warning mb-0">
+                        <i class="fas fa-tools"></i>
+                        <strong>Em Desenvolvimento</strong><br>
+                        O processamento automático dos dados está sendo implementado. Por enquanto, os arquivos são validados e armazenados para processamento manual.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dados Suportados -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow">
+                <div class="card-header">
+                    <h6 class="mb-0">
+                        <i class="fas fa-list"></i> Tipos de Dados Suportados
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6 col-lg-3 mb-3">
+                            <div class="border rounded p-3 h-100">
+                                <div class="text-center mb-2">
+                                    <i class="fas fa-box fa-2x text-primary"></i>
+                                </div>
+                                <h6 class="text-center">Insumos Gerais</h6>
+                                <small class="text-muted">
+                                    <strong>Campos:</strong> nome, tipo, quantidade, unidade, preço unitário, fornecedor, observações
+                                </small>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-lg-3 mb-3">
+                            <div class="border rounded p-3 h-100">
+                                <div class="text-center mb-2">
+                                    <i class="fas fa-users fa-2x text-success"></i>
+                                </div>
+                                <h6 class="text-center">Funcionários</h6>
+                                <small class="text-muted">
+                                    <strong>Campos:</strong> nome, cargo, salário, data de admissão, telefone, email
+                                </small>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-lg-3 mb-3">
+                            <div class="border rounded p-3 h-100">
+                                <div class="text-center mb-2">
+                                    <i class="fas fa-warehouse fa-2x text-warning"></i>
+                                </div>
+                                <h6 class="text-center">Silos</h6>
+                                <small class="text-muted">
+                                    <strong>Campos:</strong> nome, capacidade, localização, tipo de grão, observações
+                                </small>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-lg-3 mb-3">
+                            <div class="border rounded p-3 h-100">
+                                <div class="text-center mb-2">
+                                    <i class="fas fa-tractor fa-2x text-danger"></i>
+                                </div>
+                                <h6 class="text-center">Equipamentos</h6>
+                                <small class="text-muted">
+                                    <strong>Campos:</strong> nome, tipo, modelo, ano, valor, status, observações
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Instruções Técnicas -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card shadow">
+                <div class="card-header">
+                    <h6 class="mb-0">
+                        <i class="fas fa-cogs"></i> Instruções Técnicas
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6><i class="fas fa-file-excel text-success"></i> Arquivos Excel (.xlsx, .xls)</h6>
+                            <ul class="small">
+                                <li>Uma planilha para cada tipo de dado</li>
+                                <li>Primeira linha deve conter os cabeçalhos das colunas</li>
+                                <li>Dados a partir da segunda linha</li>
+                                <li>Campos obrigatórios devem ser preenchidos</li>
+                                <li>Formato de data: DD/MM/AAAA ou AAAA-MM-DD</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <h6><i class="fas fa-file-alt text-primary"></i> Arquivos Texto (.txt, .csv)</h6>
+                            <ul class="small">
+                                <li>Dados separados por vírgula (CSV) ou ponto e vírgula</li>
+                                <li>Uma categoria por arquivo ou separadas por comentários</li>
+                                <li>Linhas que começam com # são ignoradas (comentários)</li>
+                                <li>Codificação UTF-8 para caracteres especiais</li>
+                                <li>Valores com vírgula devem estar entre aspas</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="alert alert-light mt-3">
+                        <h6><i class="fas fa-question-circle"></i> Precisa de Ajuda?</h6>
+                        <p class="mb-0">
+                            <strong>Dica:</strong> Baixe o modelo padrão e use-o como base para seus dados. 
+                            Isso garante que a importação seja realizada sem erros.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Validação do arquivo antes do envio
+document.getElementById('arquivo').addEventListener('change', function(e) {
+    const arquivo = e.target.files[0];
+    if (arquivo) {
+        const tamanhoMB = arquivo.size / (1024 * 1024);
+        const extensao = arquivo.name.split('.').pop().toLowerCase();
+        
+        if (tamanhoMB > 10) {
+            alert('Arquivo muito grande! O tamanho máximo é 10MB.');
+            e.target.value = '';
+            return;
+        }
+        
+        const extensoesPermitidas = ['xlsx', 'xls', 'txt', 'csv'];
+        if (!extensoesPermitidas.includes(extensao)) {
+            alert('Formato não suportado! Use: .xlsx, .xls, .txt ou .csv');
+            e.target.value = '';
+            return;
+        }
+        
+        // Exibir informações do arquivo
+        const info = `
+            Arquivo selecionado: ${arquivo.name}
+            Tamanho: ${tamanhoMB.toFixed(2)} MB
+            Tipo: ${extensao.toUpperCase()}
+        `;
+        console.log(info);
+    }
+});
+
+// Confirmação antes do envio
+document.querySelector('form').addEventListener('submit', function(e) {
+    const arquivo = document.getElementById('arquivo').files[0];
+    if (!arquivo) {
+        e.preventDefault();
+        alert('Selecione um arquivo para importar!');
+        return;
+    }
+    
+    if (!document.getElementById('confirmaModelo').checked) {
+        e.preventDefault();
+        alert('Confirme que o arquivo segue o modelo padrão!');
+        return;
+    }
+    
+    const confirma = confirm(`Confirma a importação do arquivo "${arquivo.name}"?`);
+    if (!confirma) {
+        e.preventDefault();
+    }
+});
+</script>
+{% endblock %}

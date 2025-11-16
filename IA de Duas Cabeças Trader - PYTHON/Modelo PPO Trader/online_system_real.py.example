@@ -1,0 +1,27 @@
+#!/usr/bin/env python3
+"""
+🔐 EXEMPLO DE CONFIGURAÇÃO DO SISTEMA ONLINE
+===========================================
+
+⚠️ ESTE É UM ARQUIVO DE EXEMPLO!
+Copie para online_system_real.py e configure com suas credenciais reais.
+"""
+
+import requests
+import hashlib
+
+# 🌐 CONFIGURAÇÕES DO BIN PÚBLICO (EXEMPLO)
+ONLINE_API_BASE = "https://api.jsonbin.io/v3/b"
+ONLINE_API_KEY = "SEU_API_KEY_AQUI"  # ⚠️ Substitua pela sua API key do JSONBin
+USERS_BIN_ID = "SEU_BIN_ID_AQUI"     # ⚠️ Substitua pelo seu Bin ID
+
+def hash_password(password: str) -> str:
+    """Cria hash SHA-256 da senha"""
+    return hashlib.sha256(password.encode()).hexdigest()
+
+# ⚠️ INSTRUÇÕES:
+# 1. Copie este arquivo para: online_system_real.py
+# 2. Obtenha uma API Key em: https://jsonbin.io/
+# 3. Crie um Bin para armazenar usuários
+# 4. Substitua ONLINE_API_KEY e USERS_BIN_ID acima
+# 5. NUNCA commite o arquivo online_system_real.py no git!

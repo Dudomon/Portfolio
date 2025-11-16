@@ -1,0 +1,28 @@
+
+GOLD HYBRID DATASET V2 - ULTRA-REALISTA
+======================================
+Criado em: 2025-09-11 20:03:40
+Símbolo: GC=F
+Timeframe: 1 minuto
+Período: 2022-09-13 00:00:00-04:00 → 2025-09-11 23:59:00-04:00
+
+ESTATÍSTICAS:
+- Total de barras: 1,085,760
+- Dados reais (interpolados): 0
+- Dados sintéticos V2: 1,085,760
+- Preço inicial: $1720.49
+- Preço final: $3672.50
+- Variação total: +113.46%
+- Volume médio: 6
+
+QUALIDADE V2:
+- Algoritmo: Brownian Bridge + Volatilidade horária
+- Interpolação: 5m→1m realista
+- Formato: XXXX.XX garantido
+- Indicadores: Premium otimizados
+- Diversidade esperada: >80%
+
+ARQUIVOS:
+- CSV: data\GC=F_HYBRID_V2_3Y_1MIN_20250911_200306.csv
+- Pickle: data_cache\GC=F_HYBRID_V2_3Y_1MIN_20250911_200306.pkl
+- Metadata: metadata\GC=F_HYBRID_V2_3Y_1MIN_20250911_200306_info.txt

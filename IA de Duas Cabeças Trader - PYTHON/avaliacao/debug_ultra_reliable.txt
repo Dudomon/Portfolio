@@ -1,0 +1,4 @@
+ANALYZE DEBUG - Data length: 9166
+ANALYZE DEBUG - All portfolio raw: 9166 entries
+ANALYZE DEBUG - Recent portfolio raw: 50 entries
+ANALYZE DEBUG - Sample portfolio values: [461.1575641636464, 462.3509697953509, 464.75292576494485]

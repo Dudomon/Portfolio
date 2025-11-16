@@ -1,0 +1,343 @@
+{% extends "base.html" %}
+
+{% block title %}Insumos - CropLink{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col">
+            <h1 class="display-6">
+                <i class="fas fa-boxes text-success"></i>
+                Insumos Gerais - Estoque
+            </h1>
+            <p class="text-muted">Controle de estoque geral da fazenda (materiais, ferramentas, combustível, etc.)</p>
+        </div>
+        <div class="col-auto">
+            <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalAdicionarInsumo">
+                <i class="fas fa-plus"></i> Adicionar Insumo
+            </button>
+        </div>
+    </div>
+
+    <!-- Pesquisa -->
+    <div class="card shadow mb-4">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="input-group">
+                        <span class="input-group-text">
+                            <i class="fas fa-search"></i>
+                        </span>
+                        <input type="text" class="form-control" id="pesquisaInsumo" placeholder="Pesquisar por nome do insumo...">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <select class="form-select" id="filtroStatus">
+                        <option value="">Todos os Status</option>
+                        <option value="baixo">Baixo Estoque</option>
+                        <option value="medio">Médio Estoque</option>
+                        <option value="ok">Estoque OK</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Lista de Insumos -->
+    <div class="card shadow">
+        <div class="card-body">
+            {% if insumos %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead class="table-success">
+                            <tr>
+                                <th>Nome</th>
+                                <th>Quantidade</th>
+                                <th>Unidade</th>
+                                <th>Status</th>
+                                <th>Previsão</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for insumo in insumos %}
+                            <tr>
+                                <td>{{ insumo.nome }}</td>
+                                <td>
+                                    <span class="{% if insumo.quantidade < 10 %}text-danger{% elif insumo.quantidade < 50 %}text-warning{% else %}text-success{% endif %}">
+                                        {{ insumo.quantidade }}
+                                    </span>
+                                </td>
+                                <td>{{ insumo.unidade }}</td>
+                                <td>
+                                    {% if insumo.quantidade < 10 %}
+                                        <span class="badge bg-danger">Baixo</span>
+                                    {% elif insumo.quantidade < 50 %}
+                                        <span class="badge bg-warning">Médio</span>
+                                    {% else %}
+                                        <span class="badge bg-success">OK</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% set duracao = insumo.prever_duracao_estoque() %}
+                                    {% if duracao == -1 %}
+                                        <small class="text-muted">Sem histórico</small>
+                                    {% elif duracao == 0 %}
+                                        <span class="text-danger">Esgotado</span>
+                                    {% elif duracao <= 7 %}
+                                        <span class="text-danger">{{ duracao }} dias</span>
+                                    {% elif duracao <= 30 %}
+                                        <span class="text-warning">{{ duracao }} dias</span>
+                                    {% else %}
+                                        <span class="text-success">{{ duracao }} dias</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <div class="btn-group" role="group">
+                                        <button class="btn btn-sm btn-primary" onclick="movimentarInsumo({{ insumo.id }}, '{{ insumo.nome }}')">
+                                            <i class="fas fa-exchange-alt"></i> Movimentar
+                                        </button>
+                                        <button class="btn btn-sm btn-warning" onclick="editarInsumo({{ insumo.id }}, '{{ insumo.nome }}', {{ insumo.quantidade }}, '{{ insumo.unidade }}')">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-danger" onclick="excluirInsumo({{ insumo.id }}, '{{ insumo.nome }}')">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="text-center py-5">
+                    <i class="fas fa-boxes fa-3x text-muted mb-3"></i>
+                    <p class="text-muted">Nenhum insumo cadastrado ainda.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Modal Adicionar Insumo -->
+<div class="modal fade" id="modalAdicionarInsumo" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Adicionar Insumo</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="POST" action="{{ url_for('adicionar_insumo') }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="nome" class="form-label">Nome do Material/Insumo</label>
+                        <input type="text" class="form-control" id="nome" name="nome" 
+                               placeholder="Ex: Combustível diesel, Ferramentas, Peças, Material de escritório..." required>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-8">
+                            <label for="quantidade" class="form-label">Quantidade Inicial</label>
+                            <input type="number" class="form-control" id="quantidade" name="quantidade" step="0.01" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="unidade" class="form-label">Unidade</label>
+                            <select class="form-select" id="unidade" name="unidade" required>
+                                <option value="un">un (Unidades)</option>
+                                <option value="kg">kg (Quilos)</option>
+                                <option value="L">L (Litros)</option>
+                                <option value="ton">ton (Toneladas)</option>
+                                <option value="m">m (Metros)</option>
+                                <option value="m²">m² (Metro quadrado)</option>
+                                <option value="m³">m³ (Metro cúbico)</option>
+                                <option value="cx">cx (Caixas)</option>
+                                <option value="pc">pc (Peças)</option>
+                                <option value="gl">gl (Galões)</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-success">Adicionar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Movimentar Insumo -->
+<div class="modal fade" id="modalMovimentar" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Movimentar Insumo</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="formMovimentar" method="POST">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Insumo</label>
+                        <input type="text" class="form-control" id="nomeInsumoMovimentar" readonly>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label for="tipo" class="form-label">Tipo de Movimentação</label>
+                            <select class="form-select" id="tipo" name="tipo" required>
+                                <option value="Entrada">Entrada</option>
+                                <option value="Saída">Saída</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="quantidadeMovimentar" class="form-label">Quantidade</label>
+                            <input type="number" class="form-control" id="quantidadeMovimentar" name="quantidade" step="0.01" required>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="observacao" class="form-label">Observação</label>
+                        <textarea class="form-control" id="observacao" name="observacao" rows="3"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Movimentar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Editar Insumo -->
+<div class="modal fade" id="modalEditarInsumo" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Editar Insumo</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="formEditar" method="POST">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="nomeEditar" class="form-label">Nome do Material/Insumo</label>
+                        <input type="text" class="form-control" id="nomeEditar" name="nome" required>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-8">
+                            <label for="quantidadeEditar" class="form-label">Quantidade</label>
+                            <input type="number" class="form-control" id="quantidadeEditar" name="quantidade" step="0.01" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="unidadeEditar" class="form-label">Unidade</label>
+                            <select class="form-select" id="unidadeEditar" name="unidade" required>
+                                <option value="un">un (Unidades)</option>
+                                <option value="kg">kg (Quilos)</option>
+                                <option value="L">L (Litros)</option>
+                                <option value="ton">ton (Toneladas)</option>
+                                <option value="m">m (Metros)</option>
+                                <option value="m²">m² (Metro quadrado)</option>
+                                <option value="m³">m³ (Metro cúbico)</option>
+                                <option value="cx">cx (Caixas)</option>
+                                <option value="pc">pc (Peças)</option>
+                                <option value="gl">gl (Galões)</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-warning">Atualizar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Confirmar Exclusão -->
+<div class="modal fade" id="modalExcluirInsumo" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title">Confirmar Exclusão</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="formExcluir" method="POST">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                <div class="modal-body">
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <strong>Atenção!</strong> Esta ação não pode ser desfeita.
+                    </div>
+                    <p>Deseja realmente excluir o insumo <strong id="nomeInsumoExcluir"></strong>?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-danger">Sim, Excluir</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function movimentarInsumo(id, nome) {
+    document.getElementById('nomeInsumoMovimentar').value = nome;
+    document.getElementById('formMovimentar').action = '/insumos/movimentar/' + id;
+    new bootstrap.Modal(document.getElementById('modalMovimentar')).show();
+}
+
+function editarInsumo(id, nome, quantidade, unidade) {
+    document.getElementById('nomeEditar').value = nome;
+    document.getElementById('quantidadeEditar').value = quantidade;
+    document.getElementById('unidadeEditar').value = unidade;
+    document.getElementById('formEditar').action = '/insumos/editar/' + id;
+    new bootstrap.Modal(document.getElementById('modalEditarInsumo')).show();
+}
+
+function excluirInsumo(id, nome) {
+    document.getElementById('nomeInsumoExcluir').textContent = nome;
+    document.getElementById('formExcluir').action = '/insumos/excluir/' + id;
+    new bootstrap.Modal(document.getElementById('modalExcluirInsumo')).show();
+}
+
+// Filtros de pesquisa e status
+document.getElementById('pesquisaInsumo').addEventListener('input', filtrarInsumos);
+document.getElementById('filtroStatus').addEventListener('change', filtrarInsumos);
+
+function filtrarInsumos() {
+    const pesquisa = document.getElementById('pesquisaInsumo').value.toLowerCase();
+    const status = document.getElementById('filtroStatus').value;
+    const linhas = document.querySelectorAll('tbody tr');
+    
+    linhas.forEach(linha => {
+        const nome = linha.cells[0].textContent.toLowerCase();
+        const statusBadge = linha.querySelector('.badge');
+        let statusAtual = '';
+        
+        if (statusBadge) {
+            if (statusBadge.classList.contains('bg-danger')) {
+                statusAtual = 'baixo';
+            } else if (statusBadge.classList.contains('bg-warning')) {
+                statusAtual = 'medio';
+            } else if (statusBadge.classList.contains('bg-success')) {
+                statusAtual = 'ok';
+            }
+        }
+        
+        const matchPesquisa = nome.includes(pesquisa);
+        const matchStatus = status === '' || statusAtual === status;
+        
+        if (matchPesquisa && matchStatus) {
+            linha.style.display = '';
+        } else {
+            linha.style.display = 'none';
+        }
+    });
+}
+</script>
+{% endblock %}

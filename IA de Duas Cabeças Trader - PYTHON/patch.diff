@@ -1,0 +1,30 @@
+*** Begin Patch
+*** Update File: cherry.py
+@@
+-                metrics_callback = MetricsCallback(env=env, log_freq=2000, verbose=1)
+-                progress_callback = ProgressBarCallback(total_timesteps=current_phase.timesteps, verbose=1, training_env=env)
+-            #  MONITORAR USO DE MEMÓRIA/VRAM DURANTE O TREINAMENTO
+-            memory_watchdog = MemoryWatchdogCallback(
+-                log_freq=10000,
+-                warn_gpu_fraction=0.80,
+-                warn_ram_gb=28.0,
+-                auto_release_cuda=True,
+-                auto_gc=True,
+-                verbose=1,
+-            )
++                metrics_callback = MetricsCallback(env=env, log_freq=2000, verbose=1)
++                progress_callback = ProgressBarCallback(
++                    total_timesteps=current_phase.timesteps,
++                    verbose=1,
++                    training_env=env,
++                )
++                #  MONITORAR USO DE MEMÓRIA/VRAM DURANTE O TREINAMENTO
++                memory_watchdog = MemoryWatchdogCallback(
++                    log_freq=10000,
++                    warn_gpu_fraction=0.80,
++                    warn_ram_gb=28.0,
++                    auto_release_cuda=True,
++                    auto_gc=True,
++                    verbose=1,
++                )
+*** End Patch

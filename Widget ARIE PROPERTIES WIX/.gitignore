@@ -1,0 +1,74 @@
+# ======================================
+# Widget ARIE PROPERTIES - .gitignore
+# ======================================
+
+# ======================================
+# 🔒 ARQUIVOS SENSÍVEIS - NUNCA COMMITAR
+# ======================================
+
+# Credenciais e configurações sensíveis
+backend-proxy.js
+http-functions.js
+config.js
+*.env
+*.env.local
+.env.*
+*credentials*.js
+*secrets*.js
+
+# Arquivos com senhas hardcoded
+wix-api/**/http-functions.js
+wix-api/**/webhook.js
+cors-proxy/server.js
+
+# ======================================
+# 📦 DEPENDÊNCIAS E NODE_MODULES
+# ======================================
+node_modules/
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# ======================================
+# 🗂️ ARQUIVOS DE BUILD E CACHE
+# ======================================
+dist/
+build/
+*.log
+*.cache
+.cache/
+
+# ======================================
+# 💻 IDE E EDITORES
+# ======================================
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# ======================================
+# 🗃️ DADOS E BACKUPS
+# ======================================
+*.txt
+!README.txt
+*.json
+!package.json
+!.gitignore
+
+# ======================================
+# 📹 ARQUIVOS GRANDES
+# ======================================
+*.mkv
+*.mp4
+*.avi
+*.mov
+
+# ======================================
+# PERMITIR APENAS ARQUIVOS DE EXEMPLO
+# ======================================
+!*.example.js
+!*.example.html
+!README.md
+!SECURITY.md

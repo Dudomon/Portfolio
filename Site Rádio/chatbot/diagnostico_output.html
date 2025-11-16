@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diagnóstico - Chatbot Rádio Entre Rios</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            padding: 30px;
+        }
+        h1 {
+            color: #FF6B00;
+            margin-bottom: 10px;
+        }
+        h2 {
+            color: #333;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #FF6B00;
+        }
+        .check-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px;
+            margin: 8px 0;
+            border-radius: 6px;
+            background: #f8f9fa;
+        }
+        .check-item.success {
+            background: #d4edda;
+            border-left: 4px solid #28a745;
+        }
+        .check-item.error {
+            background: #f8d7da;
+            border-left: 4px solid #dc3545;
+        }
+        .check-item.warning {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+        }
+        .icon {
+            font-size: 20px;
+            width: 24px;
+            text-align: center;
+        }
+        .code {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 15px;
+            border-radius: 6px;
+            overflow-x: auto;
+            margin: 10px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+        }
+        .info-box {
+            background: #e7f3ff;
+            border-left: 4px solid #2196F3;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            background: #FF6B00;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            margin-top: 15px;
+            transition: background 0.2s;
+        }
+        .button:hover {
+            background: #E55F00;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Diagnóstico do Chatbot</h1>
+        <p style="color: #666; margin-bottom: 20px;">Rádio Entre Rios FM 99.1 MHz</p>
+
+        <h2>📋 Verificações do Sistema</h2>
+
+        <div class="check-item success"><span class="icon">✓</span> PHP 8.2.12 (OK)</div><div class="check-item success"><span class="icon">✓</span> Extensão cURL habilitada</div><div class="check-item success"><span class="icon">✓</span> Extensão JSON habilitada</div><div class="check-item success"><span class="icon">✓</span> Arquivo config.php encontrado</div><div class="check-item success"><span class="icon">✓</span> API Key configurada (AIzaSyAAIp...Hblk, 39 caracteres)</div><div class="check-item success"><span class="icon">✓</span> Diretório logs/ com permissões OK</div><div class="check-item success"><span class="icon">✓</span> chat_api.php (Backend da API)</div><div class="check-item success"><span class="icon">✓</span> context.php (Base de conhecimento)</div><div class="check-item success"><span class="icon">✓</span> chatbot.js (Widget JavaScript)</div><div class="check-item success"><span class="icon">✓</span> chatbot.css (Estilos CSS)</div>
+        <h2>📊 Resumo</h2>
+        <div class="check-item success">
+            <span class="icon">✓</span> 10 verificações OK
+        </div>
+                
+        <h2>🧪 Teste de Conexão com Gemini</h2>
+                    <div class="info-box">
+                <p><strong>Testando conexão com a API do Google Gemini...</strong></p>
+                <div class="check-item error"><span class="icon">✗</span> Erro HTTP 404</div><div class="code">{
+  &quot;error&quot;: {
+    &quot;code&quot;: 404,
+    &quot;message&quot;: &quot;models/gemini-1.5-flash is not found for API version v1beta, or is not supported for generateContent. Call ListModels to see the list of available models and their supported methods.&quot;,
+    &quot;status&quot;: &quot;NOT_FOUND&quot;
+  }
+}
+</div>            </div>
+        
+        <h2>🎯 Próximos Passos</h2>
+                    <div class="check-item success">
+                <span class="icon">🎉</span> Tudo pronto! O chatbot está configurado corretamente.
+            </div>
+            <a href="test.html" class="button">Testar Chatbot</a>
+            <a href="README.md" class="button" style="background: #6C757D;">Ver Documentação</a>
+        
+        <p style="text-align: center; margin-top: 30px; color: #666; font-size: 12px;">
+            © 2025 Rádio Entre Rios FM 99.1 MHz
+        </p>
+    </div>
+</body>
+</html>

@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Widget Consulta Boletos</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        .widget-container {
+            max-width: 500px;
+            margin: 20px auto;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            font-family: Arial, sans-serif;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #007bff;
+        }
+
+        .btn-consultar {
+            width: 100%;
+            padding: 12px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .btn-consultar:hover {
+            background: #0056b3;
+        }
+
+        .btn-consultar:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+            color: #666;
+        }
+
+        .results {
+            display: none;
+            margin-top: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 5px;
+        }
+
+        .error {
+            display: none;
+            margin-top: 20px;
+            padding: 15px;
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 5px;
+            color: #856404;
+        }
+
+        .success {
+            display: none;
+            margin-top: 20px;
+            padding: 15px;
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            border-radius: 5px;
+            color: #155724;
+        }
+
+        .boleto-item {
+            background: white;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            border-left: 4px solid #007bff;
+        }
+
+        .boleto-header {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .boleto-details {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .log-area {
+            margin-top: 20px;
+            padding: 10px;
+            background: #f1f1f1;
+            border-radius: 5px;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="widget-container">
+        <h2>🧾 Consulta de Boletos</h2>
+        
+        <form id="consultaForm">
+            <div class="form-group">
+                <label for="cpfCnpj">CPF/CNPJ:</label>
+                <input type="text" id="cpfCnpj" placeholder="Digite seu CPF ou CNPJ" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="nome">Nome:</label>
+                <input type="text" id="nome" placeholder="Digite seu nome" required>
+            </div>
+            
+            <button type="submit" class="btn-consultar">Consultar Boletos</button>
+        </form>
+
+        <div class="loading" id="loading">
+            <p>Consultando boletos...</p>
+        </div>
+
+        <div class="error" id="error"></div>
+        <div class="success" id="success"></div>
+
+        <div class="results" id="results">
+            <h3>Boletos Encontrados:</h3>
+            <div id="boletos-list"></div>
+        </div>
+
+        <div class="log-area" id="logs">
+            <strong>Logs:</strong><br>
+            <div id="log-content"></div>
+        </div>
+    </div>
+
+    <script>
+        // Configurações - TESTE MÚLTIPLAS URLs CORRETAS
+        const WIX_URLS = [
+            'https://www.arieproperties.com/_functions',
+            'https://www.arieproperties.com/_functions-dev',
+            'https://www.arieproperties.com/_api',
+            'https://www.arieproperties.com/site/_functions'
+        ];
+        
+        let WORKING_URL = null;
+        
+        // Função para adicionar logs
+        function addLog(message, type = 'info') {
+            const logContent = document.getElementById('log-content');
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = document.createElement('div');
+            logEntry.style.color = type === 'error' ? 'red' : type === 'success' ? 'green' : 'black';
+            logEntry.innerHTML = `[${timestamp}] ${message}`;
+            logContent.appendChild(logEntry);
+            logContent.scrollTop = logContent.scrollHeight;
+        }
+
+        // Função para mostrar erro
+        function showError(message) {
+            const errorDiv = document.getElementById('error');
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+            document.getElementById('success').style.display = 'none';
+        }
+
+        // Função para mostrar sucesso
+        function showSuccess(message) {
+            const successDiv = document.getElementById('success');
+            successDiv.textContent = message;
+            successDiv.style.display = 'block';
+            document.getElementById('error').style.display = 'none';
+        }
+
+        // Função para limpar mensagens
+        function clearMessages() {
+            document.getElementById('error').style.display = 'none';
+            document.getElementById('success').style.display = 'none';
+        }
+
+        // Função para testar múltiplas URLs
+        async function testarBackend() {
+            addLog('Testando conexão com backend...', 'info');
+            
+            for (let i = 0; i < WIX_URLS.length; i++) {
+                const url = WIX_URLS[i];
+                try {
+                    addLog(`Tentando URL ${i + 1}/${WIX_URLS.length}: ${url}`, 'info');
+                    
+                    const response = await fetch(`${url}/get_teste`, {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    });
+
+                    addLog(`Status da resposta: ${response.status}`, 'info');
+
+                    if (!response.ok) {
+                        throw new Error(`Erro HTTP: ${response.status}`);
+                    }
+
+                    const data = await response.json();
+                    addLog(`✅ SUCESSO! URL funcionando: ${url}`, 'success');
+                    addLog(`Resposta: ${JSON.stringify(data)}`, 'info');
+                    
+                    WORKING_URL = url;
+                    return true;
+                } catch (error) {
+                    addLog(`❌ Falha na URL ${url}: ${error.message}`, 'error');
+                    continue;
+                }
+            }
+            
+            addLog('❌ TODAS AS URLs FALHARAM!', 'error');
+            addLog('Verifique se o HTTP Functions está publicado no Wix', 'error');
+            return false;
+        }
+
+        // Função para buscar boletos
+        async function buscarBoletos(cpfCnpj, nome) {
+            try {
+                addLog(`Buscando boletos para CPF/CNPJ: ${cpfCnpj}`, 'info');
+                
+                const url = `${WIX_SITE_URL}/get_boletosDetalhes?cpfCnpj=${encodeURIComponent(cpfCnpj)}`;
+                addLog(`URL: ${url}`, 'info');
+                
+                const response = await fetch(url, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                addLog(`Status da resposta: ${response.status}`, 'info');
+
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    addLog(`Erro HTTP: ${response.status} - ${errorText}`, 'error');
+                    throw new Error(`Erro HTTP: ${response.status}`);
+                }
+
+                const data = await response.json();
+                addLog('Dados recebidos do backend', 'success');
+                addLog(`Resposta: ${JSON.stringify(data, null, 2)}`, 'info');
+
+                if (!data.success) {
+                    throw new Error(data.error || 'Erro desconhecido');
+                }
+
+                return data.boletos || [];
+            } catch (error) {
+                addLog(`Erro ao buscar boletos: ${error.message}`, 'error');
+                throw error;
+            }
+        }
+
+        // Função para exibir boletos
+        function exibirBoletos(boletos) {
+            const boletosList = document.getElementById('boletos-list');
+            
+            if (boletos.length === 0) {
+                boletosList.innerHTML = '<p>Nenhum boleto encontrado.</p>';
+                return;
+            }
+
+            boletosList.innerHTML = boletos.map(boleto => `
+                <div class="boleto-item">
+                    <div class="boleto-header">
+                        Boleto #${boleto.numero} - ${boleto.situacao}
+                    </div>
+                    <div class="boleto-details">
+                        <p><strong>Valor:</strong> R$ ${(boleto.valorOriginal || 0).toFixed(2)}</p>
+                        <p><strong>Vencimento:</strong> ${new Date(boleto.dataVencimento).toLocaleDateString('pt-BR')}</p>
+                        <p><strong>Nosso Número:</strong> ${boleto.nossoNumero}</p>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Event listener para o formulário
+        document.getElementById('consultaForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const cpfCnpj = document.getElementById('cpfCnpj').value.trim();
+            const nome = document.getElementById('nome').value.trim();
+            
+            if (!cpfCnpj || !nome) {
+                showError('Por favor, preencha todos os campos');
+                return;
+            }
+
+            // Mostrar loading
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('results').style.display = 'none';
+            document.querySelector('.btn-consultar').disabled = true;
+            clearMessages();
+
+            try {
+                // Primeiro testar a conexão
+                const backendOk = await testarBackend();
+                if (!backendOk) {
+                    throw new Error('Falha na conexão com o backend');
+                }
+
+                // Buscar boletos
+                const boletos = await buscarBoletos(cpfCnpj, nome);
+                
+                // Exibir resultados
+                exibirBoletos(boletos);
+                document.getElementById('results').style.display = 'block';
+                
+                showSuccess(`Consulta realizada com sucesso! ${boletos.length} boleto(s) encontrado(s).`);
+                
+            } catch (error) {
+                showError(`Erro: ${error.message}`);
+            } finally {
+                document.getElementById('loading').style.display = 'none';
+                document.querySelector('.btn-consultar').disabled = false;
+            }
+        });
+
+        // Inicialização
+        addLog('Widget carregado e pronto para uso', 'success');
+        
+        // Testar backend ao carregar a página
+        setTimeout(testarBackend, 1000);
+    </script>
+</body>
+</html>

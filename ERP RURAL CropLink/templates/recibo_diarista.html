@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recibo de Pagamento - {{ diarista.nome_completo }}</title>
+    <style>
+        @media print {
+            .no-print { display: none !important; }
+            body { margin: 0; padding: 20px; }
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f8f9fa;
+        }
+        
+        .recibo-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border: 2px solid #007bff;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        .recibo-header {
+            background: linear-gradient(135deg, #007bff, #0056b3);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .recibo-body {
+            padding: 30px;
+        }
+        
+        .empresa-info {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 20px;
+        }
+        
+        .recibo-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .info-section h4 {
+            color: #007bff;
+            margin-bottom: 10px;
+            border-bottom: 1px solid #dee2e6;
+            padding-bottom: 5px;
+        }
+        
+        .info-item {
+            margin-bottom: 8px;
+        }
+        
+        .info-label {
+            font-weight: bold;
+            color: #495057;
+        }
+        
+        .trabalhos-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+        }
+        
+        .trabalhos-table th,
+        .trabalhos-table td {
+            border: 1px solid #dee2e6;
+            padding: 10px;
+            text-align: left;
+        }
+        
+        .trabalhos-table th {
+            background-color: #007bff;
+            color: white;
+            font-weight: bold;
+        }
+        
+        .trabalhos-table tbody tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+        
+        .valor-total {
+            background-color: #28a745;
+            color: white;
+            font-weight: bold;
+        }
+        
+        .assinatura-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 50px;
+            margin-top: 50px;
+            padding-top: 30px;
+            border-top: 2px solid #007bff;
+        }
+        
+        .assinatura-box {
+            text-align: center;
+        }
+        
+        .linha-assinatura {
+            border-top: 2px solid #333;
+            margin-top: 40px;
+            padding-top: 10px;
+        }
+        
+        .btn-actions {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            margin: 5px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .btn-primary {
+            background-color: #007bff;
+            color: white;
+        }
+        
+        .btn-success {
+            background-color: #28a745;
+            color: white;
+        }
+        
+        .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+        }
+        
+        .btn:hover {
+            opacity: 0.8;
+        }
+        
+        .recibo-numero {
+            text-align: right;
+            font-size: 0.9em;
+            color: #6c757d;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="btn-actions no-print">
+        <button class="btn btn-primary" onclick="window.print()">
+            <i class="fas fa-print"></i> Imprimir
+        </button>
+        <button class="btn btn-success" onclick="gerarPDF()">
+            <i class="fas fa-file-pdf"></i> Salvar PDF
+        </button>
+        <a href="{{ url_for('diaristas') }}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Voltar
+        </a>
+    </div>
+
+    <div class="recibo-container">
+        <div class="recibo-header">
+            <h1>RECIBO DE PAGAMENTO</h1>
+            <h3>PRESTAÇÃO DE SERVIÇOS</h3>
+        </div>
+        
+        <div class="recibo-body">
+            <div class="recibo-numero">
+                Recibo Nº: REC-{{ diarista.id }}-{{ data_emissao.strftime('%Y%m%d') }}
+            </div>
+            
+            <div class="empresa-info">
+                <h2>FAZENDA REBELATO</h2>
+                <p>Gestão Agrícola e Pecuária</p>
+                <p>Sistema de Controle de Diaristas</p>
+            </div>
+            
+            <div class="recibo-info">
+                <div class="info-section">
+                    <h4>DADOS DO PRESTADOR</h4>
+                    <div class="info-item">
+                        <span class="info-label">Nome:</span> {{ diarista.nome_completo }}
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">CPF:</span> {{ diarista.cpf or 'Não informado' }}
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Telefone:</span> {{ diarista.telefone or 'Não informado' }}
+                    </div>
+                </div>
+                
+                <div class="info-section">
+                    <h4>DADOS DO PAGAMENTO</h4>
+                    <div class="info-item">
+                        <span class="info-label">Período:</span> 
+                        {{ registros[0].data.strftime('%d/%m/%Y') }} a {{ registros[-1].data.strftime('%d/%m/%Y') }}
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Total de dias:</span> {{ total_dias }}
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Valor por dia:</span> R$ {{ "{:,.2f}".format(diarista.valor_diaria) }}
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Data de emissão:</span> {{ data_emissao.strftime('%d/%m/%Y') }}
+                    </div>
+                </div>
+            </div>
+            
+            <h4 style="color: #007bff; margin-bottom: 15px;">DISCRIMINAÇÃO DOS SERVIÇOS</h4>
+            <table class="trabalhos-table">
+                <thead>
+                    <tr>
+                        <th>Data</th>
+                        <th>Entrada</th>
+                        <th>Saída</th>
+                        <th>Serviços Prestados</th>
+                        <th>Valor (R$)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for registro in registros %}
+                    <tr>
+                        <td>{{ registro.data.strftime('%d/%m/%Y') }}</td>
+                        <td>{{ registro.hora_entrada.strftime('%H:%M') if registro.hora_entrada else '-' }}</td>
+                        <td>{{ registro.hora_saida.strftime('%H:%M') if registro.hora_saida else '-' }}</td>
+                        <td>{{ registro.descricao_trabalho or 'Trabalho geral' }}</td>
+                        <td>R$ {{ "{:,.2f}".format(diarista.valor_diaria) }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+                <tfoot>
+                    <tr class="valor-total">
+                        <td colspan="4"><strong>VALOR TOTAL DOS SERVIÇOS</strong></td>
+                        <td><strong>R$ {{ "{:,.2f}".format(valor_total) }}</strong></td>
+                    </tr>
+                </tfoot>
+            </table>
+            
+            <div style="margin: 20px 0; padding: 15px; background-color: #f8f9fa; border-left: 4px solid #007bff;">
+                <p><strong>Descrição:</strong> Recibo referente aos serviços de mão de obra prestados na propriedade rural conforme discriminado acima.</p>
+                <p><strong>Valor por extenso:</strong> <em>{{ valor_extenso(valor_total) if valor_extenso is defined else 'Valor em extenso' }}</em></p>
+            </div>
+            
+            <div class="assinatura-section">
+                <div class="assinatura-box">
+                    <div class="linha-assinatura">
+                        <strong>{{ diarista.nome_completo }}</strong><br>
+                        CPF: {{ diarista.cpf or 'Não informado' }}<br>
+                        <small>Prestador de Serviços</small>
+                    </div>
+                </div>
+                
+                <div class="assinatura-box">
+                    <div class="linha-assinatura">
+                        <strong>FAZENDA REBELATO</strong><br>
+                        Responsável pelo Pagamento<br>
+                        <small>{{ data_emissao.strftime('%d/%m/%Y') }}</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function gerarPDF() {
+            // Implementar geração de PDF se necessário
+            window.print();
+        }
+        
+        // Auto-foco para impressão quando a página carrega
+        window.addEventListener('load', function() {
+            if (window.location.search.includes('auto_print=true')) {
+                setTimeout(() => window.print(), 1000);
+            }
+        });
+    </script>
+</body>
+</html>

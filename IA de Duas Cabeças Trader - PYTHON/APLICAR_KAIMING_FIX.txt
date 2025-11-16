@@ -1,0 +1,4 @@
+TIMESTAMP: Sat Aug 30 00:11:41 2025
+PROBLEMA: 64.4% zeros no actor, 58.5% e 60.6% nos critics
+SOLUÇÃO: Aplicar torch.nn.init.kaiming_uniform_ nas primeiras camadas
+STATUS: AGUARDANDO APLICAÇÃO

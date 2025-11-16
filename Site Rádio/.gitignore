@@ -1,0 +1,123 @@
+# ======================================
+# Site WordPress Rádio Entre Rios - .gitignore
+# ======================================
+#
+# Site em produção: www.radioentrerios.com.br
+# Apenas documentação será exposta
+# Todo core WordPress e dados são protegidos
+#
+# ======================================
+
+# ======================================
+# 🔒 WORDPRESS CORE - NÃO EXPOR
+# ======================================
+
+# WordPress core completo
+wp-admin/
+wp-includes/
+wp-content/
+
+# Arquivos core WordPress
+*.php
+!README.php
+wp-*.php
+xmlrpc.php
+default.php
+index.php
+
+# ======================================
+# 🔑 CONFIGURAÇÕES E CREDENCIAIS
+# ======================================
+
+# Configuração WordPress (contém DB credentials)
+wp-config.php
+wp-config-sample.php
+.htaccess
+litespeed.conf
+
+# Private files
+.private/
+
+# ======================================
+# 🗂️ CONTEÚDO E UPLOADS
+# ======================================
+
+# Uploads de mídia
+uploads/
+*.jpg
+*.jpeg
+*.png
+*.gif
+*.pdf
+*.mp3
+*.mp4
+!screenshots/*.png
+!screenshots/*.jpg
+
+# Cache e temporários
+cache/
+*.cache
+.cache/
+
+# ======================================
+# 📦 PLUGINS E TEMAS (TERCEIROS)
+# ======================================
+
+# Todos plugins (padrão WordPress)
+wp-content/plugins/
+plugins/
+
+# Todos temas (padrão WordPress)
+wp-content/themes/
+themes/
+
+# ======================================
+# 🗃️ BANCO DE DADOS E BACKUPS
+# ======================================
+
+# Database exports
+*.sql
+*.sql.gz
+*.db
+
+# Backups
+*.zip
+*.tar
+*.tar.gz
+backup/
+backups/
+
+# ======================================
+# 📝 LOGS E DEBUG
+# ======================================
+
+# WordPress debug
+debug.log
+error_log
+*.log
+
+# ======================================
+# 💻 SISTEMA E IDE
+# ======================================
+
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# ======================================
+# PERMITIR APENAS
+# ======================================
+
+# Documentação showcase
+!README.md
+!SECURITY.md
+!screenshots/
+!screenshots/*.png
+!screenshots/*.jpg
+
+# Nada do WordPress será exposto
+# Este é apenas showcase do projeto

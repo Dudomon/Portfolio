@@ -1,0 +1,74 @@
+🔥 ULTRA RELIABLE PEAKS - CHECKPOINT CANDIDATES
+============================================================
+Generated: 2025-10-31 15:45:56
+
+🥇 PEAK #1:
+   Step: 1,694,800
+   Sharpe: 6.1037
+   Portfolio: $844.46
+   Confidence: 1.00
+   📁 CHECKPOINT RECOMMENDATION: SAVE AT STEP 1694800
+
+🥈 PEAK #2:
+   Step: 301,500
+   Sharpe: 6.0714
+   Portfolio: $686.77
+   Confidence: 1.00
+   📁 CHECKPOINT RECOMMENDATION: SAVE AT STEP 301500
+
+🥉 PEAK #3:
+   Step: 1,694,500
+   Sharpe: 5.8291
+   Portfolio: $844.46
+   Confidence: 1.00
+   📁 CHECKPOINT RECOMMENDATION: SAVE AT STEP 1694500
+
+🏅 PEAK #4:
+   Step: 2,805,400
+   Sharpe: 5.8244
+   Portfolio: $247.04
+   Confidence: 1.00
+   📁 CHECKPOINT RECOMMENDATION: SAVE AT STEP 2805400
+
+🏅 PEAK #5:
+   Step: 1,694,700
+   Sharpe: 5.7682
+   Portfolio: $844.46
+   Confidence: 1.00
+   📁 CHECKPOINT RECOMMENDATION: SAVE AT STEP 1694700
+
+🏅 PEAK #6:
+   Step: 301,400
+   Sharpe: 5.7386
+   Portfolio: $691.57
+   Confidence: 1.00
+   📁 CHECKPOINT RECOMMENDATION: SAVE AT STEP 301400
+
+🏅 PEAK #7:
+   Step: 2,805,300
+   Sharpe: 5.6475
+   Portfolio: $247.04
+   Confidence: 1.00
+   📁 CHECKPOINT RECOMMENDATION: SAVE AT STEP 2805300
+
+🏅 PEAK #8:
+   Step: 439,400
+   Sharpe: 5.6019
+   Portfolio: $495.30
+   Confidence: 1.00
+   📁 CHECKPOINT RECOMMENDATION: SAVE AT STEP 439400
+
+🏅 PEAK #9:
+   Step: 439,500
+   Sharpe: 5.5602
+   Portfolio: $508.74
+   Confidence: 1.00
+   📁 CHECKPOINT RECOMMENDATION: SAVE AT STEP 439500
+
+🏅 PEAK #10:
+   Step: 2,806,900
+   Sharpe: 5.5338
+   Portfolio: $258.50
+   Confidence: 1.00
+   📁 CHECKPOINT RECOMMENDATION: SAVE AT STEP 2806900
+

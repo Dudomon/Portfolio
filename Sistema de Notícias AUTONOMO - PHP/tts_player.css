@@ -1,0 +1,192 @@
+/**
+ * TTS Player Styles
+ * Botões de áudio para notícias
+ */
+
+.tts-button {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 8px 14px;
+    background: linear-gradient(135deg, #FF7F27 0%, #e66d1a 100%);
+    color: white;
+    border: none;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 6px rgba(255, 127, 39, 0.3);
+}
+
+.tts-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(255, 127, 39, 0.4);
+    background: linear-gradient(135deg, #e66d1a 0%, #FF7F27 100%);
+}
+
+.tts-button:active {
+    transform: translateY(0);
+}
+
+.tts-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.tts-button i {
+    font-size: 13px;
+    transition: transform 0.2s ease;
+}
+
+.tts-button.tts-playing {
+    background: linear-gradient(135deg, #27AE60 0%, #229954 100%);
+    animation: pulse 1.5s ease-in-out infinite;
+}
+
+.tts-button.tts-playing i {
+    animation: spin 2s linear infinite;
+}
+
+/* Badge de tipo de áudio */
+.tts-badge {
+    font-size: 11px;
+    padding: 2px 6px;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.2);
+    font-weight: 600;
+}
+
+.tts-badge-premium {
+    background: rgba(255, 215, 0, 0.3);
+}
+
+.tts-badge-standard {
+    background: rgba(52, 152, 219, 0.3);
+}
+
+.tts-badge-browser {
+    background: rgba(155, 89, 182, 0.3);
+}
+
+/* Animações */
+@keyframes pulse {
+    0%, 100% {
+        box-shadow: 0 4px 12px rgba(39, 174, 96, 0.4);
+    }
+    50% {
+        box-shadow: 0 4px 20px rgba(39, 174, 96, 0.6);
+    }
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* Versão compacta (para cards pequenos) */
+.tts-button-compact {
+    padding: 6px 10px;
+    font-size: 12px;
+    border-radius: 15px;
+}
+
+.tts-button-compact i {
+    font-size: 11px;
+}
+
+.tts-button-compact .tts-badge {
+    font-size: 9px;
+    padding: 1px 4px;
+}
+
+/* Versão icon-only */
+.tts-button-icon {
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    border-radius: 50%;
+}
+
+.tts-button-icon .tts-badge {
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    font-size: 10px;
+    padding: 2px;
+    min-width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Tooltip */
+.tts-button::before {
+    content: attr(title);
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%) translateY(-5px);
+    padding: 6px 10px;
+    background: rgba(0, 0, 0, 0.9);
+    color: white;
+    font-size: 12px;
+    white-space: nowrap;
+    border-radius: 6px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.tts-button:hover::before {
+    opacity: 1;
+    transform: translateX(-50%) translateY(-8px);
+}
+
+/* Responsivo */
+@media (max-width: 768px) {
+    .tts-button {
+        padding: 6px 12px;
+        font-size: 13px;
+    }
+
+    .tts-button i {
+        font-size: 12px;
+    }
+
+    .tts-badge {
+        font-size: 10px;
+        padding: 1px 5px;
+    }
+}
+
+/* Integração com cards de notícias */
+.news-card .card-actions,
+.noticia-item .noticia-footer {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 12px;
+}
+
+.news-card .tts-button,
+.noticia-item .tts-button {
+    flex-shrink: 0;
+}
+
+/* Estados de loading/error */
+.tts-button .fa-spinner {
+    animation: spin 1s linear infinite;
+}
+
+.tts-button .fa-exclamation-triangle {
+    color: #FFD93D;
+}

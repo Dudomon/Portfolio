@@ -1,0 +1,47 @@
+
+🎯 RELATÓRIO DE AVALIAÇÃO CONFIÁVEL
+==========================================
+📅 Timestamp: 20250806_204651
+🤖 Checkpoint: checkpoint_5150000_steps_20250806_203835
+📊 Dataset: GC_YAHOO_ENHANCED_V3_BALANCED_20250804_192226.csv
+
+📈 PERFORMANCE GERAL:
+• Total de testes: 15
+• Retorno médio: 0.00% ± 0.00%
+• Retorno mediano: 0.00%
+• Intervalo confiança (95%): [0.00%, 0.00%]
+• Testes positivos: 0/15 (0.0%)
+
+📉 ANÁLISE DE RISCO:
+• Drawdown médio: -59.28%
+• Drawdown máximo: -15.97%
+• Sharpe ratio médio: 12.735
+• Risk-adjusted return: 0.000
+
+💼 TRADING PERFORMANCE:
+• Trades médios por teste: 0.0
+• Win rate médio: 0.0%
+
+📊 PERFORMANCE POR CENÁRIO:
+
+• Início:
+  - Retorno: 0.00% ± 0.00%
+  - Range: [0.00%, 0.00%]  
+  - Win ratio: 0.0%
+
+• Meio:
+  - Retorno: 0.00% ± 0.00%
+  - Range: [0.00%, 0.00%]  
+  - Win ratio: 0.0%
+
+• Final:
+  - Retorno: 0.00% ± 0.00%
+  - Range: [0.00%, 0.00%]  
+  - Win ratio: 0.0%
+
+🎖️ AVALIAÇÃO FINAL: 🔴 RUIM
+
+🔍 CONFIABILIDADE:
+• Testes realizados: 15
+• Cenários diferentes: 3
+• Consistência entre cenários: Baixa

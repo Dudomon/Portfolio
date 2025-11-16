@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <!-- Folha principal -->
+  <path d="M16 2C24 2 30 8 30 16C30 22 26 26 22 28C20 29 18 29.5 16 29.5C14 29.5 12 29 10 28C6 26 2 22 2 16C2 8 8 2 16 2Z" fill="#2E7D32"/>
+  
+  <!-- Nervura central da folha -->
+  <path d="M16 4L16 28" stroke="#1B5E20" stroke-width="1.5" fill="none"/>
+  
+  <!-- Nervuras laterais -->
+  <path d="M8 12Q12 14 16 16Q20 14 24 12" stroke="#1B5E20" stroke-width="0.8" fill="none"/>
+  <path d="M6 18Q10 20 16 22Q22 20 26 18" stroke="#1B5E20" stroke-width="0.8" fill="none"/>
+</svg>

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Teste CORS Preview</title>
+</head>
+<body>
+    <h1>Teste de Preview do Deezer</h1>
+    <button onclick="testDirect()">Testar URL Direta do Deezer</button>
+    <button onclick="testViaBackend()">Testar Via Backend</button>
+    <div id="result"></div>
+    <audio id="player" controls style="margin-top: 20px; width: 100%;"></audio>
+
+    <script>
+        async function testDirect() {
+            const url = 'https://cdnt-preview.dzcdn.net/api/1/1/e/c/d/0/ecd582cb754486b3249b6e319ed8afd0.mp3';
+            document.getElementById('result').innerHTML = 'Testando URL direta...';
+
+            const audio = document.getElementById('player');
+            audio.src = url;
+
+            try {
+                await audio.play();
+                document.getElementById('result').innerHTML = '✅ Preview funcionando!';
+            } catch (err) {
+                document.getElementById('result').innerHTML = '❌ Erro: ' + err.message;
+            }
+        }
+
+        async function testViaBackend() {
+            document.getElementById('result').innerHTML = 'Buscando preview via backend...';
+
+            try {
+                const response = await fetch('https://www.radioentrerios.com.br/wp-content/noticias/radio_metadata_api.php?action=preview&artist=Henrique e Juliano&title=Flor e o Beija-Flor');
+                const data = await response.json();
+
+                document.getElementById('result').innerHTML = 'Preview encontrado: ' + data.preview_url;
+
+                const audio = document.getElementById('player');
+                audio.src = data.preview_url;
+                await audio.play();
+
+                document.getElementById('result').innerHTML += '<br>✅ Reproduzindo!';
+            } catch (err) {
+                document.getElementById('result').innerHTML = '❌ Erro: ' + err.message;
+            }
+        }
+    </script>
+</body>
+</html>

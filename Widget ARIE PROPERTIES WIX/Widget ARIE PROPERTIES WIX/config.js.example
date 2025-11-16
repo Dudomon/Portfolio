@@ -1,0 +1,36 @@
+// Configurações para integração com Sienge e Wix
+// ⚠️ IMPORTANTE: Copie este arquivo para config.js e preencha com suas credenciais
+module.exports = {
+    // Credenciais do Sienge
+    sienge: {
+        baseURL: 'https://api.sienge.com.br/YOUR_COMPANY/public/api/v1',
+        username: 'YOUR_SIENGE_USERNAME',
+        password: 'YOUR_SIENGE_PASSWORD'
+    },
+
+    // Configurações do Wix
+    wix: {
+        apiKey: process.env.WIX_API_KEY, // Sua API Key do Wix
+        siteId: process.env.WIX_SITE_ID, // ID do seu site Wix
+        collectionName: 'Customers', // Nome da coleção de membros
+    },
+
+    // Mapeamento de campos (Sienge -> Wix)
+    fieldMapping: {
+        'name': 'nome',
+        'email': 'email',
+        'phone': 'telefone',
+        'document': 'cpfCnpj',
+        'address': 'endereco',
+        'city': 'cidade',
+        'state': 'estado',
+        'zipCode': 'cep',
+        'birthdate': 'dataNascimento'
+    },
+
+    // Configurações de arquivos
+    files: {
+        log: 'importacao-clientes.log',
+        clientes: 'clientes-importados.json'
+    }
+};

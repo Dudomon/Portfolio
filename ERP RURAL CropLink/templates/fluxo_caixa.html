@@ -1,0 +1,217 @@
+{% extends "base.html" %}
+
+{% block title %}Fluxo de Caixa - CropLink{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col">
+            <h1 class="display-6">
+                <i class="fas fa-chart-line text-success"></i>
+                Fluxo de Caixa
+            </h1>
+            <p class="text-muted">Controle do fluxo de caixa e análise financeira</p>
+        </div>
+        <div class="col-auto">
+            <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalLancamento">
+                <i class="fas fa-plus"></i> Novo Lançamento
+            </button>
+        </div>
+    </div>
+
+    <!-- Resumo Financeiro -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card bg-light shadow-sm">
+                <div class="card-body text-center">
+                    <h5 class="card-title text-success">Entradas do Mês</h5>
+                    <h3 class="text-success">R$ {{ "%.2f"|format(entradas_mes) }}</h3>
+                    <small class="text-muted">Recebido</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-light shadow-sm">
+                <div class="card-body text-center">
+                    <h5 class="card-title text-danger">Saídas do Mês</h5>
+                    <h3 class="text-danger">R$ {{ "%.2f"|format(saidas_mes) }}</h3>
+                    <small class="text-muted">Pago</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-light shadow-sm">
+                <div class="card-body text-center">
+                    <h5 class="card-title {% if saldo_mes >= 0 %}text-primary{% else %}text-danger{% endif %}">Saldo do Mês</h5>
+                    <h3 class="{% if saldo_mes >= 0 %}text-primary{% else %}text-danger{% endif %}">R$ {{ "%.2f"|format(saldo_mes) }}</h3>
+                    <small class="text-muted">Atual</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-light shadow-sm">
+                <div class="card-body text-center">
+                    <h5 class="card-title text-info">Saldo Projetado</h5>
+                    <h3 class="{% if saldo_projetado >= 0 %}text-info{% else %}text-warning{% endif %}">R$ {{ "%.2f"|format(saldo_projetado) }}</h3>
+                    <small class="text-muted">A receber - A pagar</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Gráfico e Movimentações -->
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header">
+                    <h5 class="mb-0">Evolução Mensal</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="graficoFluxoCaixa" height="80"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card shadow">
+                <div class="card-header">
+                    <h5 class="mb-0">Movimentações Recentes</h5>
+                </div>
+                <div class="card-body" style="max-height: 400px; overflow-y: auto;">
+                    {% if movimentacoes_recentes %}
+                        <div class="list-group list-group-flush">
+                            {% for mov in movimentacoes_recentes %}
+                            <div class="list-group-item px-0">
+                                <div class="d-flex align-items-center">
+                                    <div class="flex-shrink-0">
+                                        {% if mov.tipo == 'entrada' %}
+                                            <i class="fas fa-arrow-up fa-2x text-success"></i>
+                                        {% else %}
+                                            <i class="fas fa-arrow-down fa-2x text-danger"></i>
+                                        {% endif %}
+                                    </div>
+                                    <div class="ms-3 flex-grow-1">
+                                        <h6 class="mb-1">{{ mov.descricao }}</h6>
+                                        <small class="text-muted">{{ mov.data.strftime('%d/%m/%Y') }} - {{ mov.categoria }}</small>
+                                    </div>
+                                    <div class="text-end">
+                                        <span class="fw-bold {% if mov.tipo == 'entrada' %}text-success{% else %}text-danger{% endif %}">
+                                            {% if mov.tipo == 'entrada' %}+{% else %}-{% endif %} R$ {{ "%.2f"|format(mov.valor) }}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="text-center py-4">
+                            <i class="fas fa-exchange-alt fa-2x text-muted mb-3"></i>
+                            <p class="text-muted">Nenhuma movimentação cadastrada</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Ações Rápidas -->
+    <div class="row mt-4">
+        <div class="col">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="mb-3"><i class="fas fa-link"></i> Ações Rápidas</h5>
+                    <div class="btn-group" role="group">
+                        <a href="{{ url_for('contas_receber') }}" class="btn btn-outline-success">
+                            <i class="fas fa-plus-circle"></i> Nova Conta a Receber
+                        </a>
+                        <a href="{{ url_for('contas_pagar') }}" class="btn btn-outline-danger">
+                            <i class="fas fa-plus-circle"></i> Nova Conta a Pagar
+                        </a>
+                        <a href="{{ url_for('contas_receber') }}" class="btn btn-outline-primary">
+                            <i class="fas fa-list"></i> Ver Contas a Receber
+                        </a>
+                        <a href="{{ url_for('contas_pagar') }}" class="btn btn-outline-warning">
+                            <i class="fas fa-list"></i> Ver Contas a Pagar
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Dados do gráfico vindos do backend
+    const meses = {{ meses_grafico|safe }};
+    const entradas = {{ entradas_grafico|safe }};
+    const saidas = {{ saidas_grafico|safe }};
+
+    // Criar gráfico
+    const ctx = document.getElementById('graficoFluxoCaixa').getContext('2d');
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: meses,
+            datasets: [
+                {
+                    label: 'Entradas',
+                    data: entradas,
+                    borderColor: 'rgb(40, 167, 69)',
+                    backgroundColor: 'rgba(40, 167, 69, 0.1)',
+                    tension: 0.4,
+                    fill: true
+                },
+                {
+                    label: 'Saídas',
+                    data: saidas,
+                    borderColor: 'rgb(220, 53, 69)',
+                    backgroundColor: 'rgba(220, 53, 69, 0.1)',
+                    tension: 0.4,
+                    fill: true
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                legend: {
+                    position: 'top',
+                },
+                tooltip: {
+                    mode: 'index',
+                    intersect: false,
+                    callbacks: {
+                        label: function(context) {
+                            let label = context.dataset.label || '';
+                            if (label) {
+                                label += ': ';
+                            }
+                            label += 'R$ ' + context.parsed.y.toFixed(2).replace('.', ',');
+                            return label;
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: function(value) {
+                            return 'R$ ' + value.toFixed(2).replace('.', ',');
+                        }
+                    }
+                }
+            },
+            interaction: {
+                mode: 'nearest',
+                axis: 'x',
+                intersect: false
+            }
+        }
+    });
+});
+</script>
+{% endblock %}

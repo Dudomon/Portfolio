@@ -1,0 +1,12 @@
+filename: GOLD_1M_MT5_MASSIVE_1061264bars_20250924_092923.pkl
+symbol: GOLD
+total_bars: 1061264
+start_date: 2022-09-26 01:00:00
+end_date: 2025-09-24 12:29:00
+duration_days: 1094
+columns: 34
+features: ['timestamp', 'open_1m', 'high_1m', 'low_1m', 'close_1m', 'volume_1m', 'spread', 'real_volume', 'returns_1m', 'rsi_14_1m', 'sma_5_1m', 'sma_10_1m', 'sma_20_1m', 'sma_50_1m', 'sma_200_1m', 'ema_5_1m', 'ema_10_1m', 'ema_20_1m', 'ema_50_1m', 'ema_200_1m', 'macd_1m', 'macd_signal_1m', 'macd_histogram_1m', 'bb_upper_1m', 'bb_middle_1m', 'bb_lower_1m', 'bb_position_1m', 'tr_1m', 'atr_14_1m', 'volume_sma_20_1m', 'volume_ratio_1m', 'volatility_20_1m', 'stoch_k_1m', 'stoch_d_1m']
+file_size_mb: 275.29433155059814
+created: 20250924_092923
+source: MT5_Direct
+quality: 100%_Real_Data

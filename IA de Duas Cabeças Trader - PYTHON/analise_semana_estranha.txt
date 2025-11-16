@@ -1,0 +1,39 @@
+ANÁLISE COMPLETA DA SEMANA ESTRANHA
+========================================================================================================================
+
+Seventeen com filtro ANTIGO [8, 9, 10, 11, 17, 21] (Magic: 777712)
+Experiment: SEVENTEEN | Filter: ANTIGO
+Log: D:/Projeto/Modelo PPO Trader/logs/trading_session_20251109_202631_15452_19c94b13.txt
+
+Total Trades: 75
+Win Rate: 41.3%
+Net PnL: $-83.28
+PnL/Trade: $-1.11
+Profit Factor: 0.93
+
+========================================================================================================================
+
+Seventeen com filtro ATUAL [0, 1, 2, 5, 7, 8, 11, 12, 14, 16, 21, 23] (Magic: 777344)
+Experiment: SEVENTEEN | Filter: ATUAL
+Log: D:/Projeto/Modelo PPO Trader/logs/trading_session_20251110_161139_19212_a0e93942.txt
+
+Total Trades: 64
+Win Rate: 32.8%
+Net PnL: $-290.32
+PnL/Trade: $-4.54
+Profit Factor: 0.73
+
+========================================================================================================================
+
+Eighteen SEM filtro (Magic: 777528)
+Experiment: EIGHTEEN | Filter: SEM FILTRO
+Log: D:/Projeto/Modelo PPO Trader/logs/trading_session_20251112_155713_33400_12456316.txt
+
+Total Trades: 51
+Win Rate: 41.2%
+Net PnL: $34.77
+PnL/Trade: $0.68
+Profit Factor: 1.04
+
+========================================================================================================================
+

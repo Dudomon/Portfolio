@@ -1,0 +1,197 @@
+{% extends "base.html" %}
+
+{% block title %}Histórico - {{ silo.nome }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2>
+                <i class="fas fa-warehouse text-primary"></i>
+                Histórico - {{ silo.nome }}
+            </h2>
+            <p class="text-muted">Movimentações detalhadas de grãos</p>
+        </div>
+        <div>
+            <a href="{{ url_for('silos') }}" class="btn btn-outline-secondary">
+                <i class="fas fa-arrow-left"></i> Voltar aos Silos
+            </a>
+        </div>
+    </div>
+
+    <!-- Informações do Silo -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card bg-primary text-white">
+                <div class="card-body text-center">
+                    <h5>Capacidade</h5>
+                    <h3>{{ "{:,.0f}".format(silo.capacidade_kg) }} kg</h3>
+                    <small>{{ "{:,.0f}".format(silo.capacidade_kg / 60) }} sacas</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-success text-white">
+                <div class="card-body text-center">
+                    <h5>Estoque Atual</h5>
+                    <h3>{{ "{:,.0f}".format(silo.get_estoque_total()) }} kg</h3>
+                    <small>{{ "{:,.0f}".format(silo.get_estoque_total() / 60) }} sacas</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-info text-white">
+                <div class="card-body text-center">
+                    <h5>Ocupação</h5>
+                    <h3>{{ "%.1f"|format(silo.get_percentual_ocupacao()) }}%</h3>
+                    <small>{{ "{:,.0f}".format(silo.get_capacidade_disponivel()) }} kg disponível</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-warning text-dark">
+                <div class="card-body text-center">
+                    <h5>Movimentações</h5>
+                    <h3>{{ movimentacoes|length }}</h3>
+                    <small>Últimos registros</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Histórico de Movimentações -->
+    <div class="card shadow">
+        <div class="card-header">
+            <h5 class="mb-0">Histórico de Movimentações</h5>
+        </div>
+        <div class="card-body">
+            {% if movimentacoes %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Data/Hora</th>
+                                <th>Tipo</th>
+                                <th>Grão</th>
+                                <th>Peso Líquido</th>
+                                <th>Sacas</th>
+                                <th>Placa/Motorista</th>
+                                <th>Pesos (kg)</th>
+                                <th>Observação</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for mov in movimentacoes %}
+                            <tr>
+                                <td>
+                                    <strong>{{ mov.data_movimentacao.strftime('%d/%m/%Y') }}</strong><br>
+                                    <small class="text-muted">{{ mov.data_movimentacao.strftime('%H:%M') }}</small>
+                                </td>
+                                <td>
+                                    {% if mov.tipo_movimentacao == 'Entrada' %}
+                                        <span class="badge bg-success">
+                                            <i class="fas fa-arrow-down"></i> Entrada
+                                        </span>
+                                    {% else %}
+                                        <span class="badge bg-danger">
+                                            <i class="fas fa-arrow-up"></i> Saída
+                                        </span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <strong>{{ mov.grao.nome }}</strong>
+                                </td>
+                                <td>
+                                    <span class="fw-bold 
+                                        {% if mov.tipo_movimentacao == 'Entrada' %}text-success
+                                        {% else %}text-danger{% endif %}">
+                                        {% if mov.tipo_movimentacao == 'Entrada' %}+{% else %}-{% endif %}
+                                        {% if mov.peso_liquido_kg %}
+                                            {{ "{:,.1f}".format(mov.peso_liquido_kg) }} kg
+                                        {% else %}
+                                            {{ "{:,.1f}".format(mov.quantidade_kg) }} kg
+                                        {% endif %}
+                                    </span>
+                                    {% if mov.peso_liquido_kg %}
+                                        <br><small class="text-muted"><i class="fas fa-balance-scale"></i> Tara calculada</small>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <span class="text-muted">
+                                        {% set peso_final = mov.peso_liquido_kg or mov.quantidade_kg %}
+                                        {{ "{:,.1f}".format(peso_final / 60) }} sacas
+                                    </span>
+                                </td>
+                                <td>
+                                    {% if mov.placa_caminhao or mov.nome_motorista %}
+                                        <div class="d-flex align-items-center">
+                                            <i class="fas fa-truck text-primary me-1"></i>
+                                            <div>
+                                                {% if mov.placa_caminhao %}
+                                                    <strong>{{ mov.placa_caminhao }}</strong><br>
+                                                {% endif %}
+                                                {% if mov.nome_motorista %}
+                                                    <small class="text-muted">{{ mov.nome_motorista }}</small>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    {% else %}
+                                        <small class="text-muted">-</small>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if mov.peso_entrada_kg or mov.peso_saida_kg %}
+                                        <div class="small">
+                                            {% if mov.peso_entrada_kg %}
+                                                <div class="text-success">
+                                                    <i class="fas fa-arrow-down"></i> Entrada: {{ "{:,.0f}".format(mov.peso_entrada_kg) }} kg
+                                                </div>
+                                            {% endif %}
+                                            {% if mov.peso_saida_kg %}
+                                                <div class="text-danger">
+                                                    <i class="fas fa-arrow-up"></i> Saída: {{ "{:,.0f}".format(mov.peso_saida_kg) }} kg
+                                                </div>
+                                            {% endif %}
+                                            {% if mov.peso_entrada_kg and mov.peso_saida_kg %}
+                                                <div class="text-info mt-1">
+                                                    <i class="fas fa-calculator"></i> Líquido: {{ "{:,.0f}".format(mov.peso_entrada_kg - mov.peso_saida_kg) }} kg
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                    {% else %}
+                                        <small class="text-muted">-</small>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if mov.observacao %}
+                                        <small class="text-muted">{{ mov.observacao[:80] }}{% if mov.observacao|length > 80 %}...{% endif %}</small>
+                                    {% else %}
+                                        <small class="text-muted">-</small>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                
+                {% if movimentacoes|length >= 100 %}
+                <div class="text-center mt-3">
+                    <small class="text-muted">Mostrando os 100 registros mais recentes</small>
+                </div>
+                {% endif %}
+            {% else %}
+                <div class="text-center py-5">
+                    <i class="fas fa-history fa-3x text-muted mb-3"></i>
+                    <h5 class="text-muted">Nenhuma movimentação registrada</h5>
+                    <p class="text-muted">As movimentações de grãos aparecerão aqui.</p>
+                    <a href="{{ url_for('silos') }}" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> Fazer Lançamento
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

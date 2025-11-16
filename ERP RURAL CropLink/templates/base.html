@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <title>{% block title %}CropLink - Sistema de Gestão Agrícola{% endblock %}</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='favicon.svg') }}">
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    <link rel="apple-touch-icon" href="{{ url_for('static', filename='favicon.svg') }}">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Custom CSS -->
+    <link href="{{ url_for('static', filename='css/style.css') }}?v=contraste{{ range(1000, 9999) | random }}" rel="stylesheet">
+    
+    
+    {% block head %}{% endblock %}
+</head>
+<body>
+    {% if current_user.is_authenticated %}
+    <!-- Mobile Menu Toggle -->
+    <button class="mobile-menu-toggle d-lg-none" onclick="toggleMobileSidebar()">
+        <i class="fas fa-bars"></i>
+    </button>
+    
+    <!-- Sidebar Navigation -->
+    <nav class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <a class="sidebar-brand" href="{{ url_for('dashboard') }}">
+                <i class="fas fa-leaf"></i>
+                <span>CropLink</span>
+            </a>
+            <div class="user-welcome">
+                <small>Bem-vindo, {{ current_user.nome_completo or current_user.username }}</small>
+            </div>
+            <button class="sidebar-toggle d-none d-lg-block" onclick="toggleSidebar()">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+        </div>
+        
+        <ul class="sidebar-nav">
+            <!-- Dashboard - Para todos os usuários autenticados -->
+            <li class="nav-item">
+                <a class="nav-link {{ 'active' if request.endpoint == 'dashboard' }}" href="{{ url_for('dashboard') }}">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+            
+            <!-- MÓDULOS PRINCIPAIS - Para todos os usuários autenticados -->
+            {% if current_user.is_authenticated %}
+            
+            <!-- Gestão de Insumos -->
+            <li class="nav-item nav-dropdown">
+                <a class="nav-link dropdown-toggle {{ 'active' if request.endpoint in ['insumos', 'insumos_agricolas', 'aplicacao_insumos'] }} {{ 'collapsed' if request.endpoint not in ['insumos', 'insumos_agricolas', 'aplicacao_insumos'] else '' }}" 
+                   href="#" 
+                   data-bs-toggle="collapse" 
+                   data-bs-target="#insumosDropdown" 
+                   aria-expanded="{{ 'true' if request.endpoint in ['insumos', 'insumos_agricolas', 'aplicacao_insumos'] else 'false' }}">
+                    <i class="fas fa-boxes"></i>
+                    <span>Gestão de Insumos</span>
+                    <i class="fas fa-chevron-down dropdown-arrow"></i>
+                </a>
+                <div class="dropdown-submenu" id="insumosDropdown" style="display: none;">
+                    <a class="dropdown-item {{ 'active' if request.endpoint == 'insumos' }}" href="{{ url_for('insumos') }}">
+                        <i class="fas fa-box"></i>
+                        <span>Insumos Gerais</span>
+                    </a>
+                    
+                    <a class="dropdown-item {{ 'active' if request.endpoint == 'insumos_agricolas' }}" href="{{ url_for('insumos_agricolas') }}">
+                        <i class="fas fa-seedling"></i>
+                        <span>Insumos Agrícolas</span>
+                    </a>
+                    
+                    <a class="dropdown-item {{ 'active' if request.endpoint == 'aplicacao_insumos' }}" href="{{ url_for('aplicacao_insumos') }}">
+                        <i class="fas fa-spray-can"></i>
+                        <span>Aplicação</span>
+                    </a>
+                </div>
+            </li>
+            
+            <!-- Equipamentos -->
+            <li class="nav-item">
+                <a class="nav-link {{ 'active' if request.endpoint == 'maquinario' }}" href="{{ url_for('maquinario') }}">
+                    <i class="fas fa-tractor"></i>
+                    <span>Maquinários</span>
+                </a>
+            </li>
+            
+            <!-- Pessoas -->
+            <li class="nav-item nav-dropdown">
+                <a class="nav-link dropdown-toggle {{ 'active' if request.endpoint in ['funcionarios', 'diaristas', 'fornecedores'] }} {{ 'collapsed' if request.endpoint not in ['funcionarios', 'diaristas', 'fornecedores'] else '' }}" 
+                   href="#" 
+                   data-bs-toggle="collapse" 
+                   data-bs-target="#rhDropdown" 
+                   aria-expanded="{{ 'true' if request.endpoint in ['funcionarios', 'diaristas', 'fornecedores'] else 'false' }}">
+                    <i class="fas fa-users"></i>
+                    <span>Pessoas</span>
+                    <i class="fas fa-chevron-down dropdown-arrow"></i>
+                </a>
+                <div class="dropdown-submenu" id="rhDropdown" style="display: none;">
+                    <a class="dropdown-item {{ 'active' if request.endpoint == 'funcionarios' }}" href="{{ url_for('funcionarios') }}">
+                        <i class="fas fa-user-tie"></i>
+                        <span>Colaboradores</span>
+                    </a>
+                    <a class="dropdown-item {{ 'active' if request.endpoint == 'diaristas' }}" href="{{ url_for('diaristas') }}">
+                        <i class="fas fa-user-clock"></i>
+                        <span>Prestadores de Serviço</span>
+                    </a>
+                    <a class="dropdown-item {{ 'active' if request.endpoint == 'fornecedores' }}" href="{{ url_for('fornecedores') }}">
+                        <i class="fas fa-truck"></i>
+                        <span>Fornecedores</span>
+                    </a>
+                </div>
+            </li>
+            
+            <!-- Silos -->
+            <li class="nav-item">
+                <a class="nav-link {{ 'active' if request.endpoint == 'silos' }}" href="{{ url_for('silos') }}">
+                    <i class="fas fa-warehouse"></i>
+                    <span>Silos</span>
+                </a>
+            </li>
+
+            <!-- Talhões -->
+            <li class="nav-item">
+                <a class="nav-link {{ 'active' if request.endpoint == 'talhoes' }}" href="{{ url_for('talhoes') }}">
+                    <i class="fas fa-map-marked-alt"></i>
+                    <span>Talhões</span>
+                </a>
+            </li>
+
+            <!-- Controle de Chuva -->
+            <li class="nav-item">
+                <a class="nav-link {{ 'active' if request.endpoint == 'chuva' }}" href="{{ url_for('chuva') }}">
+                    <i class="fas fa-cloud-rain"></i>
+                    <span>Controle de Chuva</span>
+                </a>
+            </li>
+            
+            <!-- Financeiro -->
+            <li class="nav-item nav-dropdown">
+                <a class="nav-link dropdown-toggle {{ 'active' if request.endpoint in ['contas_pagar', 'contas_receber', 'fluxo_caixa', 'contas_bancarias'] }} {{ 'collapsed' if request.endpoint not in ['contas_pagar', 'contas_receber', 'fluxo_caixa', 'contas_bancarias'] else '' }}" 
+                   href="#" 
+                   data-bs-toggle="collapse" 
+                   data-bs-target="#financeiroDropdown" 
+                   aria-expanded="{{ 'true' if request.endpoint in ['contas_pagar', 'contas_receber', 'fluxo_caixa', 'contas_bancarias'] else 'false' }}">
+                    <i class="fas fa-dollar-sign"></i>
+                    <span>Financeiro</span>
+                    <i class="fas fa-chevron-down dropdown-arrow"></i>
+                </a>
+                <div class="dropdown-submenu" id="financeiroDropdown" style="display: none;">
+                    <a class="dropdown-item {{ 'active' if request.endpoint == 'contas_pagar' }}" href="{{ url_for('contas_pagar') }}">
+                        <i class="fas fa-file-invoice"></i>
+                        <span>Contas a Pagar</span>
+                    </a>
+                    <a class="dropdown-item {{ 'active' if request.endpoint == 'contas_receber' }}" href="{{ url_for('contas_receber') }}">
+                        <i class="fas fa-receipt"></i>
+                        <span>Contas a Receber</span>
+                    </a>
+                    <a class="dropdown-item {{ 'active' if request.endpoint == 'fluxo_caixa' }}" href="{{ url_for('fluxo_caixa') }}">
+                        <i class="fas fa-chart-line"></i>
+                        <span>Fluxo de Caixa</span>
+                    </a>
+                    <a class="dropdown-item {{ 'active' if request.endpoint == 'contas_bancarias' }}" href="{{ url_for('contas_bancarias') }}">
+                        <i class="fas fa-university"></i>
+                        <span>Contas Bancárias</span>
+                    </a>
+                </div>
+            </li>
+            
+            <!-- Relatórios -->
+            <li class="nav-item">
+                <a class="nav-link {{ 'active' if request.endpoint and 'relatorio' in request.endpoint }}" href="{{ url_for('relatorios') }}">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>Relatórios</span>
+                </a>
+            </li>
+            
+            {% endif %}
+            
+            
+            
+            <!-- Administração - Para usuários comuns (não administradores) -->
+            {% if not current_user.is_admin %}
+            <hr style="margin: 10px 20px; border-color: var(--cinza-medio);">
+
+            <li class="nav-item nav-dropdown">
+                <a class="nav-link dropdown-toggle {{ 'active' if request.endpoint == 'upgrade_plano' }} {{ 'collapsed' if request.endpoint != 'upgrade_plano' else '' }}" 
+                   href="#" 
+                   data-bs-toggle="collapse" 
+                   data-bs-target="#userAdminDropdown" 
+                   aria-expanded="{{ 'true' if request.endpoint == 'upgrade_plano' else 'false' }}">
+                    <i class="fas fa-user-cog"></i>
+                    <span>Administração</span>
+                    <i class="fas fa-chevron-down dropdown-arrow"></i>
+                </a>
+                <div class="dropdown-submenu" id="userAdminDropdown" style="display: none;">
+                    <a class="dropdown-item {{ 'active' if request.endpoint == 'upgrade_plano' }}" href="{{ url_for('upgrade_plano') }}">
+                        <i class="fas fa-crown text-warning"></i>
+                        <span>Meus Planos</span>
+                    </a>
+                    <a class="dropdown-item" 
+                       href="https://wa.me/5547936183058?text=Olá,%20gostaria%20de%20falar%20com%20Pedro!" 
+                       target="_blank" 
+                       rel="noopener noreferrer">
+                        <i class="fab fa-whatsapp text-success"></i>
+                        <span>Fale com o Desenvolvedor</span>
+                    </a>
+                </div>
+            </li>
+            {% endif %}
+
+            <!-- Administração - Somente para Administradores -->
+            {% if current_user.is_admin %}
+            <hr style="margin: 10px 20px; border-color: var(--cinza-medio);">
+
+            <li class="nav-item nav-dropdown">
+                <a class="nav-link dropdown-toggle {{ 'active' if request.endpoint in ['administracao', 'gerencia_usuarios', 'import_dados', 'gerenciar_clientes', 'gerenciar_produtores'] }} {{ 'collapsed' if request.endpoint not in ['administracao', 'gerencia_usuarios', 'import_dados', 'gerenciar_clientes', 'gerenciar_produtores'] else '' }}" 
+                   href="#" 
+                   data-bs-toggle="collapse" 
+                   data-bs-target="#adminDropdown" 
+                   aria-expanded="{{ 'true' if request.endpoint in ['administracao', 'gerencia_usuarios', 'import_dados', 'gerenciar_clientes', 'gerenciar_produtores'] else 'false' }}">
+                    <i class="fas fa-cog"></i>
+                    <span>Administração</span>
+                    <i class="fas fa-chevron-down dropdown-arrow"></i>
+                </a>
+                <div class="dropdown-submenu" id="adminDropdown" style="display: none;">
+                    <a class="dropdown-item {{ 'active' if request.endpoint == 'gerencia_usuarios' }}" href="{{ url_for('gerencia_usuarios') }}">
+                        <i class="fas fa-users-cog"></i>
+                        <span>Gerência de Usuários</span>
+                    </a>
+                    <a class="dropdown-item {{ 'active' if request.endpoint == 'gerenciar_clientes' }}" href="{{ url_for('gerenciar_clientes') }}">
+                        <i class="fas fa-handshake"></i>
+                        <span>Gerenciar Clientes</span>
+                    </a>
+                    <a class="dropdown-item {{ 'active' if request.endpoint == 'import_dados' }}" href="{{ url_for('import_dados') }}">
+                        <i class="fas fa-file-import"></i>
+                        <span>Import de Dados</span>
+                    </a>
+                </div>
+            </li>
+            {% endif %}
+            
+            <!-- Perfil do Usuário -->
+            <li class="nav-item">
+                <a class="nav-link {{ 'active' if request.endpoint == 'meu_perfil' }}" href="{{ url_for('meu_perfil') }}">
+                    <i class="fas fa-user-circle"></i>
+                    <span>Meu Perfil</span>
+                </a>
+            </li>
+
+            <!-- Sistema -->
+            <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('logout') }}">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Sair</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    
+    <!-- Main Content for Authenticated Users -->
+    <main class="main-content">
+        <div class="content-wrapper">
+            <!-- Page Header -->
+            {% block page_header %}
+            <div class="page-header">
+                <h1 class="page-title">{% block page_title %}Dashboard{% endblock %}</h1>
+                <p class="page-subtitle">{% block page_subtitle %}Visão geral das operações da fazenda{% endblock %}</p>
+            </div>
+            {% endblock %}
+            
+            <!-- Flash Messages -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show" role="alert">
+                            <i class="fas fa-{{ 'exclamation-triangle' if category == 'error' else 'check-circle' if category == 'success' else 'info-circle' }}"></i>
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+            
+            <!-- Page Content -->
+            {% block content %}{% endblock %}
+        </div>
+    </main>
+    
+    <!-- Bottom Navigation Mobile (App-like) -->
+    <nav class="mobile-bottom-nav">
+        <a class="bottom-nav-item {{ 'active' if request.endpoint == 'dashboard' }}" href="{{ url_for('dashboard') }}">
+            <i class="fas fa-chart-line"></i>
+            <span>Dashboard</span>
+        </a>
+        
+        {% if current_user.is_authenticated %}
+        <a class="bottom-nav-item {{ 'active' if request.endpoint in ['insumos', 'insumos_agricolas'] }}" href="{{ url_for('insumos_agricolas') }}">
+            <i class="fas fa-seedling"></i>
+            <span>Insumos</span>
+        </a>
+        
+        <a class="bottom-nav-item {{ 'active' if request.endpoint == 'silos' }}" href="{{ url_for('silos') }}">
+            <i class="fas fa-warehouse"></i>
+            <span>Silos</span>
+        </a>
+
+        <a class="bottom-nav-item {{ 'active' if request.endpoint == 'talhoes' }}" href="{{ url_for('talhoes') }}">
+            <i class="fas fa-map-marked-alt"></i>
+            <span>Talhões</span>
+        </a>
+        
+        <a class="bottom-nav-item {{ 'active' if request.endpoint in ['funcionarios', 'diaristas'] }}" href="{{ url_for('funcionarios') }}">
+            <i class="fas fa-users"></i>
+            <span>Equipe</span>
+        </a>
+        
+        <a class="bottom-nav-item {{ 'active' if request.endpoint == 'relatorios' }}" href="{{ url_for('relatorios') }}">
+            <i class="fas fa-chart-bar"></i>
+            <span>Relatórios</span>
+        </a>
+        {% endif %}
+    </nav>
+    
+    {% endif %}
+    
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Custom JavaScript -->
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    
+    <!-- Sidebar and Navigation JavaScript -->
+    <script>
+        // Desktop sidebar toggle functionality
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const toggleIcon = document.querySelector('.sidebar-toggle i');
+            
+            sidebar.classList.toggle('collapsed');
+            
+            // Update toggle icon
+            if (sidebar.classList.contains('collapsed')) {
+                toggleIcon.className = 'fas fa-chevron-right';
+            } else {
+                toggleIcon.className = 'fas fa-chevron-left';
+            }
+        }
+        
+        // Mobile sidebar toggle functionality
+        function toggleMobileSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('show');
+        }
+        
+        // Close mobile sidebar when clicking outside
+        document.addEventListener('click', function(event) {
+            const sidebar = document.getElementById('sidebar');
+            const mobileToggle = document.querySelector('.mobile-menu-toggle');
+            const isMobile = window.innerWidth < 992; // Bootstrap lg breakpoint
+            
+            if (isMobile && sidebar.classList.contains('show') && 
+                !sidebar.contains(event.target) && 
+                !mobileToggle.contains(event.target)) {
+                sidebar.classList.remove('show');
+            }
+        });
+        
+        // Dropdown functionality - WORKING VERSION
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Initializing dropdown functionality...');
+            
+            // Setup dropdown toggles
+            const dropdownToggles = document.querySelectorAll('.dropdown-toggle');
+            console.log('Found dropdown toggles:', dropdownToggles.length);
+            
+            dropdownToggles.forEach((toggle, index) => {
+                console.log(`Setting up dropdown ${index + 1}:`, toggle);
+                
+                toggle.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    
+                    console.log('Dropdown clicked!');
+                    
+                    // Get target collapse element
+                    const targetId = this.getAttribute('data-bs-target');
+                    const collapse = document.querySelector(targetId);
+                    
+                    console.log('Target ID:', targetId);
+                    console.log('Target element:', collapse);
+                    
+                    if (!collapse) {
+                        console.error('Collapse element not found!');
+                        return;
+                    }
+                    
+                    // Check current state
+                    const isOpen = collapse.style.display === 'block' || collapse.classList.contains('show');
+                    console.log('Is currently open:', isOpen);
+                    
+                    // Close all other dropdowns
+                    dropdownToggles.forEach(otherToggle => {
+                        if (otherToggle !== this) {
+                            const otherId = otherToggle.getAttribute('data-bs-target');
+                            const otherCollapse = document.querySelector(otherId);
+                            if (otherCollapse) {
+                                otherCollapse.style.display = 'none';
+                                otherCollapse.classList.remove('show');
+                                otherToggle.classList.add('collapsed');
+                                otherToggle.setAttribute('aria-expanded', 'false');
+                            }
+                        }
+                    });
+                    
+                    // Toggle current dropdown
+                    if (isOpen) {
+                        // Close it
+                        collapse.style.display = 'none';
+                        collapse.classList.remove('show');
+                        this.classList.add('collapsed');
+                        this.setAttribute('aria-expanded', 'false');
+                        console.log('Closed dropdown');
+                    } else {
+                        // Open it
+                        collapse.style.display = 'block';
+                        collapse.classList.add('show');
+                        this.classList.remove('collapsed');
+                        this.setAttribute('aria-expanded', 'true');
+                        console.log('Opened dropdown');
+                    }
+                });
+            });
+            
+            // Initialize states
+            dropdownToggles.forEach(toggle => {
+                const targetId = toggle.getAttribute('data-bs-target');
+                const collapse = document.querySelector(targetId);
+                
+                if (collapse) {
+                    // Start with all dropdowns closed
+                    collapse.style.display = 'none';
+                    collapse.classList.remove('show');
+                    toggle.classList.add('collapsed');
+                    toggle.setAttribute('aria-expanded', 'false');
+                }
+            });
+            
+            // Handle active page dropdown auto-open
+            const currentPath = window.location.pathname;
+            console.log('Current path:', currentPath);
+            
+            // Check if current page is in a dropdown
+            if (currentPath === '/insumos' || currentPath === '/insumos-agricolas') {
+                const insumosDropdown = document.querySelector('#insumosDropdown');
+                const insumosToggle = document.querySelector('[data-bs-target="#insumosDropdown"]');
+                if (insumosDropdown && insumosToggle) {
+                    insumosDropdown.style.display = 'block';
+                    insumosDropdown.classList.add('show');
+                    insumosToggle.classList.remove('collapsed');
+                    insumosToggle.setAttribute('aria-expanded', 'true');
+                    console.log('Auto-opened Insumos dropdown');
+                }
+            }
+            
+            if (currentPath === '/funcionarios' || currentPath === '/diaristas') {
+                const rhDropdown = document.querySelector('#rhDropdown');
+                const rhToggle = document.querySelector('[data-bs-target="#rhDropdown"]');
+                if (rhDropdown && rhToggle) {
+                    rhDropdown.style.display = 'block';
+                    rhDropdown.classList.add('show');
+                    rhToggle.classList.remove('collapsed');
+                    rhToggle.setAttribute('aria-expanded', 'true');
+                    console.log('Auto-opened RH dropdown');
+                }
+            }
+            
+            console.log('Dropdown setup complete!');
+        });
+    </script>
+    
+    {% block scripts %}{% endblock %}
+</body>
+</html>

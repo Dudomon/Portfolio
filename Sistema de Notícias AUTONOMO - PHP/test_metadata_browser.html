@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Teste Metadata Browser</title>
+    <style>
+        body {
+            font-family: monospace;
+            background: #1a1a1a;
+            color: #FFB580;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .section {
+            background: #2a2a2a;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            border: 1px solid #FFB580;
+        }
+        button {
+            background: #FFB580;
+            color: #000;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 5px;
+        }
+        button:hover {
+            background: #FF8C42;
+        }
+        .success {
+            color: #0f0;
+        }
+        .error {
+            color: #f00;
+        }
+        pre {
+            background: #1a1a1a;
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>🎵 Teste de Metadata da Rádio Entre Rios</h1>
+
+    <button onclick="testAPI()">1. Testar API (radio_metadata_api.php)</button>
+    <button onclick="testShoutcastJSON()">2. Testar Shoutcast JSON</button>
+    <button onclick="testShoutcast7HTML()">3. Testar Shoutcast 7.html</button>
+    <button onclick="clearCache()">Limpar Cache</button>
+
+    <div class="section">
+        <h2>📊 Resultado dos Testes</h2>
+        <div id="results"></div>
+    </div>
+
+    <div class="section">
+        <h2>🎵 Metadata Atual</h2>
+        <div id="current-metadata">
+            <p>Clique em "Testar API" para buscar metadata...</p>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'https://www.radioentrerios.com.br/wp-content/noticias/radio_metadata_api.php';
+        const SHOUTCAST_JSON = 'https://live9.livemus.com.br:27076/stats?json=1';
+        const SHOUTCAST_7HTML = 'https://live9.livemus.com.br:27076/7.html';
+
+        function log(message, type = 'info') {
+            const results = document.getElementById('results');
+            const color = type === 'success' ? '#0f0' : type === 'error' ? '#f00' : '#FFB580';
+            results.innerHTML += `<div style="color: ${color};">${message}</div>`;
+            console.log(message);
+        }
+
+        function clear() {
+            document.getElementById('results').innerHTML = '';
+        }
+
+        async function testAPI() {
+            clear();
+            log('🔍 Testando API de Metadata...', 'info');
+
+            try {
+                const url = `${API_URL}?action=current&t=${Date.now()}`;
+                log(`📡 URL: ${url}`, 'info');
+
+                const response = await fetch(url);
+                const data = await response.json();
+
+                log('<br>✅ SUCESSO! Resposta recebida:', 'success');
+                log(`<pre>${JSON.stringify(data, null, 2)}</pre>`, 'info');
+
+                if (data.success && data.data) {
+                    const metadata = data.data;
+                    document.getElementById('current-metadata').innerHTML = `
+                        <h3>🎵 Música Atual</h3>
+                        <p><strong>Título:</strong> ${metadata.title}</p>
+                        <p><strong>Artista:</strong> ${metadata.artist}</p>
+                        <p><strong>Full:</strong> ${metadata.full}</p>
+                        <p><strong>Listeners:</strong> ${metadata.listeners}</p>
+                        <p><strong>Bitrate:</strong> ${metadata.bitrate}</p>
+                        <p><strong>Timestamp:</strong> ${new Date(metadata.timestamp * 1000).toLocaleString()}</p>
+                        ${metadata.cover ? `<img src="${metadata.cover}" alt="Capa" style="width: 150px; border-radius: 8px; margin-top: 10px;">` : ''}
+                    `;
+                } else {
+                    log('⚠️ API retornou sucesso, mas sem dados válidos', 'error');
+                }
+            } catch (error) {
+                log(`<br>❌ ERRO: ${error.message}`, 'error');
+                log(`<pre>${error.stack}</pre>`, 'error');
+            }
+        }
+
+        async function testShoutcastJSON() {
+            clear();
+            log('🔍 Testando Shoutcast JSON diretamente...', 'info');
+
+            try {
+                const url = `${SHOUTCAST_JSON}`;
+                log(`📡 URL: ${url}`, 'info');
+
+                const response = await fetch(url);
+
+                log(`<br>📊 Status: ${response.status} ${response.statusText}`, 'info');
+                log(`📋 Headers:`, 'info');
+                for (const [key, value] of response.headers.entries()) {
+                    log(`  ${key}: ${value}`, 'info');
+                }
+
+                const data = await response.json();
+
+                log('<br>✅ JSON recebido:', 'success');
+                log(`<pre>${JSON.stringify(data, null, 2)}</pre>`, 'info');
+
+                if (data.songtitle) {
+                    log(`<br>🎵 Música: ${data.songtitle}`, 'success');
+                }
+            } catch (error) {
+                log(`<br>❌ ERRO: ${error.message}`, 'error');
+                log('⚠️ Possíveis causas: CORS bloqueado, servidor offline, ou SSL inválido', 'error');
+            }
+        }
+
+        async function testShoutcast7HTML() {
+            clear();
+            log('🔍 Testando Shoutcast 7.html...', 'info');
+
+            try {
+                const url = `${SHOUTCAST_7HTML}`;
+                log(`📡 URL: ${url}`, 'info');
+
+                const response = await fetch(url);
+
+                log(`<br>📊 Status: ${response.status} ${response.statusText}`, 'info');
+
+                const text = await response.text();
+
+                log('<br>✅ Resposta recebida:', 'success');
+                log(`<pre>${text}</pre>`, 'info');
+
+                const parts = text.split(',');
+                if (parts.length >= 7) {
+                    log('<br>📋 Campos separados:', 'info');
+                    log(`  [0] Listeners: ${parts[0]}`, 'info');
+                    log(`  [1] Status: ${parts[1]}`, 'info');
+                    log(`  [2] Peak: ${parts[2]}`, 'info');
+                    log(`  [3] Max: ${parts[3]}`, 'info');
+                    log(`  [4] Unique: ${parts[4]}`, 'info');
+                    log(`  [5] Bitrate: ${parts[5]}`, 'info');
+                    log(`  [6] Song Title: ${parts[6]}`, 'success');
+                }
+            } catch (error) {
+                log(`<br>❌ ERRO: ${error.message}`, 'error');
+                log('⚠️ Possíveis causas: CORS bloqueado, servidor offline, ou SSL inválido', 'error');
+            }
+        }
+
+        async function clearCache() {
+            clear();
+            log('🗑️ Para limpar o cache do servidor PHP, delete:', 'info');
+            log('D:\\Widget noticias\\cache\\radio_metadata\\current_song.json', 'info');
+            log('<br>⚠️ Você pode fazer isso manualmente ou via FTP no servidor', 'info');
+        }
+
+        // Auto-teste ao carregar
+        window.addEventListener('load', () => {
+            log('✅ Página carregada! Use os botões acima para testar.', 'success');
+        });
+    </script>
+</body>
+</html>

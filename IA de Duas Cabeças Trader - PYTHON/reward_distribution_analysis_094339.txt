@@ -1,0 +1,25 @@
+RELATÓRIO DE ANÁLISE DE DISTRIBUIÇÃO DE REWARDS
+============================================================
+
+Arquivo analisado: avaliacoes\rewards_20250804_094339.jsonl
+Total de amostras: 46,598
+
+ESTATÍSTICAS BÁSICAS:
+Média: -1.759124
+Desvio padrão: 0.464194
+Mínimo: -2.000000
+Máximo: 2.000000
+
+PERCENTIS CRÍTICOS:
+P1%: -2.000000
+P5%: -2.000000
+P95%: -0.653700
+P99%: 0.177093
+
+CLIPPING ATUAL [-1, 1]:
+Informação perdida: 94.16%
+Valores clippados: 43,875
+
+RECOMENDAÇÃO ÓTIMA:
+Range: [-2.000, -0.002]
+Informação preservada: 98.00%

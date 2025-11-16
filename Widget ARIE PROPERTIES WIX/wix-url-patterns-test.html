@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔍 Teste Padrões URL Wix - Diagnóstico Completo</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        
+        .section h3 {
+            color: #2c5aa0;
+            margin-top: 0;
+        }
+        
+        .test-button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        
+        .test-button:hover {
+            background: #0056b3;
+        }
+        
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        
+        .warning {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        
+        .info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        
+        .log-area {
+            background: #000;
+            color: #0f0;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 400px;
+            overflow-y: auto;
+            margin: 10px 0;
+        }
+        
+        .url-pattern {
+            background: #f8f9fa;
+            padding: 10px;
+            border-left: 4px solid #007bff;
+            margin: 10px 0;
+            font-family: monospace;
+        }
+        
+        .status {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 3px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .status-success { background: #28a745; color: white; }
+        .status-error { background: #dc3545; color: white; }
+        .status-testing { background: #ffc107; color: black; }
+        .status-pending { background: #6c757d; color: white; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Teste Padrões URL Wix - Diagnóstico Completo</h1>
+        
+        <div class="info">
+            <strong>🎯 Objetivo:</strong> Descobrir o padrão correto de URL para HTTP Functions do Wix
+            <br><strong>📍 Site:</strong> arieproperties.com
+            <br><strong>🔧 Função:</strong> getBalanceInfo
+        </div>
+        
+        <!-- Seção 1: Padrões de URL Conhecidos -->
+        <div class="section">
+            <h3>📋 Padrões de URL do Wix para HTTP Functions</h3>
+            
+            <div class="warning">
+                <strong>⚠️ Informação Important:</strong> Wix usa diferentes padrões de URL dependendo do tipo de site:
+                <ul>
+                    <li><strong>Sites publicados:</strong> https://dominio.com/_functions/funcao</li>
+                    <li><strong>Sites de preview:</strong> https://usuario.wixsite.com/site/_functions/funcao</li>
+                    <li><strong>Sites conectados:</strong> https://www.dominio.com/_functions/funcao</li>
+                    <li><strong>Sites premium:</strong> https://dominio.com/_functions/funcao</li>
+                </ul>
+            </div>
+            
+            <button class="test-button" onclick="testAllURLPatterns()">🧪 Testar Todos os Padrões</button>
+            <button class="test-button" onclick="clearLog()">🗑️ Limpar Log</button>
+        </div>
+        
+        <!-- Seção 2: Testes de URL -->
+        <div class="section">
+            <h3>🌐 Testes de URL - arieproperties.com</h3>
+            
+            <div id="url-tests">
+                <!-- URLs serão inseridas dinamicamente -->
+            </div>
+        </div>
+        
+        <!-- Seção 3: Teste Direto API Sienge -->
+        <div class="section">
+            <h3>🔗 Teste Direto API Sienge</h3>
+            
+            <div class="info">
+                <strong>📡 API Sienge:</strong> Testando conectividade direta (bypass Wix)
+                <br><strong>🔑 Credenciais:</strong> arieproperties-ti / eeoTCIXR9NtEdv118V1L16xZWZR64W7p
+            </div>
+            
+            <button class="test-button" onclick="testSiengeAPI()">🧪 Testar API Sienge Direta</button>
+            
+            <div id="sienge-result"></div>
+        </div>
+        
+        <!-- Seção 4: Diagnóstico -->
+        <div class="section">
+            <h3>🔍 Diagnóstico e Sugestões</h3>
+            
+            <div id="diagnostic-info">
+                <div class="warning">
+                    <strong>🔧 Possíveis Problemas:</strong>
+                    <ul>
+                        <li>HTTP Functions não estão ativas no painel Wix</li>
+                        <li>Arquivo http-functions.js não está no local correto</li>
+                        <li>Funções não estão exportadas corretamente</li>
+                        <li>Problemas de CORS</li>
+                        <li>Site usando subdomínio diferente</li>
+                        <li>Necessário usar POST em vez de GET</li>
+                    </ul>
+                </div>
+                
+                <button class="test-button" onclick="generateDiagnostic()">🔍 Gerar Diagnóstico</button>
+            </div>
+        </div>
+        
+        <!-- Log -->
+        <div class="section">
+            <h3>📝 Log de Testes</h3>
+            <div id="log" class="log-area"></div>
+        </div>
+    </div>
+
+    <script>
+        // Configurações
+        const BASE_DOMAIN = 'arieproperties.com';
+        const FUNCTION_NAME = 'getBalanceInfo';
+        
+        // Diferentes padrões de URL para testar
+        const URL_PATTERNS = [
+            // ⭐ PADRÕES ESPECÍFICOS BASEADOS NA URL EXATA INFORMADA
+            `https://www.${BASE_DOMAIN}/blank/_functions/${FUNCTION_NAME}`,
+            `https://www.${BASE_DOMAIN}/blank?rc=test-site&_functions=${FUNCTION_NAME}`,
+            `https://www.${BASE_DOMAIN}/blank/_functions/${FUNCTION_NAME}?rc=test-site`,
+            `https://www.${BASE_DOMAIN}/_functions/${FUNCTION_NAME}?rc=test-site`,
+            
+            // Padrão 1: Site publicado
+            `https://${BASE_DOMAIN}/_functions/${FUNCTION_NAME}`,
+            
+            // Padrão 2: Site com www
+            `https://www.${BASE_DOMAIN}/_functions/${FUNCTION_NAME}`,
+            
+            // Padrão 3: Site de preview/teste
+            `https://${BASE_DOMAIN.replace('.com', '')}.wixsite.com/_functions/${FUNCTION_NAME}`,
+            
+            // Padrão 4: Site de preview com subpasta
+            `https://${BASE_DOMAIN.replace('.com', '')}.wixsite.com/site/_functions/${FUNCTION_NAME}`,
+            
+            // Padrão 5: Wix.com preview
+            `https://${BASE_DOMAIN.replace('.com', '')}.wixsite.com/${BASE_DOMAIN.replace('.com', '')}/_functions/${FUNCTION_NAME}`,
+            
+            // Padrão 6: Functions dev
+            `https://www.${BASE_DOMAIN}/_functions-dev/${FUNCTION_NAME}`,
+            
+            // Padrão 7: API endpoint
+            `https://www.${BASE_DOMAIN}/_api/${FUNCTION_NAME}`,
+            
+            // Padrão 8: Site endpoint
+            `https://www.${BASE_DOMAIN}/site/_functions/${FUNCTION_NAME}`,
+            
+            // Padrão 9: HTTPS sem www
+            `https://${BASE_DOMAIN}/_functions/${FUNCTION_NAME}`,
+            
+            // Padrão 10: Wix API format
+            `https://www.${BASE_DOMAIN}/_functions/wix-http-functions/${FUNCTION_NAME}`,
+            
+            // Padrão 11: Teste com subdomínio
+            `https://api.${BASE_DOMAIN}/_functions/${FUNCTION_NAME}`,
+            
+            // Padrão 12: Teste formato backend
+            `https://backend.${BASE_DOMAIN}/_functions/${FUNCTION_NAME}`
+        ];
+        
+        function log(message, type = 'info') {
+            const logArea = document.getElementById('log');
+            const timestamp = new Date().toLocaleTimeString();
+            const color = type === 'error' ? '#ff6b6b' : type === 'success' ? '#51cf66' : '#74c0fc';
+            
+            logArea.innerHTML += `<div style="color: ${color};">[${timestamp}] ${message}</div>`;
+            logArea.scrollTop = logArea.scrollHeight;
+        }
+        
+        function clearLog() {
+            document.getElementById('log').innerHTML = '';
+            log('Log limpo', 'info');
+        }
+        
+        async function testURL(url, method = 'GET', body = null) {
+            log(`🧪 Testando: ${url} [${method}]`, 'info');
+            
+            try {
+                const options = {
+                    method: method,
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    }
+                };
+                
+                if (body && method !== 'GET') {
+                    options.body = JSON.stringify(body);
+                }
+                
+                const response = await fetch(url, options);
+                
+                log(`✅ Status: ${response.status} - ${response.statusText}`, 'success');
+                
+                if (response.ok) {
+                    const data = await response.text();
+                    log(`📄 Resposta: ${data.substring(0, 200)}...`, 'success');
+                    return { success: true, status: response.status, data: data };
+                } else {
+                    log(`❌ Erro HTTP: ${response.status}`, 'error');
+                    return { success: false, status: response.status, error: response.statusText };
+                }
+                
+            } catch (error) {
+                log(`❌ Erro de rede: ${error.message}`, 'error');
+                return { success: false, error: error.message };
+            }
+        }
+        
+        async function testAllURLPatterns() {
+            log('🚀 Iniciando teste de todos os padrões de URL...', 'info');
+            
+            const urlTestsDiv = document.getElementById('url-tests');
+            urlTestsDiv.innerHTML = '';
+            
+            let successCount = 0;
+            
+            for (let i = 0; i < URL_PATTERNS.length; i++) {
+                const url = URL_PATTERNS[i];
+                
+                // Criar elemento visual para este teste
+                const testDiv = document.createElement('div');
+                testDiv.className = 'url-pattern';
+                testDiv.innerHTML = `
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span><strong>Padrão ${i + 1}:</strong> ${url}</span>
+                        <span class="status status-testing" id="status-${i}">TESTANDO...</span>
+                    </div>
+                `;
+                urlTestsDiv.appendChild(testDiv);
+                
+                // Testar GET
+                const getResult = await testURL(url, 'GET');
+                
+                if (getResult.success) {
+                    document.getElementById(`status-${i}`).className = 'status status-success';
+                    document.getElementById(`status-${i}`).textContent = 'SUCESSO GET';
+                    successCount++;
+                } else {
+                    // Testar POST se GET falhar
+                    const postResult = await testURL(url, 'POST', { documento: '12345678901' });
+                    
+                    if (postResult.success) {
+                        document.getElementById(`status-${i}`).className = 'status status-success';
+                        document.getElementById(`status-${i}`).textContent = 'SUCESSO POST';
+                        successCount++;
+                    } else {
+                        document.getElementById(`status-${i}`).className = 'status status-error';
+                        document.getElementById(`status-${i}`).textContent = 'FALHOU';
+                    }
+                }
+                
+                // Pequena pausa entre testes
+                await new Promise(resolve => setTimeout(resolve, 500));
+            }
+            
+            log(`📊 Teste completo: ${successCount}/${URL_PATTERNS.length} URLs funcionando`, 'info');
+            
+            if (successCount === 0) {
+                log('❌ NENHUMA URL FUNCIONOU - Veja sugestões abaixo', 'error');
+                generateDiagnostic();
+            }
+        }
+        
+        async function testSiengeAPI() {
+            log('🔗 Testando API Sienge direta...', 'info');
+            
+            const siengeResult = document.getElementById('sienge-result');
+            siengeResult.innerHTML = '<div class="info">🔄 Testando conectividade direta com API Sienge...</div>';
+            
+            const credentials = btoa('arieproperties-ti:eeoTCIXR9NtEdv118V1L16xZWZR64W7p');
+            const testDocument = '12345678901';
+            
+            try {
+                const response = await fetch(`https://api.sienge.com.br/arieproperties/public/api/v1/financial/current-debit-balance?document=${testDocument}`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Basic ${credentials}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    siengeResult.innerHTML = `
+                        <div class="success">
+                            <strong>✅ API Sienge funcionando!</strong>
+                            <br>Status: ${response.status}
+                            <br>Dados: ${JSON.stringify(data, null, 2)}
+                        </div>
+                    `;
+                    log('✅ API Sienge funcionando corretamente', 'success');
+                } else {
+                    siengeResult.innerHTML = `
+                        <div class="error">
+                            <strong>❌ API Sienge falhou</strong>
+                            <br>Status: ${response.status}
+                            <br>Erro: ${response.statusText}
+                        </div>
+                    `;
+                    log(`❌ API Sienge falhou: ${response.status}`, 'error');
+                }
+            } catch (error) {
+                siengeResult.innerHTML = `
+                    <div class="error">
+                        <strong>❌ Erro de conexão com API Sienge</strong>
+                        <br>Erro: ${error.message}
+                        <br><em>Provavelmente bloqueado por CORS</em>
+                    </div>
+                `;
+                log(`❌ Erro CORS/Rede API Sienge: ${error.message}`, 'error');
+            }
+        }
+        
+        function generateDiagnostic() {
+            log('🔍 Gerando diagnóstico...', 'info');
+            
+            const diagnosticDiv = document.getElementById('diagnostic-info');
+            diagnosticDiv.innerHTML = `
+                <div class="warning">
+                    <strong>🔧 Possíveis Problemas Identificados:</strong>
+                    <ul>
+                        <li><strong>HTTP Functions não ativas:</strong> Verifique no painel Wix se as HTTP Functions estão habilitadas</li>
+                        <li><strong>Arquivo não encontrado:</strong> Certifique-se que http-functions.js está na pasta correta</li>
+                        <li><strong>Exportação incorreta:</strong> Função deve ser exportada: <code>export function getBalanceInfo(request) { ... }</code></li>
+                        <li><strong>Domínio incorreto:</strong> Site pode estar usando subdomínio diferente</li>
+                        <li><strong>Método HTTP:</strong> Tente usar POST em vez de GET</li>
+                    </ul>
+                </div>
+                
+                <div class="info">
+                    <strong>🎯 Próximos Passos Sugeridos:</strong>
+                    <ol>
+                        <li><strong>Verifique no painel Wix:</strong> Vá em Configurações → Funções Avançadas → HTTP Functions</li>
+                        <li><strong>Confirme a estrutura do arquivo:</strong> Deve ser Backend/http-functions.js</li>
+                        <li><strong>Teste no editor Wix:</strong> Use o preview do próprio Wix primeiro</li>
+                        <li><strong>Verifique logs:</strong> Painel Wix → Logs → Functions</li>
+                        <li><strong>Teste com Postman:</strong> Ferramenta externa para testar APIs</li>
+                    </ol>
+                </div>
+                
+                <div class="error">
+                    <strong>🚨 Problema Crítico Identificado:</strong>
+                    <br>Se TODAS as URLs falharam, provavelmente:
+                    <ul>
+                        <li>HTTP Functions não estão ativas no Wix</li>
+                        <li>Arquivo http-functions.js não está no local correto</li>
+                        <li>Site ainda não foi publicado/deployado</li>
+                    </ul>
+                </div>
+            `;
+        }
+        
+        // Inicializar página
+        document.addEventListener('DOMContentLoaded', function() {
+            log('🚀 Teste de Padrões URL Wix iniciado', 'info');
+            log(`📍 Domínio alvo: ${BASE_DOMAIN}`, 'info');
+            log(`🔧 Função alvo: ${FUNCTION_NAME}`, 'info');
+            log(`📋 Total de padrões para testar: ${URL_PATTERNS.length}`, 'info');
+        });
+    </script>
+</body>
+</html>

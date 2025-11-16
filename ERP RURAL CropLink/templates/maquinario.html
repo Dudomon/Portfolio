@@ -1,0 +1,398 @@
+{% extends "base.html" %}
+
+{% block title %}Maquinário - CropLink{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col">
+            <h1 class="display-6">
+                <i class="fas fa-tractor text-success"></i>
+                Gestão de Maquinário
+            </h1>
+            <p class="text-muted">Controle de máquinas, equipamentos e manutenções</p>
+        </div>
+        <div class="col-auto">
+            <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalAdicionarMaquina">
+                <i class="fas fa-plus"></i> Adicionar Máquina
+            </button>
+        </div>
+    </div>
+
+    <!-- Lista de Máquinas -->
+    <div class="card shadow">
+        <div class="card-body">
+            {% if maquinas %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th style="width: 25%;">Nome</th>
+                                <th style="width: 25%;">Marca/Modelo</th>
+                                <th style="width: 12%;" class="text-center-td">Ano</th>
+                                <th style="width: 15%;" class="text-center-td">Status</th>
+                                <th style="width: 15%;" class="text-center-td">Horas de Uso</th>
+                                <th style="width: 8%;" class="text-center-td">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for maquina in maquinas %}
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <i class="fas fa-tractor text-success me-2"></i>
+                                        <span class="fw-semibold">{{ maquina.nome }}</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    {% if maquina.marca and maquina.modelo %}
+                                        <span class="fw-medium">{{ maquina.marca }}</span><br>
+                                        <small class="text-muted">{{ maquina.modelo }}</small>
+                                    {% elif maquina.marca %}
+                                        <span class="fw-medium">{{ maquina.marca }}</span>
+                                    {% else %}
+                                        <span class="text-muted">-</span>
+                                    {% endif %}
+                                </td>
+                                <td class="text-center-td">
+                                    {% if maquina.ano %}
+                                        <span class="fw-medium">{{ maquina.ano }}</span>
+                                    {% else %}
+                                        <span class="text-muted">-</span>
+                                    {% endif %}
+                                </td>
+                                <td class="text-center-td">
+                                    {% if maquina.status == 'Operacional' %}
+                                        <span class="badge status-operational">
+                                            <i class="fas fa-check-circle me-1"></i>{{ maquina.status }}
+                                        </span>
+                                    {% elif 'Manutenção' in maquina.status %}
+                                        <span class="badge bg-warning">
+                                            <i class="fas fa-wrench me-1"></i>{{ maquina.status }}
+                                        </span>
+                                    {% elif maquina.status == 'Inativo' %}
+                                        <span class="badge bg-secondary">
+                                            <i class="fas fa-pause-circle me-1"></i>{{ maquina.status }}
+                                        </span>
+                                    {% else %}
+                                        <span class="badge bg-danger">
+                                            <i class="fas fa-exclamation-triangle me-1"></i>{{ maquina.status }}
+                                        </span>
+                                    {% endif %}
+                                </td>
+                                <td class="text-center-td">
+                                    {% if maquina.horas_de_uso %}
+                                        <span class="fw-medium">{{ "{:,.0f}".format(maquina.horas_de_uso) }}h</span>
+                                    {% else %}
+                                        <small class="text-muted">-</small>
+                                    {% endif %}
+                                </td>
+                                <td class="text-center-td">
+                                    <div class="btn-group" role="group">
+                                        <button class="btn btn-sm btn-outline-primary" onclick="editarMaquina({{ maquina.id }}, '{{ maquina.nome }}', '{{ maquina.marca }}', '{{ maquina.modelo }}', {{ maquina.ano or 'null' }}, '{{ maquina.status }}', {{ maquina.horas_de_uso or 0 }}, '{{ maquina.tipo_oleo or '' }}', '{{ maquina.filtro_oleo or '' }}', '{{ maquina.filtro_ar or '' }}', '{{ maquina.filtro_combustivel or '' }}', '{{ maquina.data_ultima_troca_oleo.strftime('%Y-%m-%d') if maquina.data_ultima_troca_oleo else '' }}', '{{ maquina.data_ultima_troca_filtro_oleo.strftime('%Y-%m-%d') if maquina.data_ultima_troca_filtro_oleo else '' }}', '{{ maquina.data_ultima_troca_filtro_ar.strftime('%Y-%m-%d') if maquina.data_ultima_troca_filtro_ar else '' }}', '{{ maquina.data_ultima_troca_filtro_combustivel.strftime('%Y-%m-%d') if maquina.data_ultima_troca_filtro_combustivel else '' }}')">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-outline-danger" onclick="excluirMaquina({{ maquina.id }}, '{{ maquina.nome }}')" title="Excluir máquina">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="text-center py-5">
+                    <i class="fas fa-tractor fa-3x text-muted mb-3"></i>
+                    <p class="text-muted">Nenhuma máquina cadastrada ainda.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Modal Adicionar Máquina -->
+<div class="modal fade" id="modalAdicionarMaquina" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Adicionar Máquina/Equipamento</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="POST" action="{{ url_for('adicionar_maquina') }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <label for="nome" class="form-label">Nome da Máquina/Equipamento *</label>
+                            <input type="text" class="form-control" id="nome" name="nome" required placeholder="Ex: Trator John Deere">
+                        </div>
+                        <div class="col-md-4">
+                            <label for="status" class="form-label">Status</label>
+                            <select class="form-select" id="status" name="status">
+                                <option value="Operacional">Operacional</option>
+                                <option value="Em Manutenção">Em Manutenção</option>
+                                <option value="Inativo">Inativo</option>
+                                <option value="Avariado">Avariado</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label for="marca" class="form-label">Marca</label>
+                            <input type="text" class="form-control" id="marca" name="marca" placeholder="Ex: John Deere">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="modelo" class="form-label">Modelo</label>
+                            <input type="text" class="form-control" id="modelo" name="modelo" placeholder="Ex: 6120">
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label for="ano" class="form-label">Ano</label>
+                            <input type="number" class="form-control" id="ano" name="ano" min="1980" max="2030" placeholder="2020">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="horas_de_uso" class="form-label">Horas de Uso</label>
+                            <input type="number" class="form-control" id="horas_de_uso" name="horas_de_uso" step="0.1" placeholder="0.0">
+                        </div>
+                    </div>
+                    
+                    <!-- Seção de Manutenção -->
+                    <hr class="my-4">
+                    <h6 class="text-muted">Informações de Manutenção (Opcional)</h6>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label for="tipo_oleo" class="form-label">Tipo de Óleo</label>
+                            <input type="text" class="form-control" id="tipo_oleo" name="tipo_oleo" placeholder="Ex: SAE 15W-40">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="filtro_oleo" class="form-label">Filtro de Óleo</label>
+                            <input type="text" class="form-control" id="filtro_oleo" name="filtro_oleo" placeholder="Ex: LF9009">
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label for="filtro_ar" class="form-label">Filtro de Ar</label>
+                            <input type="text" class="form-control" id="filtro_ar" name="filtro_ar" placeholder="Ex: AF26400">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="filtro_combustivel" class="form-label">Filtro de Combustível</label>
+                            <input type="text" class="form-control" id="filtro_combustivel" name="filtro_combustivel" placeholder="Ex: FF5324">
+                        </div>
+                    </div>
+                    
+                    <!-- Datas das Últimas Trocas -->
+                    <hr class="my-3">
+                    <h6 class="text-muted">Datas das Últimas Trocas (Opcional)</h6>
+                    <small class="text-muted mb-3 d-block">Registre quando foi feita a última troca para acompanhar os prazos de manutenção</small>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label for="data_ultima_troca_oleo" class="form-label">Última Troca de Óleo</label>
+                            <input type="date" class="form-control" id="data_ultima_troca_oleo" name="data_ultima_troca_oleo">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="data_ultima_troca_filtro_oleo" class="form-label">Última Troca Filtro de Óleo</label>
+                            <input type="date" class="form-control" id="data_ultima_troca_filtro_oleo" name="data_ultima_troca_filtro_oleo">
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label for="data_ultima_troca_filtro_ar" class="form-label">Última Troca Filtro de Ar</label>
+                            <input type="date" class="form-control" id="data_ultima_troca_filtro_ar" name="data_ultima_troca_filtro_ar">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="data_ultima_troca_filtro_combustivel" class="form-label">Última Troca Filtro Combustível</label>
+                            <input type="date" class="form-control" id="data_ultima_troca_filtro_combustivel" name="data_ultima_troca_filtro_combustivel">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-success">Adicionar Máquina</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Editar Máquina -->
+<div class="modal fade" id="modalEditarMaquina" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Editar Máquina/Equipamento</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="POST" id="formEditarMaquina">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <label for="editNome" class="form-label">Nome da Máquina/Equipamento *</label>
+                            <input type="text" class="form-control" id="editNome" name="nome" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="editStatus" class="form-label">Status</label>
+                            <select class="form-select" id="editStatus" name="status">
+                                <option value="Operacional">Operacional</option>
+                                <option value="Em Manutenção">Em Manutenção</option>
+                                <option value="Inativo">Inativo</option>
+                                <option value="Avariado">Avariado</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label for="editMarca" class="form-label">Marca</label>
+                            <input type="text" class="form-control" id="editMarca" name="marca">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="editModelo" class="form-label">Modelo</label>
+                            <input type="text" class="form-control" id="editModelo" name="modelo">
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label for="editAno" class="form-label">Ano</label>
+                            <input type="number" class="form-control" id="editAno" name="ano" min="1980" max="2030">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="editHorasUso" class="form-label">Horas de Uso</label>
+                            <input type="number" class="form-control" id="editHorasUso" name="horas_de_uso" step="0.1">
+                        </div>
+                    </div>
+                    
+                    <!-- Seção de Manutenção -->
+                    <hr class="my-4">
+                    <h6 class="text-muted">Informações de Manutenção (Opcional)</h6>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label for="editTipoOleo" class="form-label">Tipo de Óleo</label>
+                            <input type="text" class="form-control" id="editTipoOleo" name="tipo_oleo" placeholder="Ex: SAE 15W-40">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="editFiltroOleo" class="form-label">Filtro de Óleo</label>
+                            <input type="text" class="form-control" id="editFiltroOleo" name="filtro_oleo" placeholder="Ex: LF9009">
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label for="editFiltroAr" class="form-label">Filtro de Ar</label>
+                            <input type="text" class="form-control" id="editFiltroAr" name="filtro_ar" placeholder="Ex: AF26400">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="editFiltroCombustivel" class="form-label">Filtro de Combustível</label>
+                            <input type="text" class="form-control" id="editFiltroCombustivel" name="filtro_combustivel" placeholder="Ex: FF5324">
+                        </div>
+                    </div>
+                    
+                    <!-- Datas das Últimas Trocas -->
+                    <hr class="my-3">
+                    <h6 class="text-muted">Datas das Últimas Trocas (Opcional)</h6>
+                    <small class="text-muted mb-3 d-block">Registre quando foi feita a última troca para acompanhar os prazos de manutenção</small>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label for="editDataUltimaTrocaOleo" class="form-label">Última Troca de Óleo</label>
+                            <input type="date" class="form-control" id="editDataUltimaTrocaOleo" name="data_ultima_troca_oleo">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="editDataUltimaTrocaFiltroOleo" class="form-label">Última Troca Filtro de Óleo</label>
+                            <input type="date" class="form-control" id="editDataUltimaTrocaFiltroOleo" name="data_ultima_troca_filtro_oleo">
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label for="editDataUltimaTrocaFiltroAr" class="form-label">Última Troca Filtro de Ar</label>
+                            <input type="date" class="form-control" id="editDataUltimaTrocaFiltroAr" name="data_ultima_troca_filtro_ar">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="editDataUltimaTrocaFiltroCombustivel" class="form-label">Última Troca Filtro Combustível</label>
+                            <input type="date" class="form-control" id="editDataUltimaTrocaFiltroCombustivel" name="data_ultima_troca_filtro_combustivel">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Salvar Alterações</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Excluir Máquina -->
+<div class="modal fade" id="modalExcluirMaquina" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title">Confirmar Exclusão</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="formExcluirMaquina" method="POST">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                <div class="modal-body">
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <strong>Atenção!</strong> Esta ação não pode ser desfeita.
+                    </div>
+                    <p>Deseja realmente excluir a máquina <strong id="nomeMaquinaExcluir"></strong>?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-danger">Excluir</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function editarMaquina(id, nome, marca, modelo, ano, status, horasUso, tipoOleo, filtroOleo, filtroAr, filtroCombustivel, dataUltimaTrocaOleo, dataUltimaTrocaFiltroOleo, dataUltimaTrocaFiltroAr, dataUltimaTrocaFiltroCombustivel) {
+    document.getElementById('editNome').value = nome;
+    document.getElementById('editMarca').value = marca || '';
+    document.getElementById('editModelo').value = modelo || '';
+    document.getElementById('editAno').value = ano || '';
+    document.getElementById('editStatus').value = status;
+    document.getElementById('editHorasUso').value = horasUso || 0;
+    
+    // Preencher campos de manutenção
+    document.getElementById('editTipoOleo').value = tipoOleo || '';
+    document.getElementById('editFiltroOleo').value = filtroOleo || '';
+    document.getElementById('editFiltroAr').value = filtroAr || '';
+    document.getElementById('editFiltroCombustivel').value = filtroCombustivel || '';
+    
+    // Preencher campos de datas das últimas trocas
+    document.getElementById('editDataUltimaTrocaOleo').value = dataUltimaTrocaOleo || '';
+    document.getElementById('editDataUltimaTrocaFiltroOleo').value = dataUltimaTrocaFiltroOleo || '';
+    document.getElementById('editDataUltimaTrocaFiltroAr').value = dataUltimaTrocaFiltroAr || '';
+    document.getElementById('editDataUltimaTrocaFiltroCombustivel').value = dataUltimaTrocaFiltroCombustivel || '';
+    
+    document.getElementById('formEditarMaquina').action = '/maquinario/editar/' + id;
+    
+    new bootstrap.Modal(document.getElementById('modalEditarMaquina')).show();
+}
+
+function excluirMaquina(id, nome) {
+    document.getElementById('nomeMaquinaExcluir').textContent = nome;
+    document.getElementById('formExcluirMaquina').action = '/maquinario/excluir/' + id;
+    new bootstrap.Modal(document.getElementById('modalExcluirMaquina')).show();
+}
+</script>
+{% endblock %}

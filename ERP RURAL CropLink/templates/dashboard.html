@@ -1,0 +1,385 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - CropLink{% endblock %}
+
+{% block page_title %}Dashboard{% endblock %}
+{% block page_subtitle %}Visão geral das operações {% endblock %}
+
+{% block content %}
+
+
+<!-- Estatísticas Gerais -->
+<div class="row mb-4">
+    <!-- Total de Insumos -->
+    <div class="col-xl-3 col-lg-6 col-md-6 mb-3">
+        <div class="stat-card success">
+            <div class="stat-number">{{ total_insumos or 0 }}</div>
+            <div class="stat-label">Insumos Cadastrados</div>
+            <i class="fas fa-boxes stat-icon"></i>
+        </div>
+    </div>
+    
+    <!-- Total de Máquinas -->
+    <div class="col-xl-3 col-lg-6 col-md-6 mb-3">
+        <div class="stat-card primary">
+            <div class="stat-number">{{ total_maquinas or 0 }}</div>
+            <div class="stat-label">Máquinas Cadastradas</div>
+            <i class="fas fa-tractor stat-icon"></i>
+        </div>
+    </div>
+    
+    <!-- Total de Funcionários -->
+    <div class="col-xl-3 col-lg-6 col-md-6 mb-3">
+        <div class="stat-card info">
+            <div class="stat-number">{{ total_funcionarios or 0 }}</div>
+            <div class="stat-label">Funcionários Ativos</div>
+            <i class="fas fa-users stat-icon"></i>
+        </div>
+    </div>
+    
+    <!-- Total de Silos -->
+    <div class="col-xl-3 col-lg-6 col-md-6 mb-3">
+        <div class="stat-card warning">
+            <div class="stat-number">{{ total_silos or 0 }}</div>
+            <div class="stat-label">Silos Cadastrados</div>
+            <i class="fas fa-warehouse stat-icon"></i>
+        </div>
+    </div>
+</div>
+
+<!-- Gráficos e Análises -->
+<div class="row mb-4">
+    <!-- Gráfico de Movimentações de Insumos -->
+    <div class="col-lg-8 mb-3">
+        <div class="card" style="height: 400px;">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-chart-line me-2 text-green"></i>
+                    Movimentações de Insumos
+                </h5>
+            </div>
+            <div class="card-body" style="height: 320px; overflow: hidden;">
+                <div style="position: relative; height: 280px; width: 100%;">
+                    <canvas id="movimentacoesChart" style="height: 280px !important; width: 100% !important; max-height: 280px; max-width: 100%;"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Alertas de Estoque -->
+    <div class="col-lg-4 mb-3">
+        <div class="card" style="height: 400px;">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-exclamation-triangle me-2" style="color: #FF9800;"></i>
+                    Alertas de Estoque
+                </h5>
+            </div>
+            <div class="card-body" style="height: 320px; overflow-y: auto;">
+                {% if insumos_baixo_estoque %}
+                    {% for insumo in insumos_baixo_estoque[:5] %}
+                    <div class="d-flex justify-content-between align-items-center mb-3 p-2 rounded" style="background-color: var(--cinza-claro);">
+                        <div style="flex: 1; min-width: 0;">
+                            <h6 class="mb-1" style="font-size: 14px; font-weight: 600; color: var(--preto-principal); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                {{ insumo.nome[:20] }}{% if insumo.nome|length > 20 %}...{% endif %}
+                            </h6>
+                            <small style="color: var(--cinza-escuro);">{{ insumo.quantidade }} {{ insumo.unidade }}</small>
+                        </div>
+                        <span class="badge bg-warning ms-2" style="font-size: 10px;">
+                            {% set duracao = insumo.prever_duracao_estoque() %}
+                            {% if duracao == 0 %}
+                                Esgotado
+                            {% elif duracao == -1 %}
+                                Sem mov.
+                            {% else %}
+                                {{ duracao }} dias
+                            {% endif %}
+                        </span>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="text-center py-4">
+                        <i class="fas fa-check-circle fa-2x mb-2" style="color: var(--verde-principal);"></i>
+                        <p class="text-muted mb-0" style="font-size: 14px;">Estoques adequados</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Registros Recentes -->
+<div class="row mb-4">
+    <!-- Últimas Movimentações -->
+    <div class="col-lg-6 mb-3">
+        <div class="card" style="height: 400px;">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-history me-2 text-green"></i>
+                    Últimas Movimentações
+                </h5>
+            </div>
+            <div class="card-body" style="height: 320px; overflow-y: auto; padding: 0;">
+                {% if movimentacoes_recentes %}
+                    <div class="table-responsive" style="height: 100%;">
+                        <table class="table table-sm table-hover mb-0">
+                            <thead style="position: sticky; top: 0; background: var(--branco-principal); z-index: 10;">
+                                <tr>
+                                    <th style="font-size: 12px; padding: 8px;">Insumo</th>
+                                    <th style="font-size: 12px; padding: 8px;">Tipo</th>
+                                    <th style="font-size: 12px; padding: 8px;">Qtd</th>
+                                    <th style="font-size: 12px; padding: 8px;">Data</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for mov in movimentacoes_recentes[:10] %}
+                                <tr>
+                                    <td style="font-size: 12px; padding: 6px 8px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 120px;">
+                                        {{ mov.insumo.nome[:15] }}{% if mov.insumo.nome|length > 15 %}...{% endif %}
+                                    </td>
+                                    <td style="font-size: 12px; padding: 6px 8px;">
+                                        <span class="badge bg-{{ 'success' if mov.tipo_movimentacao == 'Entrada' else 'danger' }}" style="font-size: 10px;">
+                                            {{ mov.tipo_movimentacao }}
+                                        </span>
+                                    </td>
+                                    <td style="font-size: 12px; padding: 6px 8px;">{{ mov.quantidade }}</td>
+                                    <td style="font-size: 12px; padding: 6px 8px;">{{ mov.data_movimentacao.strftime('%d/%m') }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="text-center py-4">
+                        <i class="fas fa-inbox fa-2x mb-2" style="color: var(--cinza-escuro);"></i>
+                        <p class="text-muted mb-0" style="font-size: 14px;">Nenhuma movimentação</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <!-- Registros de Chuva -->
+    <div class="col-lg-6 mb-3">
+        <div class="card" style="height: 400px;">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-cloud-rain me-2" style="color: #2196F3;"></i>
+                    Registros de Chuva
+                </h5>
+            </div>
+            <div class="card-body" style="height: 320px; overflow: hidden;">
+                {% if registros_chuva %}
+                    <div style="position: relative; height: 200px; width: 100%; margin-bottom: 16px;">
+                        <canvas id="chuvaChart" style="height: 200px !important; width: 100% !important; max-height: 200px; max-width: 100%;"></canvas>
+                    </div>
+                    
+                    <div class="row text-center">
+                        <div class="col-6">
+                            <h4 style="color: var(--verde-principal); margin-bottom: 4px; font-size: 18px;">
+                                {{ total_chuva_semana or 0 }}mm
+                            </h4>
+                            <small style="color: var(--cinza-escuro); font-size: 12px;">Total da Semana</small>
+                        </div>
+                        <div class="col-6">
+                            <h4 style="color: #2196F3; margin-bottom: 4px; font-size: 18px;">
+                                {{ media_chuva_semana or 0 }}mm
+                            </h4>
+                            <small style="color: var(--cinza-escuro); font-size: 12px;">Média Diária</small>
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="text-center py-4">
+                        <i class="fas fa-sun fa-2x mb-2" style="color: #FF9800;"></i>
+                        <p class="text-muted mb-0" style="font-size: 14px;">Nenhum registro de chuva</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Ações Rápidas por Plano -->
+<div class="row">
+    <div class="col-12">
+        <div class="card" style="min-height: 200px;">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-bolt me-2 text-green"></i>
+                    Ações Rápidas
+                </h5>
+                <span class="badge bg-success">{{ current_user.plano|title }}</span>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <!-- Sempre disponível -->
+                    <div class="col-lg-3 col-md-6 mb-2">
+                        <a href="{{ url_for('insumos') }}" class="btn btn-outline-success w-100" style="height: 80px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-decoration: none;">
+                            <i class="fas fa-plus-circle mb-1" style="font-size: 20px;"></i>
+                            <span style="font-size: 12px;">Adicionar Insumo</span>
+                        </a>
+                    </div>
+                    
+                    <div class="col-lg-3 col-md-6 mb-2">
+                        <a href="{{ url_for('silos') }}" class="btn btn-outline-success w-100" style="height: 80px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-decoration: none;">
+                            <i class="fas fa-warehouse mb-1" style="font-size: 20px;"></i>
+                            <span style="font-size: 12px;">Controlar Silos</span>
+                        </a>
+                    </div>
+
+                    <!-- Pulverização -->
+                    <div class="col-lg-3 col-md-6 mb-2">
+                        <a href="{{ url_for('aplicacao_insumos') }}" class="btn btn-outline-success w-100" style="height: 80px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-decoration: none;">
+                            <i class="fas fa-seedling mb-1" style="font-size: 20px;"></i>
+                            <span style="font-size: 12px;">Pulverização</span>
+                        </a>
+                    </div>
+
+                    <!-- Caderno Campo -->
+                    <div class="col-lg-3 col-md-6 mb-2">
+                        <a href="#" onclick="alert('Caderno de Campo em desenvolvimento!')" class="btn btn-outline-success w-100" style="height: 80px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-decoration: none;">
+                            <i class="fas fa-book mb-1" style="font-size: 20px;"></i>
+                            <span style="font-size: 12px;">Caderno Campo</span>
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Configurar gráfico de movimentações com tamanho fixo
+    const movCtx = document.getElementById('movimentacoesChart');
+    if (movCtx) {
+        // Definir tamanho fixo do canvas
+        movCtx.width = movCtx.parentElement.clientWidth;
+        movCtx.height = 280;
+        
+        new Chart(movCtx, {
+            type: 'line',
+            data: {
+                labels: {% if labels_movimentacoes %}{{ labels_movimentacoes|safe }}{% else %}["Sem dados"]{% endif %},
+                datasets: [{
+                    label: 'Entradas',
+                    data: {% if dados_entradas %}{{ dados_entradas|safe }}{% else %}[0]{% endif %},
+                    borderColor: '#2E7D32',
+                    backgroundColor: 'rgba(46, 125, 50, 0.1)',
+                    borderWidth: 2,
+                    fill: true,
+                    tension: 0.3
+                }, {
+                    label: 'Saídas',
+                    data: {% if dados_saidas %}{{ dados_saidas|safe }}{% else %}[0]{% endif %},
+                    borderColor: '#F44336',
+                    backgroundColor: 'rgba(244, 67, 54, 0.1)',
+                    borderWidth: 2,
+                    fill: true,
+                    tension: 0.3
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: {
+                            color: '#333333',
+                            font: {
+                                size: 12
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        ticks: {
+                            color: '#666666',
+                            font: {
+                                size: 10
+                            }
+                        },
+                        grid: {
+                            color: '#e0e0e0'
+                        }
+                    },
+                    y: {
+                        ticks: {
+                            color: '#666666',
+                            font: {
+                                size: 10
+                            }
+                        },
+                        grid: {
+                            color: '#e0e0e0'
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    // Configurar gráfico de chuva com tamanho fixo
+    const chuvaCtx = document.getElementById('chuvaChart');
+    if (chuvaCtx) {
+        // Definir tamanho fixo do canvas
+        chuvaCtx.width = chuvaCtx.parentElement.clientWidth;
+        chuvaCtx.height = 200;
+        
+        new Chart(chuvaCtx, {
+            type: 'bar',
+            data: {
+                labels: {% if labels_chuva %}{{ labels_chuva|safe }}{% else %}["Sem dados"]{% endif %},
+                datasets: [{
+                    label: 'Precipitação (mm)',
+                    data: {% if dados_chuva %}{{ dados_chuva|safe }}{% else %}[0]{% endif %},
+                    backgroundColor: 'rgba(33, 150, 243, 0.7)',
+                    borderColor: '#2196F3',
+                    borderWidth: 1,
+                    borderRadius: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    x: {
+                        ticks: {
+                            color: '#666666',
+                            font: {
+                                size: 10
+                            }
+                        },
+                        grid: {
+                            color: '#e0e0e0'
+                        }
+                    },
+                    y: {
+                        ticks: {
+                            color: '#666666',
+                            font: {
+                                size: 10
+                            }
+                        },
+                        grid: {
+                            color: '#e0e0e0'
+                        },
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    }
+});
+</script>
+{% endblock %}

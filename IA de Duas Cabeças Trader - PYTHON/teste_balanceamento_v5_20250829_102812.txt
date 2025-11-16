@@ -1,0 +1,37 @@
+🎯 TESTE DE BALANCEAMENTO V5 SHARPE REWARD SYSTEM
+============================================================
+
+🟢 TRADING PERFEITO
+----------------------------------------
+Total Return: 75.78%
+Actual Sharpe: 3.042
+Avg Reward: 0.8033
+Reward StdDev: 0.7467
+Final Portfolio: $1757.85
+
+🔴 TRADING ERRÁTICO
+----------------------------------------
+Total Return: -27.41%
+Actual Sharpe: -0.024
+Avg Reward: -2.4026
+Reward StdDev: 1.5309
+Final Portfolio: $725.93
+
+🟡 TRADING MEDIANO
+----------------------------------------
+Total Return: 16.07%
+Actual Sharpe: 0.770
+Avg Reward: -3.0000
+Reward StdDev: 0.0000
+Final Portfolio: $1160.67
+
+🔵 GRANDE GANHO FINAL
+----------------------------------------
+Total Return: 64.73%
+Actual Sharpe: 0.444
+Avg Reward: -2.8443
+Reward StdDev: 0.8387
+Final Portfolio: $1647.30
+
+Correlação Sharpe vs Reward: 0.928
+Range de Rewards: 4.9040

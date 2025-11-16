@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - CropLink</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-green: #00A859;
+            --light-gray: #f8f9fa;
+            --medium-gray: #6c757d;
+            --dark-gray: #343a40;
+            --white: #ffffff;
+            --shadow-soft: 0 4px 24px rgba(0, 0, 0, 0.06);
+            --shadow-medium: 0 8px 32px rgba(0, 0, 0, 0.12);
+            --border-radius: 12px;
+            --border-radius-large: 20px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #f8fffe 0%, #e8f5f0 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .login-container {
+            min-height: 100vh;
+            display: flex;
+            background: var(--white);
+        }
+
+        /* Coluna Esquerda - Carrossel */
+        .carousel-section {
+            flex: 1;
+            background: linear-gradient(135deg, var(--primary-green) 0%, #00964d 100%);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .carousel-container {
+            width: 100%;
+            max-width: 500px;
+            height: 400px;
+            position: relative;
+            margin: 0 auto;
+        }
+
+        .carousel-slide {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transform: translateX(30px);
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: var(--white);
+            padding: 2rem;
+        }
+
+        .carousel-slide.active {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .carousel-slide .icon {
+            font-size: 4rem;
+            margin-bottom: 1.5rem;
+            opacity: 0.9;
+        }
+
+        .carousel-slide h3 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            line-height: 1.3;
+        }
+
+        .carousel-slide p {
+            font-size: 1.1rem;
+            font-weight: 300;
+            opacity: 0.9;
+            line-height: 1.5;
+            max-width: 400px;
+        }
+
+        .carousel-indicators {
+            position: absolute;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .carousel-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.4);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .carousel-dot.active {
+            background: var(--white);
+            transform: scale(1.2);
+        }
+
+        /* Decoração de fundo */
+        .bg-decoration {
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" patternUnits="userSpaceOnUse" width="100" height="100"><circle cx="25" cy="25" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="75" cy="75" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="50" cy="10" r="0.5" fill="rgba(255,255,255,0.1)"/><circle cx="20" cy="80" r="0.5" fill="rgba(255,255,255,0.1)"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+            animation: float 20s linear infinite;
+            z-index: -1;
+        }
+
+        @keyframes float {
+            0% { transform: translate(-25%, -25%); }
+            100% { transform: translate(-26%, -26%); }
+        }
+
+        /* Coluna Direita - Formulário */
+        .form-section {
+            flex: 1;
+            max-width: 500px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 3rem;
+            background: var(--white);
+        }
+
+        .brand-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .brand-logo {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--primary-green), #00964d);
+            border-radius: var(--border-radius);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1rem;
+            box-shadow: var(--shadow-soft);
+        }
+
+        .brand-logo i {
+            font-size: 1.8rem;
+            color: var(--white);
+        }
+
+        .brand-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--dark-gray);
+            margin-bottom: 0.5rem;
+        }
+
+        .brand-subtitle {
+            color: var(--medium-gray);
+            font-weight: 400;
+            font-size: 0.95rem;
+        }
+
+        .login-form {
+            width: 100%;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--dark-gray);
+            font-size: 0.9rem;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            border: 2px solid #e9ecef;
+            border-radius: var(--border-radius);
+            font-size: 0.95rem;
+            font-weight: 400;
+            transition: all 0.3s ease;
+            background: var(--white);
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-green);
+            box-shadow: 0 0 0 3px rgba(0, 168, 89, 0.1);
+        }
+
+        .form-control::placeholder {
+            color: var(--medium-gray);
+            font-weight: 300;
+        }
+
+        .btn-login {
+            width: 100%;
+            padding: 0.875rem 1.5rem;
+            background: linear-gradient(135deg, var(--primary-green), #00964d);
+            border: none;
+            border-radius: var(--border-radius);
+            color: var(--white);
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow-soft);
+            cursor: pointer;
+            margin-top: 1rem;
+        }
+
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-medium);
+            background: linear-gradient(135deg, #00964d, var(--primary-green));
+        }
+
+        .btn-login:active {
+            transform: translateY(0);
+        }
+
+        .alert {
+            border-radius: var(--border-radius);
+            border: none;
+            padding: 0.875rem 1rem;
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+        }
+
+        .alert-danger {
+            background: #fff5f5;
+            color: #c53030;
+            border-left: 4px solid #c53030;
+        }
+
+        .register-link {
+            text-align: center;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid #e9ecef;
+        }
+
+        .register-link a {
+            color: var(--primary-green);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .register-link a:hover {
+            color: #00964d;
+            text-decoration: underline;
+        }
+
+        .security-footer {
+            text-align: center;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid #e9ecef;
+        }
+
+        .security-text {
+            color: var(--medium-gray);
+            font-size: 0.8rem;
+            font-weight: 400;
+        }
+
+        /* Responsividade */
+        @media (max-width: 768px) {
+            .login-container {
+                flex-direction: column;
+            }
+
+            .carousel-section {
+                min-height: 40vh;
+                flex: none;
+            }
+
+            .carousel-container {
+                max-width: 90%;
+                height: 250px;
+            }
+
+            .carousel-slide .icon {
+                font-size: 2.5rem;
+                margin-bottom: 1rem;
+            }
+
+            .carousel-slide h3 {
+                font-size: 1.4rem;
+                margin-bottom: 0.8rem;
+            }
+
+            .carousel-slide p {
+                font-size: 0.95rem;
+            }
+
+            .form-section {
+                padding: 2rem 1.5rem;
+                flex: 1;
+                min-height: 60vh;
+            }
+
+            .brand-header {
+                margin-bottom: 2rem;
+            }
+
+            .brand-title {
+                font-size: 1.6rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .carousel-section {
+                min-height: 35vh;
+            }
+
+            .form-section {
+                padding: 1.5rem 1rem;
+            }
+
+            .brand-logo {
+                width: 50px;
+                height: 50px;
+            }
+
+            .brand-logo i {
+                font-size: 1.5rem;
+            }
+
+            .brand-title {
+                font-size: 1.4rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <!-- Coluna Esquerda - Carrossel -->
+        <div class="carousel-section">
+            <div class="bg-decoration"></div>
+            
+            <div class="carousel-container">
+                <div class="carousel-slide active">
+                    <div class="icon">
+                        <i class="fas fa-seedling"></i>
+                    </div>
+                    <h3>Gestão Inteligente</h3>
+                    <p>Gerencie sua produção agrícola com tecnologia avançada e relatórios em tempo real</p>
+                </div>
+                
+                <div class="carousel-slide">
+                    <div class="icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h3>Análises Precisas</h3>
+                    <p>Tome decisões baseadas em dados confiáveis e aumente a produtividade da sua fazenda</p>
+                </div>
+                
+                <div class="carousel-slide">
+                    <div class="icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h3>Equipe Conectada</h3>
+                    <p>Mantenha sua equipe sincronizada com ferramentas colaborativas e comunicação eficiente</p>
+                </div>
+                
+                <div class="carousel-slide">
+                    <div class="icon">
+                        <i class="fas fa-leaf"></i>
+                    </div>
+                    <h3>Sustentabilidade</h3>
+                    <p>Monitore práticas sustentáveis e otimize o uso de recursos naturais</p>
+                </div>
+                
+                <div class="carousel-indicators">
+                    <div class="carousel-dot active" data-slide="0"></div>
+                    <div class="carousel-dot" data-slide="1"></div>
+                    <div class="carousel-dot" data-slide="2"></div>
+                    <div class="carousel-dot" data-slide="3"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Coluna Direita - Formulário -->
+        <div class="form-section">
+            <div class="brand-header">
+                <div class="brand-logo">
+                    <i class="fas fa-leaf"></i>
+                </div>
+                <h1 class="brand-title">CropLink</h1>
+                <p class="brand-subtitle">Sistema de Gestão Agrícola</p>
+            </div>
+
+            <!-- Mensagens Flash -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show" role="alert">
+                            <i class="fas fa-{{ 'exclamation-triangle' if category == 'error' else 'check-circle' if category == 'success' else 'info-circle' }} me-2"></i>
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            <form method="POST" id="loginForm" class="login-form">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                <div class="form-group">
+                    <label for="username" class="form-label">
+                        <i class="fas fa-user me-2"></i>Usuário ou Email
+                    </label>
+                    <input type="text"
+                           class="form-control"
+                           id="username"
+                           name="username"
+                           placeholder="Digite seu usuário ou email"
+                           required
+                           autocomplete="username"
+                           value="{{ request.form.username or '' }}">
+                </div>
+
+                <div class="form-group">
+                    <label for="password" class="form-label">
+                        <i class="fas fa-lock me-2"></i>Senha
+                    </label>
+                    <div class="password-input-wrapper" style="position: relative;">
+                        <input type="password"
+                               class="form-control"
+                               id="password"
+                               name="password"
+                               placeholder="Digite sua senha"
+                               required
+                               autocomplete="current-password"
+                               style="padding-right: 45px;">
+                        <button type="button"
+                                class="btn-toggle-password"
+                                onclick="togglePasswordVisibility()"
+                                style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; color: #6c757d; cursor: pointer; padding: 5px 10px;">
+                            <i class="fas fa-eye" id="toggleIcon"></i>
+                        </button>
+                    </div>
+                    <div class="form-check mt-2">
+                        <input class="form-check-input"
+                               type="checkbox"
+                               id="showPassword"
+                               onchange="togglePasswordVisibility()">
+                        <label class="form-check-label" for="showPassword" style="font-size: 0.9rem; color: var(--medium-gray); cursor: pointer;">
+                            Exibir senha
+                        </label>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-login">
+                    <i class="fas fa-sign-in-alt me-2"></i>
+                    Entrar no Sistema
+                </button>
+            </form>
+
+            <div class="register-link">
+                <p class="text-muted mb-2">
+                    <small>Precisa de acesso? Entre em contato com o administrador.</small>
+                </p>
+            </div>
+            
+            <div class="security-footer">
+                <p class="security-text">
+                    <i class="fas fa-shield-alt me-1"></i>
+                    Sistema Seguro - Versão 2.0
+                </p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Função para exibir/ocultar senha
+        function togglePasswordVisibility() {
+            const passwordInput = document.getElementById('password');
+            const toggleIcon = document.getElementById('toggleIcon');
+            const showPasswordCheckbox = document.getElementById('showPassword');
+
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleIcon.classList.remove('fa-eye');
+                toggleIcon.classList.add('fa-eye-slash');
+                showPasswordCheckbox.checked = true;
+            } else {
+                passwordInput.type = 'password';
+                toggleIcon.classList.remove('fa-eye-slash');
+                toggleIcon.classList.add('fa-eye');
+                showPasswordCheckbox.checked = false;
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Foco automático no campo usuário
+            document.getElementById('username').focus();
+
+            // Navegação com Enter
+            document.getElementById('username').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    document.getElementById('password').focus();
+                }
+            });
+
+            document.getElementById('password').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    document.getElementById('loginForm').submit();
+                }
+            });
+
+            // Carrossel automático
+            let currentSlide = 0;
+            const slides = document.querySelectorAll('.carousel-slide');
+            const dots = document.querySelectorAll('.carousel-dot');
+            const totalSlides = slides.length;
+
+            function showSlide(n) {
+                slides.forEach(slide => slide.classList.remove('active'));
+                dots.forEach(dot => dot.classList.remove('active'));
+                
+                slides[n].classList.add('active');
+                dots[n].classList.add('active');
+            }
+
+            function nextSlide() {
+                currentSlide = (currentSlide + 1) % totalSlides;
+                showSlide(currentSlide);
+            }
+
+            // Auto-play do carrossel
+            setInterval(nextSlide, 4000);
+
+            // Clique nos indicadores
+            dots.forEach((dot, index) => {
+                dot.addEventListener('click', () => {
+                    currentSlide = index;
+                    showSlide(currentSlide);
+                });
+            });
+
+            // Swipe/drag functionality para mobile
+            let startX = 0;
+            let isDragging = false;
+            const carouselContainer = document.querySelector('.carousel-container');
+
+            carouselContainer.addEventListener('touchstart', (e) => {
+                startX = e.touches[0].clientX;
+                isDragging = true;
+            });
+
+            carouselContainer.addEventListener('touchmove', (e) => {
+                e.preventDefault();
+            });
+
+            carouselContainer.addEventListener('touchend', (e) => {
+                if (!isDragging) return;
+                
+                const endX = e.changedTouches[0].clientX;
+                const diffX = startX - endX;
+                
+                if (Math.abs(diffX) > 50) {
+                    if (diffX > 0) {
+                        // Swipe left - próximo slide
+                        currentSlide = (currentSlide + 1) % totalSlides;
+                    } else {
+                        // Swipe right - slide anterior
+                        currentSlide = currentSlide === 0 ? totalSlides - 1 : currentSlide - 1;
+                    }
+                    showSlide(currentSlide);
+                }
+                
+                isDragging = false;
+            });
+
+            // Mouse drag para desktop
+            carouselContainer.addEventListener('mousedown', (e) => {
+                startX = e.clientX;
+                isDragging = true;
+                carouselContainer.style.cursor = 'grabbing';
+            });
+
+            carouselContainer.addEventListener('mousemove', (e) => {
+                if (!isDragging) return;
+                e.preventDefault();
+            });
+
+            carouselContainer.addEventListener('mouseup', (e) => {
+                if (!isDragging) return;
+                
+                const endX = e.clientX;
+                const diffX = startX - endX;
+                
+                if (Math.abs(diffX) > 50) {
+                    if (diffX > 0) {
+                        currentSlide = (currentSlide + 1) % totalSlides;
+                    } else {
+                        currentSlide = currentSlide === 0 ? totalSlides - 1 : currentSlide - 1;
+                    }
+                    showSlide(currentSlide);
+                }
+                
+                isDragging = false;
+                carouselContainer.style.cursor = 'grab';
+            });
+
+            carouselContainer.addEventListener('mouseleave', () => {
+                isDragging = false;
+                carouselContainer.style.cursor = 'grab';
+            });
+
+            carouselContainer.style.cursor = 'grab';
+        });
+    </script>
+</body>
+</html>

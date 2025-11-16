@@ -1,0 +1,27 @@
+
+🧪 RELATÓRIO DE TESTES V11 HÍBRIDA
+═══════════════════════════════════════════════════════════
+
+📅 Data: 2025-08-22 01:59:18
+🖥️ Device: cuda
+📊 Taxa de Sucesso: 0.0%
+🎯 Recomendação: NÃO_RECOMENDADO
+
+RESULTADOS DETALHADOS:
+═══════════════════════════════════════════════════════════
+
+ARCHITECTURE: ❌ FALHOU
+  Erro: 'close_5m'
+
+FORWARD_PASS: ❌ FALHOU
+  Erro: 'close_5m'
+
+GRADIENT_FLOW: ❌ FALHOU
+  Erro: 'close_5m'
+
+TRAINING_STEP: ❌ FALHOU
+  Erro: 'close_5m'
+
+MEMORY_EFFICIENCY: ❌ FALHOU
+  Erro: 'close_5m'
+

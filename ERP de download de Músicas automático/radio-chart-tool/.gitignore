@@ -1,0 +1,58 @@
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+
+# Downloads folder
+downloads/
+*.mp3
+*.m4a
+*.webm
+*.mp4
+*.wav
+
+# FFmpeg folder
+ffmpeg/
+
+# Environment files
+.env
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.so
+.coverage
+.pytest_cache/
+
+# Virtual environment
+venv/
+env/
+ENV/
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs
+*.log
+logs/
+
+# Temporary files
+temp/
+tmp/
+*.tmp
+
+# Ngrok files
+ngrok
+*.zip

@@ -1,0 +1,15 @@
+MAGIC NUMBERS LOGS
+====================================================================================================
+
+Seventeen SEM filtro de horário (Magic: 777844)
+NOT FOUND
+
+Seventeen com filtro ANTIGO (Magic: 777712)
+Path: D:/Projeto/Modelo PPO Trader/logs\trading_session_20251109_202631_15452_19c94b13.txt
+
+Seventeen com filtro ATUAL (Magic: 777344)
+Path: D:/Projeto/Modelo PPO Trader/logs\trading_session_20251110_161139_19212_a0e93942.txt
+
+Eighteen SEM filtro (Magic: 777528)
+Path: D:/Projeto/Modelo PPO Trader/logs\trading_session_20251112_155713_33400_12456316.txt
+

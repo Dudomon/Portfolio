@@ -1,0 +1,177 @@
+{% extends "base.html" %}
+
+{% block title %}Upgrade de Plano - Sistema CropLink{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <!-- Cabeçalho Compacto -->
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h2 class="mb-0"><i class="fas fa-crown text-warning"></i> Planos de Assinatura</h2>
+            </div>
+
+            <!-- Status do Plano Atual - Compacto -->
+            <div class="alert current-plan-status d-flex align-items-center justify-content-between mb-4 py-2">
+                <div class="d-flex align-items-center">
+                    <i class="fas fa-check-circle me-2 text-success"></i>
+                    <span><strong>Plano Atual:</strong> {{ planos[plano_atual]['nome'] }} - {{ planos[plano_atual]['preco'] }}</span>
+                </div>
+                <div class="d-flex align-items-center gap-2">
+                    {% if current_user.data_expiracao %}
+                        <span class="badge bg-light text-dark">Válido até {{ current_user.data_expiracao.strftime('%d/%m/%Y') }}</span>
+                    {% endif %}
+                    <span class="badge bg-success">{{ current_user.status_assinatura|title }}</span>
+                </div>
+            </div>
+
+            <!-- Cards dos Planos - Layout Otimizado -->
+            <div class="row g-3 upgrade-plans">
+                {% for plano_id, plano in planos.items() %}
+                <div class="col-lg-4 col-md-6 mb-3">
+                    <div class="card {% if plano_id == plano_atual %}border-success{% elif plano.get('status') == 'em_breve' %}border-secondary{% else %}border-light{% endif %} h-100 position-relative {% if plano.get('status') == 'em_breve' %}coming-soon-plan{% endif %}">
+                        
+                        <!-- Badge de Status -->
+                        {% if plano_id == plano_atual %}
+                            <div class="badge bg-success position-absolute" style="top: 8px; right: 8px; z-index: 10; font-size: 10px;">
+                                <i class="fas fa-star"></i> Ativo
+                            </div>
+                        {% elif plano.get('status') == 'em_breve' %}
+                            <div class="badge bg-dark position-absolute" style="top: 8px; right: 8px; z-index: 10; font-size: 10px;">
+                                <i class="fas fa-lock"></i> Em Breve
+                            </div>
+                        {% endif %}
+                        
+                        <!-- Header do Card -->
+                        <div class="card-header text-center py-2 {% if plano_id == plano_atual %}bg-success text-white{% elif plano.get('status') == 'em_breve' %}bg-dark text-white{% elif plano_id == 'premium' %}bg-warning text-dark{% elif plano_id == 'plus' %}bg-primary text-white{% else %}bg-light{% endif %}">
+                            <h5 class="mb-1">
+                                {% if plano.get('status') == 'em_breve' %}
+                                    <i class="fas fa-lock me-1"></i>
+                                {% endif %}
+                                {{ plano['nome'] }}
+                            </h5>
+                            <h6 class="mb-0">{{ plano['preco'] }}</h6>
+                        </div>
+                        
+                        <!-- Conteúdo do Card -->
+                        <div class="card-body py-3 {% if plano.get('status') == 'em_breve' %}text-muted{% endif %}">
+                            <p class="card-text text-muted mb-2 small">{{ plano['descricao'] }}</p>
+                            
+                            <!-- Limite de Silos -->
+                            <div class="mb-2">
+                                <strong class="small"><i class="fas fa-warehouse me-1"></i>Silos:</strong> 
+                                <span class="badge {% if plano.get('status') == 'em_breve' %}bg-secondary{% else %}bg-secondary{% endif %}">{{ plano['limite_silos'] }}</span>
+                            </div>
+                            
+                            <!-- Módulos Disponíveis -->
+                            <div class="mb-3">
+                                <strong class="small d-block mb-1"><i class="fas fa-list me-1"></i>Módulos:</strong>
+                                <div class="module-badges d-flex flex-wrap gap-1">
+                                    {% for modulo in plano['modulos'] %}
+                                        {% if modulo == 'silos' %}
+                                            <span class="badge {% if plano.get('status') == 'em_breve' %}bg-secondary{% else %}bg-light text-dark{% endif %}" style="font-size: 10px;"><i class="fas fa-warehouse"></i> Silos</span>
+                                        {% elif modulo == 'graos' %}
+                                            <span class="badge {% if plano.get('status') == 'em_breve' %}bg-secondary{% else %}bg-light text-dark{% endif %}" style="font-size: 10px;"><i class="fas fa-seedling"></i> Grãos</span>
+                                        {% elif modulo == 'pulverizacao' %}
+                                            <span class="badge {% if plano.get('status') == 'em_breve' %}bg-secondary{% else %}bg-primary{% endif %}" style="font-size: 10px;"><i class="fas fa-spray-can"></i> Pulverização</span>
+                                        {% elif modulo == 'caderno_campo' %}
+                                            <span class="badge {% if plano.get('status') == 'em_breve' %}bg-secondary{% else %}bg-warning{% endif %}" style="font-size: 10px;"><i class="fas fa-book"></i> Caderno</span>
+                                        {% elif modulo == 'bolsa_valores' %}
+                                            <span class="badge {% if plano.get('status') == 'em_breve' %}bg-secondary{% else %}bg-warning{% endif %}" style="font-size: 10px;"><i class="fas fa-chart-line"></i> Bolsa</span>
+                                        {% elif modulo == 'dashboard' %}
+                                            <span class="badge {% if plano.get('status') == 'em_breve' %}bg-secondary{% else %}bg-info{% endif %}" style="font-size: 10px;"><i class="fas fa-tachometer-alt"></i> Dashboard</span>
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                            </div>
+
+                            <!-- Funcionalidades Especiais para Premium -->
+                            {% if plano_id == 'premium' %}
+                            <div class="mb-2">
+                                <strong class="small d-block mb-1"><i class="fas fa-star me-1"></i>Funcionalidades Especiais:</strong>
+                                <div class="d-flex flex-wrap gap-1">
+                                    <span class="badge {% if plano.get('status') == 'em_breve' %}bg-secondary{% else %}bg-success{% endif %}" style="font-size: 10px;"><i class="fas fa-book-open"></i> Caderno de Campo</span>
+                                    <span class="badge {% if plano.get('status') == 'em_breve' %}bg-secondary{% else %}bg-success{% endif %}" style="font-size: 10px;"><i class="fas fa-calculator"></i> Financeiro Integrado</span>
+                                </div>
+                            </div>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Footer do Card -->
+                        <div class="card-footer text-center py-2">
+                            {% if plano_id == plano_atual %}
+                                <button class="btn btn-success btn-sm w-100" disabled>
+                                    <i class="fas fa-check-circle"></i> Plano Atual
+                                </button>
+                            {% elif plano.get('status') == 'em_breve' %}
+                                <button class="btn btn-dark btn-sm w-100" disabled>
+                                    <i class="fas fa-lock"></i> Em Breve
+                                </button>
+                            {% else %}
+                                <a href="{{ url_for('teste_alterar_plano', plano=plano_id) }}" class="btn btn-sm w-100 {% if plano_id == 'premium' %}btn-warning{% elif plano_id == 'plus' %}btn-primary{% else %}btn-outline-primary{% endif %}">
+                                    <i class="fas fa-arrow-up"></i> Fazer Upgrade
+                                </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- Informações dos Novos Planos -->
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="alert alert-dark">
+                        <h5><i class="fas fa-rocket me-2"></i>Novidades em Desenvolvimento</h5>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <strong><i class="fas fa-plus-circle me-1"></i> Plano Plus:</strong>
+                                <p class="mb-1">Módulo de Pulverização avançado com controle de aplicações, registro de defensivos e monitoramento de resultados.</p>
+                            </div>
+                            <div class="col-md-6">
+                                <strong><i class="fas fa-crown me-1"></i> Plano Premium:</strong>
+                                <p class="mb-1">Caderno de Campo completo com planejamento de safra e Financeiro Integrado com controle de custos e receitas.</p>
+                            </div>
+                        </div>
+                        <hr class="my-2">
+                        <p class="mb-0 text-center"><strong>Em breve teremos esses novos recursos disponíveis! Fique atento às novidades.</strong></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Informações Resumidas -->
+            <div class="row mt-3">
+                <div class="col-md-8">
+                    <div class="alert alert-info py-2">
+                        <strong><i class="fas fa-info-circle me-1"></i>Informações:</strong>
+                        Upgrade instantâneo • Acesso imediato • Cancelamento flexível • Dados preservados
+                    </div>
+                </div>
+                <div class="col-md-4 text-end">
+                    <a href="{{ url_for('dashboard') }}" class="btn btn-outline-secondary btn-sm">
+                        <i class="fas fa-arrow-left"></i> Voltar ao Dashboard
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- CSS adicional para o visual "em breve" -->
+<style>
+.coming-soon-plan {
+    opacity: 0.85;
+    filter: grayscale(20%);
+}
+
+.coming-soon-plan:hover {
+    opacity: 1;
+    filter: grayscale(0%);
+    transition: all 0.3s ease;
+}
+
+.coming-soon-plan .card-body {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+}
+</style>
+{% endblock %}

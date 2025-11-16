@@ -1,0 +1,9 @@
+flask==2.3.3
+requests==2.31.0
+beautifulsoup4==4.12.2
+spotipy==2.23.0
+python-dotenv==1.0.0
+lxml==4.9.3
+pandas==2.1.1
+yt-dlp==2023.10.13
+mutagen==1.47.0

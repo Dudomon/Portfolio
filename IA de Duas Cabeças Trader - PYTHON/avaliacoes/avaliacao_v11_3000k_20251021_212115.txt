@@ -1,0 +1,34 @@
+AVALIAÇÃO V11 SIGMOID CHECKPOINT 3000K - 20251021_212115
+============================================================
+
+Checkpoint: D:/Projeto/Otimizacao/treino_principal/models/SILUS/FINAL_ABSOLUTE_5000000_steps_20250825_230347.zip
+Episodes: 3
+Steps per episode: 7200
+Portfolio inicial: $500.0
+
+RESULTADOS CONSOLIDADOS:
+Retorno Médio: -24.88%
+Retorno Mediano: -36.11%
+Melhor Episódio: +0.94%
+Pior Episódio: -39.47%
+Desvio Padrão: 18.31%
+Episódios Lucrativos: 1/3 (33.3%)
+
+DETALHES POR EPISÓDIO:
+🔴 Episódio 1: $500.00 → $302.63 (-39.47%) - 29 trades
+🔴 Episódio 2: $500.00 → $319.45 (-36.11%) - 39 trades
+🟡 Episódio 3: $500.00 → $504.72 (+0.94%) - 13 trades
+
+ANÁLISE DE TRADES:
+Total de Trades: 81
+Win Rate Global: 27.2%
+Trades Lucrativos: 22
+Trades Perdedores: 59
+Lucro Médio: $28.50
+Perda Média: $-16.92
+PnL Total: $-371.50
+Profit Factor: 0.63
+Frequência Trading: 0.38%
+
+AVALIAÇÃO FINAL: 🔴 RUIM
+Consistência: ❌ INCONSISTENTE (1/3)

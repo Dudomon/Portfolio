@@ -1,0 +1,360 @@
+{% extends "base.html" %}
+
+{% block title %}Aplicação de Insumos - CropLink{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col">
+            <h1 class="display-6">
+                <i class="fas fa-spray-can text-success"></i>
+                Aplicação de Insumos
+            </h1>
+            <p class="text-muted">Registre e controle a aplicação de insumos agrícolas no campo</p>
+        </div>
+    </div>
+
+    <!-- Card para Aplicação -->
+    <div class="card shadow mb-4">
+        <div class="card-header" style="background: #1B5E20 !important; color: white !important; font-weight: 700 !important;">
+            <h5 class="mb-0" style="color: white !important; font-weight: 700 !important;">
+                <i class="fas fa-plus-circle" style="color: white !important;"></i>
+                Nova Aplicação
+            </h5>
+        </div>
+        <div class="card-body">
+            <form action="{{ url_for('aplicar_insumo') }}" method="POST" id="formAplicacao">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                <!-- Seção para seleção de insumos -->
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="insumo_select" class="form-label">Adicionar Insumo Agrícola</label>
+                        <select class="form-select" id="insumo_select">
+                            <option value="">Selecione um insumo para adicionar...</option>
+                            {% for insumo in insumos %}
+                            <option value="{{ insumo.id }}" 
+                                    data-nome="{{ insumo.nome }}"
+                                    data-quantidade="{{ insumo.quantidade }}" 
+                                    data-unidade="{{ insumo.unidade }}"
+                                    data-categoria="{{ insumo.categoria }}">
+                                {{ insumo.nome }} - {{ insumo.categoria }} ({{ insumo.quantidade }} {{ insumo.unidade }})
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-6 d-flex align-items-end">
+                        <button type="button" class="btn btn-primary" id="adicionarInsumo">
+                            <i class="fas fa-plus"></i> Adicionar Insumo
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Lista de insumos selecionados -->
+                <div id="insumosSelecionados" class="mb-4">
+                    <h6 class="text-muted">Insumos para Aplicação:</h6>
+                    <div id="listaInsumos" class="border rounded p-3 bg-light">
+                        <p class="text-muted text-center m-0">Nenhum insumo adicionado. Use o campo acima para adicionar insumos.</p>
+                    </div>
+                </div>
+
+                <!-- Campos gerais da aplicação -->
+                <div class="row">
+                    <div class="col-md-6">
+                        <label for="talhao" class="form-label">Talhão</label>
+                        <input type="text" class="form-control" id="talhao" name="talhao" 
+                               placeholder="Ex: Talhão 01, Setor A">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="observacao" class="form-label">Observações Gerais</label>
+                        <input type="text" class="form-control" id="observacao" name="observacao" 
+                               placeholder="Condições, equipamentos, etc.">
+                    </div>
+                </div>
+
+                <div class="row mt-4">
+                    <div class="col">
+                        <button type="submit" class="btn btn-success btn-lg" id="btnRegistrarAplicacao" disabled>
+                            <i class="fas fa-spray-can"></i>
+                            Registrar Aplicação
+                        </button>
+                        <button type="button" class="btn btn-outline-secondary ms-2" id="btnLimpar">
+                            <i class="fas fa-eraser"></i>
+                            Limpar Tudo
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Card para Histórico -->
+    <div class="card shadow">
+        <div class="card-header" style="background: #1B5E20 !important; color: white !important; font-weight: 700 !important;">
+            <h5 class="mb-0" style="color: white !important; font-weight: 700 !important;">
+                <i class="fas fa-history" style="color: white !important;"></i>
+                Histórico de Aplicações (Últimas 10)
+            </h5>
+        </div>
+        <div class="card-body">
+            {% if aplicacoes %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead class="table-primary">
+                            <tr>
+                                <th>Data/Hora</th>
+                                <th>Insumo</th>
+                                <th>Categoria</th>
+                                <th>Quantidade</th>
+                                <th>Talhão</th>
+                                <th>Observações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for aplicacao in aplicacoes %}
+                            <tr>
+                                <td>
+                                    <small class="text-muted">
+                                        {{ aplicacao.data_aplicacao.strftime('%d/%m/%Y') }}<br>
+                                        {{ aplicacao.data_aplicacao.strftime('%H:%M') }}
+                                    </small>
+                                </td>
+                                <td>
+                                    <strong>{{ aplicacao.insumo.nome }}</strong>
+                                </td>
+                                <td>
+                                    <span class="badge 
+                                        {% if aplicacao.insumo.categoria == 'Herbicida' %}bg-danger
+                                        {% elif aplicacao.insumo.categoria == 'Fungicida' %}bg-warning
+                                        {% elif aplicacao.insumo.categoria == 'Inseticida' %}bg-info
+                                        {% elif aplicacao.insumo.categoria == 'Fertilizante' %}bg-success
+                                        {% elif aplicacao.insumo.categoria == 'Semente' %}bg-primary
+                                        {% else %}bg-secondary{% endif %}">
+                                        {{ aplicacao.insumo.categoria }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="text-primary fw-bold">
+                                        {{ aplicacao.quantidade_aplicada }} {{ aplicacao.insumo.unidade }}
+                                    </span>
+                                </td>
+                                <td>
+                                    {% if aplicacao.talhao %}
+                                        <span class="badge bg-info">{{ aplicacao.talhao }}</span>
+                                    {% else %}
+                                        <span class="text-muted">--</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <small class="text-muted">
+                                        {{ aplicacao.observacao if aplicacao.observacao else '--' }}
+                                    </small>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="text-center py-5">
+                    <i class="fas fa-spray-can text-muted" style="font-size: 4rem;"></i>
+                    <h4 class="text-muted mt-3">Nenhuma aplicação registrada</h4>
+                    <p class="text-muted">Registre sua primeira aplicação usando o formulário acima</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- JavaScript para funcionalidade de múltiplos insumos -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const insumoSelect = document.getElementById('insumo_select');
+    const btnAdicionar = document.getElementById('adicionarInsumo');
+    const listaInsumos = document.getElementById('listaInsumos');
+    const btnRegistrar = document.getElementById('btnRegistrarAplicacao');
+    const btnLimpar = document.getElementById('btnLimpar');
+    const form = document.getElementById('formAplicacao');
+    
+    let insumosSelecionados = [];
+    
+    // Função para adicionar insumo à lista
+    function adicionarInsumo() {
+        const selectedOption = insumoSelect.options[insumoSelect.selectedIndex];
+        
+        if (!selectedOption.value) {
+            alert('Selecione um insumo para adicionar!');
+            return;
+        }
+        
+        const insumoId = selectedOption.value;
+        const nome = selectedOption.dataset.nome;
+        const quantidade = parseFloat(selectedOption.dataset.quantidade);
+        const unidade = selectedOption.dataset.unidade;
+        const categoria = selectedOption.dataset.categoria;
+        
+        // Verificar se o insumo já foi adicionado
+        if (insumosSelecionados.find(i => i.id === insumoId)) {
+            alert('Este insumo já foi adicionado!');
+            return;
+        }
+        
+        // Adicionar ao array
+        insumosSelecionados.push({
+            id: insumoId,
+            nome: nome,
+            quantidade_estoque: quantidade,
+            unidade: unidade,
+            categoria: categoria,
+            quantidade_aplicada: 0
+        });
+        
+        // Resetar select
+        insumoSelect.selectedIndex = 0;
+        
+        // Atualizar interface
+        atualizarListaInsumos();
+        atualizarBotaoRegistrar();
+    }
+    
+    // Função para atualizar a lista visual dos insumos
+    function atualizarListaInsumos() {
+        if (insumosSelecionados.length === 0) {
+            listaInsumos.innerHTML = '<p class="text-muted text-center m-0">Nenhum insumo adicionado. Use o campo acima para adicionar insumos.</p>';
+            return;
+        }
+        
+        let html = '';
+        insumosSelecionados.forEach((insumo, index) => {
+            const statusEstoque = insumo.quantidade_estoque < 10 ? 'text-danger' : 
+                                  insumo.quantidade_estoque < 50 ? 'text-warning' : 'text-success';
+            
+            html += `
+                <div class="row align-items-center mb-2 p-2 border rounded bg-white">
+                    <div class="col-md-4">
+                        <strong>${insumo.nome}</strong><br>
+                        <small class="text-muted">${insumo.categoria}</small>
+                    </div>
+                    <div class="col-md-3">
+                        <small class="text-muted">Estoque:</small><br>
+                        <span class="${statusEstoque} fw-bold">${insumo.quantidade_estoque} ${insumo.unidade}</span>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label small">Qtd. Aplicada *</label>
+                        <input type="number" class="form-control form-control-sm quantidade-input" 
+                               data-index="${index}" step="0.01" min="0.01" max="${insumo.quantidade_estoque}"
+                               value="${insumo.quantidade_aplicada || ''}" required>
+                    </div>
+                    <div class="col-md-2 text-end">
+                        <button type="button" class="btn btn-sm btn-outline-danger remover-insumo" data-index="${index}">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            `;
+        });
+        
+        listaInsumos.innerHTML = html;
+        
+        // Adicionar event listeners para os novos elementos
+        document.querySelectorAll('.quantidade-input').forEach(input => {
+            input.addEventListener('input', function() {
+                const index = parseInt(this.dataset.index);
+                const quantidade = parseFloat(this.value) || 0;
+                insumosSelecionados[index].quantidade_aplicada = quantidade;
+                
+                // Validação
+                const max = parseFloat(this.max);
+                if (quantidade > max) {
+                    this.setCustomValidity(`Máximo: ${max}`);
+                } else if (quantidade <= 0) {
+                    this.setCustomValidity('Valor deve ser maior que zero');
+                } else {
+                    this.setCustomValidity('');
+                }
+                
+                atualizarBotaoRegistrar();
+            });
+        });
+        
+        document.querySelectorAll('.remover-insumo').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const index = parseInt(this.dataset.index);
+                insumosSelecionados.splice(index, 1);
+                atualizarListaInsumos();
+                atualizarBotaoRegistrar();
+            });
+        });
+    }
+    
+    // Função para verificar se pode habilitar o botão registrar
+    function atualizarBotaoRegistrar() {
+        const todosComQuantidade = insumosSelecionados.length > 0 && 
+            insumosSelecionados.every(i => i.quantidade_aplicada > 0);
+        
+        btnRegistrar.disabled = !todosComQuantidade;
+    }
+    
+    // Event listeners principais
+    btnAdicionar.addEventListener('click', adicionarInsumo);
+    
+    // Permitir adicionar com Enter no select
+    insumoSelect.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            adicionarInsumo();
+        }
+    });
+    
+    // Limpar tudo
+    btnLimpar.addEventListener('click', function() {
+        insumosSelecionados = [];
+        atualizarListaInsumos();
+        atualizarBotaoRegistrar();
+        document.getElementById('talhao').value = '';
+        document.getElementById('observacao').value = '';
+    });
+    
+    // Submissão do formulário
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        if (insumosSelecionados.length === 0) {
+            alert('Adicione pelo menos um insumo para aplicação!');
+            return;
+        }
+        
+        // Verificar se todos têm quantidade válida
+        const insumosInvalidos = insumosSelecionados.filter(i => !i.quantidade_aplicada || i.quantidade_aplicada <= 0);
+        if (insumosInvalidos.length > 0) {
+            alert('Todos os insumos devem ter quantidade aplicada maior que zero!');
+            return;
+        }
+        
+        // Criar inputs hidden para enviar os dados
+        const formData = new FormData();
+        formData.append('insumos_aplicacao', JSON.stringify(insumosSelecionados));
+        formData.append('talhao', document.getElementById('talhao').value);
+        formData.append('observacao', document.getElementById('observacao').value);
+        
+        // Converter FormData para form submission normal
+        const hiddenInputs = form.querySelectorAll('.hidden-input');
+        hiddenInputs.forEach(input => input.remove());
+        
+        // Adicionar dados como inputs hidden
+        const hiddenInsumos = document.createElement('input');
+        hiddenInsumos.type = 'hidden';
+        hiddenInsumos.name = 'insumos_aplicacao';
+        hiddenInsumos.value = JSON.stringify(insumosSelecionados);
+        hiddenInsumos.className = 'hidden-input';
+        form.appendChild(hiddenInsumos);
+        
+        // Submeter formulário
+        form.submit();
+    });
+    
+    // Inicializar estado
+    atualizarBotaoRegistrar();
+});
+</script>
+{% endblock %}

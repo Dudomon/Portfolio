@@ -1,0 +1,24 @@
+# Arquivos de configuração sensíveis
+config.php
+
+# Logs
+logs/
+*.log
+
+# Cache de rate limiting
+ratelimit_*.txt
+
+# Arquivos temporários
+*.tmp
+*.bak
+*.swp
+*~
+
+# Sistema operacional
+.DS_Store
+Thumbs.db
+
+# IDEs
+.vscode/
+.idea/
+*.sublime-*

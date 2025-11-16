@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Completo - Widget Boletos</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            padding: 20px;
+        }
+
+        .test-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+        }
+
+        .test-section h3 {
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+
+        .btn:hover {
+            background: #0056b3;
+        }
+
+        .btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        .log-area {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            padding: 15px;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 400px;
+            overflow-y: auto;
+            margin-top: 15px;
+        }
+
+        .status {
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .status.info {
+            background: #cce7ff;
+            color: #004085;
+            border: 1px solid #b8daff;
+        }
+
+        .results {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 5px;
+        }
+
+        .boleto-item {
+            background: white;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            border-left: 4px solid #007bff;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Debug Completo - Widget Boletos</h1>
+        
+        <!-- Teste 1: URLs do Backend -->
+        <div class="test-section">
+            <h3>1. Teste de Conectividade Backend</h3>
+            <button class="btn" onclick="testarTodasUrls()">🔗 Testar Todas as URLs</button>
+            <div id="url-status"></div>
+            <div id="url-logs" class="log-area"></div>
+        </div>
+
+        <!-- Teste 2: API Direta -->
+        <div class="test-section">
+            <h3>2. Teste API Sienge Direta</h3>
+            <p><strong>⚠️ IMPORTANTE:</strong> Este teste mostra se os dados no consulta-notas.html são reais ou simulados.</p>
+            <div class="form-group">
+                <label for="cpfTest">CPF/CNPJ para teste:</label>
+                <input type="text" id="cpfTest" placeholder="Digite um CPF/CNPJ" value="12345678901">
+            </div>
+            <button class="btn" onclick="testarApiDireta()">🌐 Testar API Sienge</button>
+            <div id="api-status"></div>
+            <div id="api-logs" class="log-area"></div>
+        </div>
+
+        <!-- Teste 3: Widget Funcional -->
+        <div class="test-section">
+            <h3>3. Widget Funcional</h3>
+            <div class="form-group">
+                <label for="cpfWidget">CPF/CNPJ:</label>
+                <input type="text" id="cpfWidget" placeholder="Digite seu CPF ou CNPJ">
+            </div>
+            <button class="btn" onclick="buscarBoletosWidget()">🔍 Buscar Boletos</button>
+            <div id="widget-status"></div>
+            <div id="widget-results" class="results"></div>
+            <div id="widget-logs" class="log-area"></div>
+        </div>
+
+        <!-- Logs Gerais -->
+        <div class="test-section">
+            <h3>📋 Logs Gerais</h3>
+            <div id="general-logs" class="log-area"></div>
+        </div>
+    </div>
+
+    <script>
+        // Configurações - URLs CORRETAS DO SITE DE TESTE
+        const WIX_URLS = [
+            'https://www.arieproperties.com/_functions',
+            'https://www.arieproperties.com/_functions-dev',
+            'https://www.arieproperties.com/_api',
+            'https://www.arieproperties.com/site/_functions'
+        ];
+
+        const API_CONFIG = {
+            baseURL: 'https://arieproperties.sienge.com.br/api/v1',
+            auth: {
+                username: 'arieproperties-ti',
+                password: 'eeoTCIXR9NtEdv118V1L16xZWZR64W7p'
+            }
+        };
+
+        let WORKING_URL = null;
+
+        // Função para logs
+        function addLog(message, type = 'info', targetId = 'general-logs') {
+            const logContainer = document.getElementById(targetId);
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = document.createElement('div');
+            logEntry.style.color = type === 'error' ? 'red' : type === 'success' ? 'green' : 'black';
+            logEntry.innerHTML = `[${timestamp}] ${message}`;
+            logContainer.appendChild(logEntry);
+            logContainer.scrollTop = logContainer.scrollHeight;
+        }
+
+        // Função para status
+        function setStatus(message, type, targetId) {
+            const statusDiv = document.getElementById(targetId);
+            statusDiv.className = `status ${type}`;
+            statusDiv.textContent = message;
+            statusDiv.style.display = 'block';
+        }
+
+        // Teste 1: URLs do Backend
+        async function testarTodasUrls() {
+            addLog('Iniciando teste de URLs do backend...', 'info', 'url-logs');
+            setStatus('Testando URLs...', 'info', 'url-status');
+            
+            let funcionando = false;
+            
+            for (let i = 0; i < WIX_URLS.length; i++) {
+                const url = WIX_URLS[i];
+                try {
+                    addLog(`Testando URL ${i + 1}/${WIX_URLS.length}: ${url}`, 'info', 'url-logs');
+                    
+                    const response = await fetch(`${url}/get_teste`, {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    });
+
+                    addLog(`Status: ${response.status}`, 'info', 'url-logs');
+
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}`);
+                    }
+
+                    const data = await response.json();
+                    addLog(`✅ SUCESSO! URL funcionando: ${url}`, 'success', 'url-logs');
+                    addLog(`Resposta: ${JSON.stringify(data)}`, 'info', 'url-logs');
+                    
+                    WORKING_URL = url;
+                    funcionando = true;
+                    break;
+                } catch (error) {
+                    addLog(`❌ Falha: ${error.message}`, 'error', 'url-logs');
+                }
+            }
+            
+            if (funcionando) {
+                setStatus(`✅ Backend funcionando: ${WORKING_URL}`, 'success', 'url-status');
+            } else {
+                setStatus('❌ Nenhuma URL do backend está funcionando', 'error', 'url-status');
+            }
+        }
+
+        // Teste 2: API Sienge Direta
+        async function testarApiDireta() {
+            const cpf = document.getElementById('cpfTest').value.trim();
+            if (!cpf) {
+                setStatus('Por favor, insira um CPF/CNPJ', 'error', 'api-status');
+                return;
+            }
+
+            addLog(`Testando API Sienge para CPF: ${cpf}`, 'info', 'api-logs');
+            setStatus('Testando API Sienge...', 'info', 'api-status');
+
+            try {
+                const url = `${API_CONFIG.baseURL}/current-debit-balance?cpf=${cpf.replace(/\D/g, '')}`;
+                addLog(`URL: ${url}`, 'info', 'api-logs');
+                
+                const credentials = `${API_CONFIG.auth.username}:${API_CONFIG.auth.password}`;
+                const authToken = btoa(credentials);
+                
+                const response = await fetch(url, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Basic ${authToken}`,
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    }
+                });
+
+                addLog(`Status: ${response.status}`, 'info', 'api-logs');
+
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    addLog(`Erro: ${errorText}`, 'error', 'api-logs');
+                    throw new Error(`HTTP ${response.status}`);
+                }
+
+                const data = await response.json();
+                addLog(`✅ API Sienge funcionando!`, 'success', 'api-logs');
+                addLog(`Resposta: ${JSON.stringify(data, null, 2)}`, 'info', 'api-logs');
+                
+                if (data.results && data.results.length > 0) {
+                    setStatus(`✅ API funcionando! Dados REAIS encontrados: ${data.results.length} registros`, 'success', 'api-status');
+                } else {
+                    setStatus('✅ API funcionando! Nenhum dado encontrado para este CPF', 'success', 'api-status');
+                }
+            } catch (error) {
+                addLog(`❌ Erro na API: ${error.message}`, 'error', 'api-logs');
+                setStatus(`❌ Erro na API: ${error.message}. Os dados no consulta-notas.html são SIMULADOS.`, 'error', 'api-status');
+            }
+        }
+
+        // Teste 3: Widget Funcional
+        async function buscarBoletosWidget() {
+            const cpf = document.getElementById('cpfWidget').value.trim();
+            if (!cpf) {
+                setStatus('Por favor, insira um CPF/CNPJ', 'error', 'widget-status');
+                return;
+            }
+
+            addLog(`Buscando boletos para: ${cpf}`, 'info', 'widget-logs');
+            setStatus('Buscando boletos...', 'info', 'widget-status');
+
+            try {
+                // Tentar backend primeiro
+                if (WORKING_URL) {
+                    addLog('Tentando via backend Wix...', 'info', 'widget-logs');
+                    const backendResult = await buscarViaBackend(cpf);
+                    if (backendResult.success) {
+                        exibirResultados(backendResult.boletos);
+                        setStatus(`✅ Sucesso via backend! ${backendResult.boletos.length} boletos encontrados`, 'success', 'widget-status');
+                        return;
+                    }
+                }
+
+                // Tentar API direta
+                addLog('Tentando via API direta...', 'info', 'widget-logs');
+                const apiResult = await buscarViaApi(cpf);
+                exibirResultados(apiResult);
+                setStatus(`✅ Sucesso via API! ${apiResult.length} boletos encontrados`, 'success', 'widget-status');
+
+            } catch (error) {
+                addLog(`❌ Erro: ${error.message}`, 'error', 'widget-logs');
+                setStatus(`❌ Erro: ${error.message}`, 'error', 'widget-status');
+            }
+        }
+
+        // Buscar via backend
+        async function buscarViaBackend(cpf) {
+            try {
+                const url = `${WORKING_URL}/get_boletosDetalhes?cpfCnpj=${encodeURIComponent(cpf)}`;
+                const response = await fetch(url);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+                
+                const data = await response.json();
+                return data;
+            } catch (error) {
+                addLog(`Falha no backend: ${error.message}`, 'error', 'widget-logs');
+                return { success: false, error: error.message };
+            }
+        }
+
+        // Buscar via API
+        async function buscarViaApi(cpf) {
+            const url = `${API_CONFIG.baseURL}/current-debit-balance?cpf=${cpf.replace(/\D/g, '')}`;
+            const credentials = `${API_CONFIG.auth.username}:${API_CONFIG.auth.password}`;
+            const authToken = btoa(credentials);
+            
+            const response = await fetch(url, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Basic ${authToken}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error(`API falhou: ${response.status}`);
+            }
+
+            const data = await response.json();
+            
+            // Processar dados
+            const boletos = [];
+            if (data.results) {
+                for (const bill of data.results) {
+                    const tipos = ['dueInstallments', 'payableInstallments', 'paidInstallments'];
+                    
+                    for (const tipo of tipos) {
+                        const parcelas = bill[tipo] || [];
+                        for (const installment of parcelas) {
+                            if (installment.generatedBoleto) {
+                                boletos.push({
+                                    numero: installment.installmentNumber || 'N/A',
+                                    valorOriginal: installment.originalValue || 0,
+                                    dataVencimento: installment.dueDate,
+                                    situacao: installment.currentBalance <= 0 ? 'Pago' : 
+                                            (tipo === 'dueInstallments' ? 'Vencido' : 'A Vencer'),
+                                    nossoNumero: installment.ourNumber || 'N/A'
+                                });
+                            }
+                        }
+                    }
+                }
+            }
+            
+            return boletos;
+        }
+
+        // Exibir resultados
+        function exibirResultados(boletos) {
+            const resultsDiv = document.getElementById('widget-results');
+            
+            if (!boletos || boletos.length === 0) {
+                resultsDiv.innerHTML = '<p>Nenhum boleto encontrado.</p>';
+                return;
+            }
+
+            resultsDiv.innerHTML = `
+                <h4>Boletos Encontrados (${boletos.length}):</h4>
+                ${boletos.map(boleto => `
+                    <div class="boleto-item">
+                        <div><strong>Boleto:</strong> #${boleto.numero}</div>
+                        <div><strong>Valor:</strong> R$ ${(boleto.valorOriginal || 0).toFixed(2)}</div>
+                        <div><strong>Vencimento:</strong> ${new Date(boleto.dataVencimento).toLocaleDateString('pt-BR')}</div>
+                        <div><strong>Situação:</strong> ${boleto.situacao}</div>
+                        <div><strong>Nosso Número:</strong> ${boleto.nossoNumero}</div>
+                    </div>
+                `).join('')}
+            `;
+        }
+
+        // Inicialização
+        addLog('Widget de debug carregado', 'success');
+        
+        // Testar automaticamente
+        setTimeout(() => {
+            addLog('Executando testes automáticos...', 'info');
+            testarTodasUrls();
+        }, 1000);
+    </script>
+</body>
+</html>

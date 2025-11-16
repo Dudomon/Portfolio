@@ -1,0 +1,65 @@
+================================================================================
+📊 ANÁLISE COMPLETA DO SISTEMA DE REWARDS DAYTRADE V2
+================================================================================
+
+🎯 1. ANÁLISE DE BALANCEAMENTO:
+----------------------------------------
+Média do Reward: 0.3021
+Desvio Padrão: 0.5840
+Skewness: 0.0104
+Kurtosis: -1.4464
+Ratio Positivo/Negativo: 58.7% / 41.3%
+
+📈 Contribuição dos Componentes:
+  win_bonus: 44.7%
+  loss_penalty: 44.5%
+  sharpe_ratio_bonus: 29.1%
+  position_sizing_bonus: 22.9%
+  win_rate_bonus: 2.9%
+  drawdown_penalty: 1.2%
+  pnl_direct: 0.1%
+  risk_reward_bonus: 0.0%
+  timing_bonus: 0.0%
+  execution_bonus: 0.0%
+
+🔗 2. ANÁLISE DE CORRELAÇÕES:
+----------------------------------------
+Correlações significativas com reward total:
+  loss_penalty: 0.919
+  win_bonus: 0.919
+  pnl_direct: 0.692
+  pnl: 0.692
+
+🎯 Correlação Reward-PnL: 0.692
+
+⚠️ 3. CONTRADIÇÕES DETECTADAS:
+----------------------------------------
+⚠️ win_bonus domina o reward (44.7% do total)
+⚠️ loss_penalty domina o reward (44.5% do total)
+
+🧮 4. ANÁLISE MATEMÁTICA:
+----------------------------------------
+Regressão Linear (Reward vs PnL):
+  Slope: 20.6898
+  Intercept: 0.2991
+  R²: 0.4783
+  P-value: 0.000000
+
+Não-linearidade detectada:
+  Pearson: 0.6916
+  Spearman: 0.7938
+  Diferença: 0.1022
+  ⚠️ Sistema apresenta comportamento não-linear significativo
+
+💡 5. RECOMENDAÇÕES:
+----------------------------------------
+⚠️ win_bonus domina o sistema (44.7%) - rebalancear pesos
+⚠️ Componentes altamente correlacionados detectados:
+   pnl_direct ↔ win_bonus: 0.71
+   pnl_direct ↔ loss_penalty: 0.71
+   win_bonus ↔ loss_penalty: 1.00
+
+📊 6. VISUALIZAÇÕES:
+----------------------------------------
+Gerando gráficos de análise...
+✅ Gráficos salvos em 'reward_analysis_plots.png'

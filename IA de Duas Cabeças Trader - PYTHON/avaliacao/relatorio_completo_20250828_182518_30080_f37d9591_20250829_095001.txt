@@ -1,0 +1,84 @@
+🎯 RELATÓRIO COMPLETO DE ANÁLISE DE TRADING
+============================================================
+
+Sessão: 20250828_182518_30080_f37d9591
+Timestamp: 2025-08-29 09:50:01
+
+💰 MÉTRICAS DE PERFORMANCE
+------------------------------
+portfolio_current: 525.1269984324952
+total_return_pct: 5.025399686499031
+sharpe_ratio: 0.2781017688747256
+sortino_ratio: 0.46461841230045536
+max_drawdown: 67.29313173028652
+drawdown_duration: 98645
+profit_factor: 1.0763982952923288
+win_rate_avg: 0
+avg_win_pct: 2.318809132722691
+avg_loss_pct: 2.196307439228506
+avg_trade_value: 0.12250169349418485
+portfolio_volatility: 56.17052683301988
+returns_volatility: 4.140560879887426
+total_trades: 0
+trading_frequency: 0.0
+
+🎯 ANÁLISE DE CONVERGÊNCIA
+------------------------------
+current_avg_convergence: 0.9212990635725931
+historical_avg_convergence: 0.9469777826938743
+convergence_trend: -0.02567871912128128
+convergence_stability: 0.09022539341590036
+convergence_peaks: 67030
+convergence_valleys: 4136
+best_convergence: 1.0
+worst_convergence: 0.6666666666666666
+
+🛠️ RECOMENDAÇÕES DE OTIMIZAÇÃO
+------------------------------
+1. [🔥 CRÍTICO] Reward System
+   Issue: Sharpe extremamente baixo - modelo não está aprendendo
+   Actions:
+   - Revisar reward function - pode estar muito penalizando risk
+   - Verificar se early termination está funcionando corretamente
+   - Aumentar reward por trades vencedores
+   - Reduzir penalty por volatilidade
+
+2. [💡 MÉDIO] Exploration
+   Issue: Mais entropy correlaciona com melhor performance
+   Actions:
+   - Aumentar entropy coefficient
+   - Manter exploration por mais tempo
+   - Considerar curiosity-driven exploration
+
+3. [🔥 CRÍTICO] Risk Control
+   Issue: Drawdown muito alto (67.3%)
+   Actions:
+   - Implementar position sizing baseado em volatility
+   - Adicionar circuit breakers
+   - Revisar stop-loss levels
+   - Considerar Kelly criterion para sizing
+
+4. [⚡ ALTO] Trade Quality
+   Issue: Profit factor baixo (1.08)
+   Actions:
+   - Melhorar trade selection criteria
+   - Otimizar exit strategies
+   - Reduzir overtrading
+   - Focar em trades de maior qualidade
+
+5. [💡 MÉDIO] Win Rate
+   Issue: Win rate baixo (0.0%)
+   Actions:
+   - Revisar entry signals
+   - Implementar confirmation filters
+   - Otimizar timing de entries
+   - Considerar ensemble methods
+
+6. [💡 MÉDIO] Model Architecture
+   Issue: Performance geral baixa - considerar mudanças estruturais
+   Actions:
+   - Testar diferentes network architectures
+   - Implementar attention mechanisms
+   - Considerar ensemble de políticas
+   - Adicionar market regime detection
+

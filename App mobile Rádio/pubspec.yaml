@@ -1,0 +1,62 @@
+name: radio_entre_rios
+description: App oficial da Rádio Entre Rios 105.5 FM
+version: 1.0.0+111
+publish_to: 'none'
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  
+  # UI e Design
+  cupertino_icons: ^1.0.6
+  google_fonts: ^6.1.0
+  
+  # Player de áudio
+  just_audio: ^0.9.36
+  audio_service: ^0.18.12
+  
+  # Requisições HTTP
+  http: ^1.1.0
+  dio: ^5.3.4
+  
+  # Estado e gerenciamento
+  provider: ^6.1.1
+  shared_preferences: ^2.2.2
+  
+  # Cache de imagens
+  cached_network_image: ^3.3.0
+  
+  # Utilidades
+  url_launcher: ^6.2.1
+  share_plus: ^7.2.1
+  intl: ^0.18.1
+  webview_flutter: ^4.4.2
+  
+  # Notificações
+  flutter_local_notifications: ^17.2.3
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.1
+
+flutter:
+  uses-material-design: true
+  
+  assets:
+    - assets/images/
+    - assets/icons/
+  
+  fonts:
+    - family: Montserrat
+      fonts:
+        - asset: assets/fonts/Montserrat-Regular.ttf
+        - asset: assets/fonts/Montserrat-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/Montserrat-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/Montserrat-Bold.ttf
+          weight: 700

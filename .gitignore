@@ -1,0 +1,38 @@
+# IDEs e Editores
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Sistemas Operacionais
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs
+*.log
+
+# Arquivos temporários
+*.tmp
+*.temp
+
+# Node modules (se tiver projetos Node.js/React)
+node_modules/
+
+# Python (se tiver projetos Python)
+__pycache__/
+*.pyc
+*.pyo
+venv/
+env/
+
+# Arquivos sensíveis
+.env
+.env.local
+*.key
+*.pem
+credentials.json
+
+# Claude local
+.claude/settings.local.json

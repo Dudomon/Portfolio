@@ -1,0 +1,189 @@
+{% extends "base.html" %}
+
+{% block title %}Relatório de Silos{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2>
+                <i class="fas fa-chart-line text-primary"></i>
+                Relatório de Silos
+            </h2>
+            <p class="text-muted">Análise completa de capacidade e estoque dos silos</p>
+        </div>
+        <div>
+            <a href="{{ url_for('silos') }}" class="btn btn-outline-secondary">
+                <i class="fas fa-arrow-left"></i> Voltar aos Silos
+            </a>
+        </div>
+    </div>
+
+    <!-- Resumo Geral -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card bg-primary text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h6>Total de Silos</h6>
+                            <h3>{{ relatorio|length }}</h3>
+                        </div>
+                        <div class="fs-1 opacity-50">
+                            <i class="fas fa-warehouse"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-success text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h6>Capacidade Total</h6>
+                            <h3>{{ "{:,.0f}".format(relatorio|sum(attribute='silo.capacidade_kg') or 0) }} kg</h3>
+                        </div>
+                        <div class="fs-1 opacity-50">
+                            <i class="fas fa-weight"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-info text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h6>Estoque Total</h6>
+                            <h3>{{ "{:,.0f}".format(relatorio|sum(attribute='estoque_total') or 0) }} kg</h3>
+                        </div>
+                        <div class="fs-1 opacity-50">
+                            <i class="fas fa-boxes"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-warning text-dark">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h6>Total em Sacas</h6>
+                            <h3>{{ "{:,.0f}".format((relatorio|sum(attribute='estoque_total') or 0) / 60) }}</h3>
+                        </div>
+                        <div class="fs-1 opacity-50">
+                            <i class="fas fa-cubes"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Relatório Detalhado -->
+    <div class="card shadow">
+        <div class="card-header">
+            <h5 class="mb-0">Análise Detalhada por Silo</h5>
+        </div>
+        <div class="card-body">
+            {% if relatorio %}
+                {% for item in relatorio %}
+                <div class="mb-4 p-3 border rounded">
+                    <div class="row align-items-center mb-3">
+                        <div class="col-md-6">
+                            <h5 class="mb-1">
+                                <i class="fas fa-warehouse text-primary"></i>
+                                {{ item.silo.nome }}
+                            </h5>
+                            <small class="text-muted">
+                                Capacidade: {{ "{:,.0f}".format(item.silo.capacidade_kg) }} kg
+                            </small>
+                        </div>
+                        <div class="col-md-6 text-end">
+                            <div class="row">
+                                <div class="col-4">
+                                    <small class="text-muted">Ocupação</small>
+                                    <div class="fw-bold 
+                                        {% if item.percentual_ocupacao > 80 %}text-danger
+                                        {% elif item.percentual_ocupacao > 60 %}text-warning
+                                        {% else %}text-success{% endif %}">
+                                        {{ "%.1f"|format(item.percentual_ocupacao) }}%
+                                    </div>
+                                </div>
+                                <div class="col-4">
+                                    <small class="text-muted">Estoque</small>
+                                    <div class="fw-bold">{{ "{:,.0f}".format(item.estoque_total) }} kg</div>
+                                </div>
+                                <div class="col-4">
+                                    <small class="text-muted">Disponível</small>
+                                    <div class="fw-bold text-success">{{ "{:,.0f}".format(item.capacidade_disponivel) }} kg</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Barra de Progresso -->
+                    <div class="progress mb-3" style="height: 20px;">
+                        <div class="progress-bar 
+                            {% if item.percentual_ocupacao > 80 %}bg-danger
+                            {% elif item.percentual_ocupacao > 60 %}bg-warning
+                            {% else %}bg-success{% endif %}" 
+                            style="width: {{ item.percentual_ocupacao }}%;">
+                            {{ "%.1f"|format(item.percentual_ocupacao) }}%
+                        </div>
+                    </div>
+
+                    <!-- Grãos no Silo -->
+                    {% if item.graos %}
+                        <div class="table-responsive">
+                            <table class="table table-sm table-hover">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Grão</th>
+                                        <th>Estoque (kg)</th>
+                                        <th>Sacas</th>
+                                        <th>% do Silo</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for grao_info in item.graos %}
+                                    <tr>
+                                        <td>{{ grao_info.grao.nome }}</td>
+                                        <td>{{ "{:,.0f}".format(grao_info.estoque_kg) }} kg</td>
+                                        <td>{{ "{:,.1f}".format(grao_info.sacas) }}</td>
+                                        <td>
+                                            <div class="progress" style="height: 15px;">
+                                                {% set percent_grao = (grao_info.estoque_kg / item.silo.capacidade_kg * 100) if item.silo.capacidade_kg > 0 else 0 %}
+                                                <div class="progress-bar bg-info" style="width: {{ percent_grao }}%;">
+                                                    {{ "%.1f"|format(percent_grao) }}%
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="text-center text-muted py-3">
+                            <i class="fas fa-seedling fa-2x mb-2"></i>
+                            <p>Nenhum grão armazenado neste silo</p>
+                        </div>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="text-center py-5">
+                    <i class="fas fa-warehouse fa-3x text-muted mb-3"></i>
+                    <h5 class="text-muted">Nenhum silo cadastrado</h5>
+                    <p class="text-muted">Cadastre silos para visualizar o relatório.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

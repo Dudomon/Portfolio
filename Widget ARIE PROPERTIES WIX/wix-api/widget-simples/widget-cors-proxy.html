@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consulta de Boletos - Solução CORS</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f5f5;
+        }
+
+        .widget-container {
+            max-width: 100%;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            margin: 20px auto;
+        }
+
+        .widget-header {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            padding: 25px;
+            text-align: center;
+        }
+
+        .widget-header h2 {
+            font-size: 1.8em;
+            margin-bottom: 8px;
+        }
+
+        .widget-form {
+            padding: 25px;
+            background: #f8f9fa;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 600;
+            color: #333;
+            font-size: 14px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-consultar {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 30px;
+        }
+
+        .loading-spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #4facfe;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .results {
+            display: none;
+            padding: 25px;
+        }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .dashboard-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            border-left: 4px solid;
+        }
+
+        .dashboard-card.vencido {
+            border-left-color: #e74c3c;
+        }
+
+        .dashboard-card.a-vencer {
+            border-left-color: #f39c12;
+        }
+
+        .dashboard-card.pago {
+            border-left-color: #27ae60;
+        }
+
+        .boletos-list {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .boletos-list h4 {
+            background: #f8f9fa;
+            padding: 15px;
+            margin: 0;
+            border-bottom: 1px solid #e1e5e9;
+            font-size: 16px;
+        }
+
+        .boleto-item {
+            padding: 15px;
+            border-bottom: 1px solid #e1e5e9;
+            transition: background 0.3s ease;
+        }
+
+        .boleto-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .boleto-status {
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 11px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .status-vencido {
+            background: #fee;
+            color: #e74c3c;
+        }
+
+        .status-a-vencer {
+            background: #fff3cd;
+            color: #f39c12;
+        }
+
+        .status-pago {
+            background: #d4edda;
+            color: #27ae60;
+        }
+
+        .boleto-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .btn-segunda-via {
+            background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+
+        .boleto-actions {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #e1e5e9;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .error,
+        .success-message {
+            display: none;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        .error {
+            background: #fee;
+            color: #e74c3c;
+        }
+
+        .success-message {
+            background: #d4edda;
+            color: #27ae60;
+        }
+
+        .debug-log-container {
+            margin-top: 20px;
+            border: 1px solid #ddd;
+            padding: 10px;
+            border-radius: 8px;
+        }
+
+        .debug-log {
+            background-color: #f5f5f5;
+            height: 200px;
+            overflow-y: scroll;
+            padding: 8px;
+            font-family: monospace;
+            font-size: 12px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        .proxy-settings {
+            background: #e6f3ff;
+            border: 1px solid #99ccff;
+            color: #0066cc;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 8px;
+        }
+
+        .proxy-settings h3 {
+            margin-top: 0;
+            margin-bottom: 10px;
+        }
+
+        .proxy-settings select,
+        .proxy-settings input {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .proxy-settings button {
+            background: #0066cc;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="widget-container">
+        <div class="widget-header">
+            <h2>🧾 Consulta de Boletos - Solução CORS</h2>
+            <p>Digite seus dados para consultar</p>
+        </div>
+
+        <div class="proxy-settings">
+            <h3>Configurações de Proxy CORS</h3>
+            <select id="proxySelector">
+                <option value="corsanywhere">CORS Anywhere</option>
+                <option value="corsproxy">CORS Proxy</option>
+                <option value="allorigins">All Origins</option>
+                <option value="custom">Personalizado</option>
+            </select>
+            <div id="customProxyDiv" style="display: none;">
+                <input type="text" id="customProxyUrl"
+                    placeholder="URL do proxy personalizado (ex: https://seu-proxy.com/)" />
+            </div>
+            <button onclick="testarProxy()">Testar Proxy</button>
+            <div id="proxyStatus"></div>
+        </div>
+
+        <div class="widget-form">
+            <form id="consultaForm">
+                <div class="form-group">
+                    <label for="cpfCnpj">CPF/CNPJ:</label>
+                    <input type="text" id="cpfCnpj" value="374.554.078-66" placeholder="Digite seu CPF ou CNPJ"
+                        required>
+                </div>
+
+                <div class="form-group">
+                    <label for="nome">Nome:</label>
+                    <input type="text" id="nome" value="THAIS CRISTINA JULIO BASTOS"
+                        placeholder="Digite seu nome completo" required>
+                </div>
+
+                <button type="submit" class="btn-consultar">
+                    🔍 Consultar Boletos
+                </button>
+            </form>
+        </div>
+
+        <div class="loading" id="loading">
+            <div class="loading-spinner"></div>
+            <p>Consultando seus boletos...</p>
+        </div>
+
+        <div class="error" id="error"></div>
+        <div class="success-message" id="success"></div>
+
+        <div class="results" id="results">
+            <div class="dashboard" id="dashboard"></div>
+
+            <div class="boletos-list">
+                <h4>📋 Seus Boletos</h4>
+                <div id="boletosList"></div>
+            </div>
+        </div>
+
+        <div class="debug-log-container">
+            <h4>Debug Log</h4>
+            <div id="debugLog" class="debug-log"></div>
+        </div>
+    </div>
+
+    <script>
+        // Configurações da API Sienge
+        const API_CONFIG = {
+            baseURL: 'https://api.sienge.com.br/arieproperties/public/api/v1',
+            auth: {
+                username: 'arieproperties-ti',
+                password: 'eeoTCIXR9NtEdv118V1L16xZWZR64W7p'
+            }
+        };
+
+        // Configurações de proxy CORS
+        const PROXY_CONFIGS = {
+            corsanywhere: 'https://cors-anywhere.herokuapp.com/',
+            corsproxy: 'https://corsproxy.io/?',
+            allorigins: 'https://api.allorigins.win/raw?url='
+        };
+
+        let selectedProxy = 'corsanywhere';
+        let proxyFuncionando = false;
+
+        // Função para logar mensagens
+        function log(mensagem) {
+            const logDiv = document.getElementById('debugLog');
+            const timestamp = new Date().toLocaleTimeString();
+            logDiv.innerHTML += `[${timestamp}] ${mensagem}\n`;
+            logDiv.scrollTop = logDiv.scrollHeight;
+            console.log(`[${timestamp}] ${mensagem}`);
+        }
+
+        // Função para mostrar mensagens
+        function mostrarMensagem(tipo, mensagem) {
+            const errorDiv = document.getElementById('error');
+            const successDiv = document.getElementById('success');
+
+            if (tipo === 'error') {
+                errorDiv.textContent = mensagem;
+                errorDiv.style.display = 'block';
+                successDiv.style.display = 'none';
+            } else {
+                successDiv.textContent = mensagem;
+                successDiv.style.display = 'block';
+                errorDiv.style.display = 'none';
+            }
+        }
+
+        // Função para atualizar status do proxy
+        function atualizarStatusProxy(status, mensagem) {
+            const statusDiv = document.getElementById('proxyStatus');
+
+            if (status === 'success') {
+                statusDiv.innerHTML = `✅ ${mensagem}`;
+                statusDiv.style.color = '#155724';
+                proxyFuncionando = true;
+            } else if (status === 'error') {
+                statusDiv.innerHTML = `❌ ${mensagem}`;
+                statusDiv.style.color = '#721c24';
+                proxyFuncionando = false;
+            } else {
+                statusDiv.innerHTML = `⏳ ${mensagem}`;
+                statusDiv.style.color = '#856404';
+            }
+        }
+
+        // Função para obter URL do proxy atual
+        function getProxyUrl() {
+            if (selectedProxy === 'custom') {
+                return document.getElementById('customProxyUrl').value;
+            } else {
+                return PROXY_CONFIGS[selectedProxy];
+            }
+        }
+
+        // Função para testar o proxy selecionado
+        async function testarProxy() {
+            const proxyUrl = getProxyUrl();
+
+            if (!proxyUrl) {
+                atualizarStatusProxy('error', 'URL do proxy não definida');
+                return;
+            }
+
+            log(`Testando proxy: ${proxyUrl}`);
+            atualizarStatusProxy('loading', 'Testando proxy...');
+
+            try {
+                // Testar com uma URL simples
+                const testUrl = 'https://api.sienge.com.br/arieproperties/public/api/v1/current-debit-balance?cpf=37455407866';
+                const url = `${proxyUrl}${encodeURIComponent(testUrl)}`;
+
+                log(`URL de teste: ${url}`);
+
+                const headers = {
+                    'Authorization': `Basic ${btoa(`${API_CONFIG.auth.username}:${API_CONFIG.auth.password}`)}`,
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                };
+
+                const response = await fetch(url, {
+                    method: 'GET',
+                    headers: headers
+                });
+
+                log(`Status da resposta: ${response.status}`);
+
+                if (response.ok) {
+                    const data = await response.json();
+                    log(`Dados recebidos: ${JSON.stringify(data).substring(0, 100)}...`);
+                    atualizarStatusProxy('success', 'Proxy funcionando! Você pode consultar boletos.');
+                } else {
+                    throw new Error(`Erro HTTP ${response.status}`);
+                }
+
+            } catch (error) {
+                log(`Erro ao testar proxy: ${error.message}`);
+                atualizarStatusProxy('error', `Erro ao testar proxy: ${error.message}`);
+            }
+        }
+
+        // Função para formatar CPF/CNPJ
+        function formatarCpfCnpj(valor) {
+            const numeros = valor.replace(/\D/g, '');
+
+            if (numeros.length <= 11) {
+                return numeros.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
+            } else {
+                return numeros.replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/, '$1.$2.$3/$4-$5');
+            }
+        }
+
+        // Função para formatar moeda
+        function formatarMoeda(valor) {
+            return new Intl.NumberFormat('pt-BR', {
+                style: 'currency',
+                currency: 'BRL'
+            }).format(valor || 0);
+        }
+
+        // Função para formatar data
+        function formatarData(dataString) {
+            if (!dataString) return 'N/A';
+            const data = new Date(dataString);
+            return data.toLocaleDateString('pt-BR');
+        }
+
+        // Função para determinar status do boleto
+        function determinarStatus(boleto) {
+            const hoje = new Date();
+            const vencimento = new Date(boleto.dataVencimento);
+
+            if (boleto.situacao === 'Pago' || boleto.valorPago > 0) {
+                return 'pago';
+            } else if (vencimento < hoje) {
+                return 'vencido';
+            } else {
+                return 'a-vencer';
+            }
+        }
+
+        // Função para buscar boletos via proxy
+        async function buscarBoletos(cpfCnpj) {
+            log(`Buscando boletos para CPF/CNPJ: ${cpfCnpj}`);
+
+            if (!proxyFuncionando) {
+                log('Proxy não está funcionando. Teste o proxy primeiro.');
+                throw new Error('Proxy não está funcionando. Teste o proxy primeiro.');
+            }
+
+            try {
+                const proxyUrl = getProxyUrl();
+                const apiUrl = `${API_CONFIG.baseURL}/current-debit-balance?cpf=${cpfCnpj.replace(/\D/g, '')}`;
+                const url = `${proxyUrl}${encodeURIComponent(apiUrl)}`;
+
+                log(`URL da requisição: ${url}`);
+
+                const headers = {
+                    'Authorization': `Basic ${btoa(`${API_CONFIG.auth.username}:${API_CONFIG.auth.password}`)}`,
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                };
+
+                const response = await fetch(url, {
+                    method: 'GET',
+                    headers: headers
+                });
+
+                log(`Status da resposta: ${response.status}`);
+
+                if (!response.ok) {
+                    throw new Error(`Erro HTTP ${response.status}`);
+                }
+
+                const data = await response.json();
+                log(`Dados recebidos: ${JSON.stringify(data).substring(0, 200)}...`);
+
+                // Processar dados
+                const boletosComDetalhes = [];
+
+                for (const bill of data.results || []) {
+                    const billReceivableId = bill.billReceivableId;
+                    const tiposParcelas = ['dueInstallments', 'payableInstallments', 'paidInstallments'];
+
+                    for (const tipo of tiposParcelas) {
+                        for (const installment of bill[tipo] || []) {
+                            if (installment.generatedBoleto) {
+                                boletosComDetalhes.push({
+                                    numero: installment.installmentNumber || 'N/A',
+                                    valorOriginal: installment.originalValue || 0,
+                                    valorAtual: installment.currentBalance || 0,
+                                    dataVencimento: installment.dueDate,
+                                    situacao: installment.currentBalance > 0 ? (tipo === 'dueInstallments' ? 'Vencido' : 'A Vencer') : 'Pago',
+                                    billReceivableId: billReceivableId,
+                                    installmentId: installment.installmentId,
+                                    podeSegundaVia: installment.generatedBoleto && installment.currentBalance > 0,
+                                    nossoNumero: installment.ourNumber || 'N/A'
+                                });
+                            }
+                        }
+                    }
+                }
+
+                log(`Processados ${boletosComDetalhes.length} boletos`);
+                return boletosComDetalhes;
+
+            } catch (error) {
+                log(`ERRO em buscarBoletos: ${error.message}`);
+                throw error;
+            }
+        }
+
+        // Função para gerar segunda via
+        async function gerarSegundaVia(billReceivableId, installmentId, botaoElement) {
+            const textoOriginal = botaoElement.textContent;
+            log('--- Iniciando geração de segunda via ---');
+
+            try {
+                log(`Parâmetros: billReceivableId=${billReceivableId}, installmentId=${installmentId}`);
+
+                // Mostrar loading no botão
+                botaoElement.textContent = 'Gerando...';
+                botaoElement.disabled = true;
+                botaoElement.style.background = '#95a5a6';
+
+                if (!proxyFuncionando) {
+                    throw new Error('Proxy não está funcionando. Teste o proxy primeiro.');
+                }
+
+                const proxyUrl = getProxyUrl();
+                const apiUrl = `${API_CONFIG.baseURL}/payment-slip-notification?billReceivableId=${billReceivableId}&installmentId=${installmentId}`;
+                const url = `${proxyUrl}${encodeURIComponent(apiUrl)}`;
+
+                log(`URL da requisição: ${url}`);
+
+                const headers = {
+                    'Authorization': `Basic ${btoa(`${API_CONFIG.auth.username}:${API_CONFIG.auth.password}`)}`,
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                };
+
+                const response = await fetch(url, {
+                    method: 'GET',
+                    headers: headers
+                });
+
+                log(`Status da resposta: ${response.status}`);
+
+                if (!response.ok) {
+                    throw new Error(`Erro HTTP ${response.status}`);
+                }
+
+                const data = await response.json();
+                log(`Dados recebidos: ${JSON.stringify(data)}`);
+
+                // Extrair URL do PDF
+                let downloadUrl = null;
+                if (data.results && data.results.length > 0) {
+                    downloadUrl = data.results[0].urlReport;
+                }
+
+                if (downloadUrl) {
+                    log(`Sucesso! URL do boleto recebida: ${downloadUrl}`);
+                    window.open(downloadUrl, '_blank');
+                    mostrarMensagem('success', 'Segunda via gerada com sucesso! O download foi iniciado.');
+                } else {
+                    throw new Error('URL do PDF não encontrada na resposta');
+                }
+
+            } catch (error) {
+                log(`ERRO em gerarSegundaVia: ${error.message}`);
+                mostrarMensagem('error', `Erro ao gerar segunda via: ${error.message}`);
+            } finally {
+                // Restaurar botão ao final da operação
+                botaoElement.textContent = textoOriginal;
+                botaoElement.disabled = false;
+                botaoElement.style.background = '';
+                log('--- Fim da operação de segunda via ---');
+            }
+        }
+
+        // Função para exibir dashboard
+        function exibirDashboard(boletos) {
+            const dashboard = document.getElementById('dashboard');
+
+            let totalVencido = 0, totalAVencer = 0, totalPago = 0;
+            let countVencido = 0, countAVencer = 0, countPago = 0;
+
+            boletos.forEach(boleto => {
+                const status = determinarStatus(boleto);
+                const valor = parseFloat(boleto.valorOriginal || 0);
+
+                switch (status) {
+                    case 'vencido':
+                        totalVencido += valor;
+                        countVencido++;
+                        break;
+                    case 'a-vencer':
+                        totalAVencer += valor;
+                        countAVencer++;
+                        break;
+                    case 'pago':
+                        totalPago += valor;
+                        countPago++;
+                        break;
+                }
+            });
+
+            dashboard.innerHTML = `
+                <div class="dashboard-card vencido">
+                    <h4>⚠️ Vencidos</h4>
+                    <div class="valor">${formatarMoeda(totalVencido)}</div>
+                    <p>${countVencido} boleto(s)</p>
+                </div>
+                <div class="dashboard-card a-vencer">
+                    <h4>⏰ A Vencer</h4>
+                    <div class="valor">${formatarMoeda(totalAVencer)}</div>
+                    <p>${countAVencer} boleto(s)</p>
+                </div>
+                <div class="dashboard-card pago">
+                    <h4>✅ Pagos</h4>
+                    <div class="valor">${formatarMoeda(totalPago)}</div>
+                    <p>${countPago} boleto(s)</p>
+                </div>
+            `;
+        }
+
+        // Função para exibir lista de boletos
+        function exibirBoletos(boletos) {
+            const boletosList = document.getElementById('boletosList');
+
+            if (boletos.length === 0) {
+                boletosList.innerHTML = '<div class="boleto-item">Nenhum boleto encontrado para este CPF/CNPJ.</div>';
+                return;
+            }
+
+            boletosList.innerHTML = boletos.map(boleto => {
+                const status = determinarStatus(boleto);
+                const statusClass = `status-${status}`;
+                const statusText = status === 'vencido' ? 'Vencido' :
+                    status === 'a-vencer' ? 'A Vencer' : 'Pago';
+
+                return `
+                    <div class="boleto-item">
+                        <div class="boleto-header">
+                            <div class="boleto-numero">Boleto #${boleto.numero || 'N/A'}</div>
+                            <div class="boleto-status ${statusClass}">${statusText}</div>
+                        </div>
+                        <div class="boleto-details">
+                            <div class="boleto-detail">
+                                <label>Valor:</label>
+                                <span>${formatarMoeda(boleto.valorOriginal)}</span>
+                            </div>
+                            <div class="boleto-detail">
+                                <label>Vencimento:</label>
+                                <span>${formatarData(boleto.dataVencimento)}</span>
+                            </div>
+                            <div class="boleto-detail">
+                                <label>Situação:</label>
+                                <span>${boleto.situacao || 'N/A'}</span>
+                            </div>
+                            <div class="boleto-detail">
+                                <label>Nosso Número:</label>
+                                <span>${boleto.nossoNumero || 'N/A'}</span>
+                            </div>
+                        </div>
+                        ${boleto.podeSegundaVia ? `
+                            <div class="boleto-actions">
+                                <button 
+                                    class="btn-segunda-via" 
+                                    onclick="gerarSegundaVia('${boleto.billReceivableId}', '${boleto.installmentId}', this)"
+                                    title="Gerar segunda via do boleto"
+                                >
+                                    💾 Imprimir Segunda Via
+                                </button>
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Event listener para o formulário
+        document.getElementById('consultaForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const cpfCnpj = document.getElementById('cpfCnpj').value.trim();
+            const nome = document.getElementById('nome').value.trim();
+
+            if (!cpfCnpj || !nome) {
+                mostrarMensagem('error', 'Por favor, preencha todos os campos.');
+                return;
+            }
+
+            if (!proxyFuncionando) {
+                mostrarMensagem('error', 'Proxy não está funcionando. Teste o proxy primeiro.');
+                return;
+            }
+
+            // Mostrar loading
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('results').style.display = 'none';
+            document.querySelector('.btn-consultar').disabled = true;
+            document.getElementById('error').style.display = 'none';
+            document.getElementById('success').style.display = 'none';
+
+            try {
+                const boletos = await buscarBoletos(cpfCnpj);
+
+                // Exibir resultados
+                exibirDashboard(boletos);
+                exibirBoletos(boletos);
+
+                document.getElementById('results').style.display = 'block';
+
+                if (boletos.length > 0) {
+                    mostrarMensagem('success', `Encontrados ${boletos.length} boleto(s).`);
+                } else {
+                    mostrarMensagem('error', 'Nenhum boleto encontrado para este CPF/CNPJ.');
+                }
+
+            } catch (error) {
+                mostrarMensagem('error', `Erro ao consultar boletos: ${error.message}`);
+                log(`Erro na consulta: ${error.message}`);
+            } finally {
+                // Esconder loading
+                document.getElementById('loading').style.display = 'none';
+                document.querySelector('.btn-consultar').disabled = false;
+            }
+        });
+
+        // Máscara para CPF/CNPJ
+        document.getElementById('cpfCnpj').addEventListener('input', (e) => {
+            let valor = e.target.value.replace(/\D/g, '');
+
+            if (valor.length <= 11) {
+                valor = valor.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
+            } else {
+                valor = valor.replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/, '$1.$2.$3/$4-$5');
+            }
+
+            e.target.value = valor;
+        });
+
+        // Event listener para o seletor de proxy
+        document.getElementById('proxySelector').addEventListener('change', function () {
+            selectedProxy = this.value;
+
+            if (selectedProxy === 'custom') {
+                document.getElementById('customProxyDiv').style.display = 'block';
+            } else {
+                document.getElementById('customProxyDiv').style.display = 'none';
+            }
+
+            // Resetar status do proxy
+            proxyFuncionando = false;
+            document.getElementById('proxyStatus').innerHTML = '';
+        });
+
+        // Inicialização
+        function inicializar() {
+            log('Inicializando widget...');
+            log(`URL atual: ${window.location.href}`);
+
+            // Mostrar instruções iniciais
+            atualizarStatusProxy('loading', 'Selecione um proxy e clique em "Testar Proxy"');
+        }
+
+        // Iniciar
+        inicializar();
+    </script>
+</body>
+
+</html>

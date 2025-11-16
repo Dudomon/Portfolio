@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% block title %}Esqueci Minha Senha - CropLink{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center mt-5">
+        <div class="col-md-6 col-lg-5">
+            <div class="card shadow">
+                <div class="card-header bg-success text-white text-center">
+                    <h4 class="mb-0">
+                        <i class="fas fa-key"></i> Recuperar Senha
+                    </h4>
+                </div>
+                <div class="card-body p-4">
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                        {% if messages %}
+                            {% for category, message in messages %}
+                                <div class="alert alert-{{ 'success' if category == 'success' else 'danger' }} alert-dismissible fade show" role="alert">
+                                    {{ message }}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                    {% endwith %}
+
+                    <p class="text-muted text-center mb-4">
+                        Digite seu e-mail cadastrado e enviaremos um link para redefinir sua senha.
+                    </p>
+
+                    <form method="POST" action="{{ url_for('esqueci_senha') }}">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+                        <div class="mb-3">
+                            <label for="email" class="form-label">
+                                <i class="fas fa-envelope"></i> E-mail
+                            </label>
+                            <input type="email" class="form-control form-control-lg" id="email"
+                                   name="email" placeholder="seu@email.com" required autofocus>
+                        </div>
+
+                        <div class="d-grid mb-3">
+                            <button type="submit" class="btn btn-success btn-lg">
+                                <i class="fas fa-paper-plane"></i> Enviar Link de Recuperação
+                            </button>
+                        </div>
+
+                        <div class="text-center">
+                            <a href="{{ url_for('login') }}" class="text-decoration-none">
+                                <i class="fas fa-arrow-left"></i> Voltar ao Login
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="card mt-3 bg-light">
+                <div class="card-body">
+                    <h6 class="text-muted mb-2">
+                        <i class="fas fa-info-circle"></i> Instruções:
+                    </h6>
+                    <ul class="text-muted small mb-0">
+                        <li>Digite o e-mail cadastrado na sua conta</li>
+                        <li>Verifique sua caixa de entrada e spam</li>
+                        <li>Clique no link recebido para criar uma nova senha</li>
+                        <li>O link expira em 1 hora por segurança</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

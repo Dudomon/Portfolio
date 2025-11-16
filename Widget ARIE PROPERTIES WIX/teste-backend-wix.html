@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste Backend Wix - Consulta de Boletos</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .form-section {
+            padding: 40px;
+            background: #f8f9fa;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e1e5e9;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #4facfe;
+            box-shadow: 0 0 0 3px rgba(79, 172, 254, 0.1);
+        }
+
+        .btn-consultar {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            padding: 15px 40px;
+            border: none;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+
+        .btn-consultar:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(79, 172, 254, 0.3);
+        }
+
+        .btn-consultar:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 40px;
+        }
+
+        .loading-spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #4facfe;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .results {
+            display: none;
+            padding: 40px;
+        }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .dashboard-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            text-align: center;
+            border-left: 5px solid;
+        }
+
+        .dashboard-card.vencido {
+            border-left-color: #e74c3c;
+        }
+
+        .dashboard-card.a-vencer {
+            border-left-color: #f39c12;
+        }
+
+        .dashboard-card.pago {
+            border-left-color: #27ae60;
+        }
+
+        .dashboard-card h3 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .dashboard-card .valor {
+            font-size: 2em;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .dashboard-card.vencido .valor {
+            color: #e74c3c;
+        }
+
+        .dashboard-card.a-vencer .valor {
+            color: #f39c12;
+        }
+
+        .dashboard-card.pago .valor {
+            color: #27ae60;
+        }
+
+        .boletos-list {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .boletos-list h3 {
+            background: #f8f9fa;
+            padding: 20px;
+            margin: 0;
+            border-bottom: 1px solid #e1e5e9;
+        }
+
+        .boleto-item {
+            padding: 20px;
+            border-bottom: 1px solid #e1e5e9;
+            transition: background 0.3s ease;
+        }
+
+        .boleto-item:hover {
+            background: #f8f9fa;
+        }
+
+        .boleto-item:last-child {
+            border-bottom: none;
+        }
+
+        .boleto-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .boleto-numero {
+            font-weight: bold;
+            color: #333;
+        }
+
+        .boleto-situacao {
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .boleto-situacao.vencido {
+            background: #ffeaea;
+            color: #e74c3c;
+        }
+
+        .boleto-situacao.a-vencer {
+            background: #fff3cd;
+            color: #f39c12;
+        }
+
+        .boleto-situacao.pago {
+            background: #d4edda;
+            color: #27ae60;
+        }
+
+        .boleto-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .boleto-detail {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .boleto-detail label {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .boleto-detail span {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .error {
+            display: none;
+            background: #ffeaea;
+            color: #e74c3c;
+            padding: 20px;
+            margin: 20px;
+            border-radius: 10px;
+            border-left: 5px solid #e74c3c;
+        }
+
+        .log-section {
+            background: #f8f9fa;
+            padding: 20px;
+            margin: 20px;
+            border-radius: 10px;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .log-section h4 {
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .log-entry {
+            margin-bottom: 5px;
+            padding: 5px;
+            border-radius: 3px;
+        }
+
+        .log-entry.info {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+
+        .log-entry.error {
+            background: #ffebee;
+            color: #d32f2f;
+        }
+
+        .log-entry.success {
+            background: #e8f5e8;
+            color: #388e3c;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🧾 Teste Backend Wix - Consulta de Boletos</h1>
+            <p>Testando integração com backend Wix HTTP Functions</p>
+        </div>
+
+        <div class="form-section">
+            <form id="consultaForm">
+                <div class="form-group">
+                    <label for="cpfCnpj">CPF/CNPJ:</label>
+                    <input type="text" id="cpfCnpj" placeholder="Digite seu CPF ou CNPJ" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="nome">Nome:</label>
+                    <input type="text" id="nome" placeholder="Digite seu nome completo" required>
+                </div>
+                
+                <button type="submit" class="btn-consultar">
+                    🔍 Testar Backend Wix
+                </button>
+            </form>
+        </div>
+
+        <div class="loading" id="loading">
+            <div class="loading-spinner"></div>
+            <p>Testando backend Wix...</p>
+        </div>
+
+        <div class="error" id="error"></div>
+
+        <div class="log-section" id="logSection">
+            <h4>📋 Log de Testes</h4>
+            <div id="logContent">
+                <!-- Logs serão adicionados aqui -->
+            </div>
+        </div>
+
+        <div class="results" id="results">
+            <div class="dashboard" id="dashboard">
+                <!-- Dashboard será preenchido dinamicamente -->
+            </div>
+            
+            <div class="boletos-list">
+                <h3>📋 Boletos Encontrados</h3>
+                <div id="boletosList">
+                    <!-- Lista de boletos será preenchida dinamicamente -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Configurações do Backend Wix
+        const WIX_BACKEND_URL = 'https://guilherme-silva.wixsite.com/_functions'; // Substitua pela sua URL
+
+        // Função para adicionar logs
+        function addLog(message, type = 'info') {
+            const logContent = document.getElementById('logContent');
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = document.createElement('div');
+            logEntry.className = `log-entry ${type}`;
+            logEntry.innerHTML = `[${timestamp}] ${message}`;
+            logContent.appendChild(logEntry);
+            logContent.scrollTop = logContent.scrollHeight;
+        }
+
+        // Função para formatar CPF/CNPJ
+        function formatarCpfCnpj(valor) {
+            const numeros = valor.replace(/\D/g, '');
+            
+            if (numeros.length <= 11) {
+                // CPF
+                return numeros.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
+            } else {
+                // CNPJ
+                return numeros.replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/, '$1.$2.$3/$4-$5');
+            }
+        }
+
+        // Função para formatar moeda
+        function formatarMoeda(valor) {
+            return new Intl.NumberFormat('pt-BR', {
+                style: 'currency',
+                currency: 'BRL'
+            }).format(valor || 0);
+        }
+
+        // Função para formatar data
+        function formatarData(dataString) {
+            if (!dataString) return 'N/A';
+            const data = new Date(dataString);
+            return data.toLocaleDateString('pt-BR');
+        }
+
+        // Função para determinar status do boleto
+        function determinarStatus(boleto) {
+            const hoje = new Date();
+            const vencimento = new Date(boleto.dataVencimento);
+            
+            if (boleto.situacao === 'Pago' || boleto.valorPago > 0) {
+                return 'pago';
+            } else if (vencimento < hoje) {
+                return 'vencido';
+            } else {
+                return 'a-vencer';
+            }
+        }
+
+        // Função para buscar boletos via Backend Wix
+        async function buscarBoletosViaWix(cpfCnpj, nome) {
+            try {
+                addLog('Iniciando busca via Backend Wix...', 'info');
+                addLog(`CPF/CNPJ: ${cpfCnpj}`, 'info');
+                addLog(`Nome: ${nome}`, 'info');
+                
+                const url = `${WIX_BACKEND_URL}/get_boletosDetalhes?cpfCnpj=${encodeURIComponent(cpfCnpj)}`;
+                addLog(`URL do Backend: ${url}`, 'info');
+                
+                const response = await fetch(url, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    }
+                });
+
+                addLog(`Status da resposta: ${response.status}`, 'info');
+
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    addLog(`Erro HTTP: ${response.status} - ${errorText}`, 'error');
+                    throw new Error(`Erro HTTP: ${response.status} - ${errorText}`);
+                }
+
+                const data = await response.json();
+                addLog('Dados recebidos do Backend Wix:', 'success');
+                addLog(JSON.stringify(data, null, 2), 'info');
+                
+                if (!data.success) {
+                    addLog(`Erro do Backend: ${data.error}`, 'error');
+                    throw new Error(data.error || 'Erro desconhecido do backend');
+                }
+
+                return data.boletos || [];
+                
+            } catch (error) {
+                addLog(`Erro ao buscar boletos: ${error.message}`, 'error');
+                throw error;
+            }
+        }
+
+        // Função para exibir dashboard
+        function exibirDashboard(boletos) {
+            const dashboard = document.getElementById('dashboard');
+            
+            let totalVencido = 0;
+            let totalAVencer = 0;
+            let totalPago = 0;
+            let countVencido = 0;
+            let countAVencer = 0;
+            let countPago = 0;
+
+            boletos.forEach(boleto => {
+                const status = determinarStatus(boleto);
+                const valor = parseFloat(boleto.valorOriginal || 0);
+                
+                switch (status) {
+                    case 'vencido':
+                        totalVencido += valor;
+                        countVencido++;
+                        break;
+                    case 'a-vencer':
+                        totalAVencer += valor;
+                        countAVencer++;
+                        break;
+                    case 'pago':
+                        totalPago += valor;
+                        countPago++;
+                        break;
+                }
+            });
+
+            dashboard.innerHTML = `
+                <div class="dashboard-card vencido">
+                    <h3>⚠️ Vencidos</h3>
+                    <div class="valor">${formatarMoeda(totalVencido)}</div>
+                    <p>${countVencido} boleto(s)</p>
+                </div>
+                <div class="dashboard-card a-vencer">
+                    <h3>⏰ A Vencer</h3>
+                    <div class="valor">${formatarMoeda(totalAVencer)}</div>
+                    <p>${countAVencer} boleto(s)</p>
+                </div>
+                <div class="dashboard-card pago">
+                    <h3>✅ Pagos</h3>
+                    <div class="valor">${formatarMoeda(totalPago)}</div>
+                    <p>${countPago} boleto(s)</p>
+                </div>
+            `;
+        }
+
+        // Função para exibir lista de boletos
+        function exibirBoletos(boletos) {
+            const boletosList = document.getElementById('boletosList');
+            
+            if (boletos.length === 0) {
+                boletosList.innerHTML = '<div class="boleto-item">Nenhum boleto encontrado.</div>';
+                return;
+            }
+
+            boletosList.innerHTML = boletos.map(boleto => {
+                const status = determinarStatus(boleto);
+                const statusClass = status === 'vencido' ? 'vencido' : status === 'a-vencer' ? 'a-vencer' : 'pago';
+                const statusText = status === 'vencido' ? 'Vencido' : status === 'a-vencer' ? 'A Vencer' : 'Pago';
+
+                return `
+                    <div class="boleto-item">
+                        <div class="boleto-header">
+                            <span class="boleto-numero">Boleto #${boleto.numero}</span>
+                            <span class="boleto-situacao ${statusClass}">${statusText}</span>
+                        </div>
+                        <div class="boleto-details">
+                            <div class="boleto-detail">
+                                <label>Valor Original:</label>
+                                <span>${formatarMoeda(boleto.valorOriginal)}</span>
+                            </div>
+                            <div class="boleto-detail">
+                                <label>Valor Atual:</label>
+                                <span>${formatarMoeda(boleto.valorAtual)}</span>
+                            </div>
+                            <div class="boleto-detail">
+                                <label>Data de Vencimento:</label>
+                                <span>${formatarData(boleto.dataVencimento)}</span>
+                            </div>
+                            <div class="boleto-detail">
+                                <label>Nosso Número:</label>
+                                <span>${boleto.nossoNumero}</span>
+                            </div>
+                            <div class="boleto-detail">
+                                <label>Bill Receivable ID:</label>
+                                <span>${boleto.billReceivableId || 'N/A'}</span>
+                            </div>
+                            <div class="boleto-detail">
+                                <label>Installment ID:</label>
+                                <span>${boleto.installmentId || 'N/A'}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Event listener para o formulário
+        document.getElementById('consultaForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const cpfCnpj = document.getElementById('cpfCnpj').value.trim();
+            const nome = document.getElementById('nome').value.trim();
+            
+            if (!cpfCnpj || !nome) {
+                addLog('Por favor, preencha todos os campos', 'error');
+                return;
+            }
+
+            // Limpar logs anteriores
+            document.getElementById('logContent').innerHTML = '';
+            
+            // Mostrar loading
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('error').style.display = 'none';
+            document.getElementById('results').style.display = 'none';
+            
+            try {
+                addLog('Iniciando consulta...', 'info');
+                
+                const boletos = await buscarBoletosViaWix(cpfCnpj, nome);
+                
+                addLog(`Consulta concluída. ${boletos.length} boletos encontrados.`, 'success');
+                
+                // Exibir resultados
+                exibirDashboard(boletos);
+                exibirBoletos(boletos);
+                
+                document.getElementById('results').style.display = 'block';
+                
+            } catch (error) {
+                addLog(`Erro na consulta: ${error.message}`, 'error');
+                
+                document.getElementById('error').style.display = 'block';
+                document.getElementById('error').textContent = `Erro: ${error.message}`;
+                
+            } finally {
+                document.getElementById('loading').style.display = 'none';
+            }
+        });
+
+        // Inicialização
+        addLog('Widget de teste do Backend Wix carregado', 'success');
+        addLog('Aguardando dados para teste...', 'info');
+    </script>
+</body>
+</html> 

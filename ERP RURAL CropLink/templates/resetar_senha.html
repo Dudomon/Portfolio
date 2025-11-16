@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+
+{% block title %}Redefinir Senha - CropLink{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center mt-5">
+        <div class="col-md-6 col-lg-5">
+            <div class="card shadow">
+                <div class="card-header bg-success text-white text-center">
+                    <h4 class="mb-0">
+                        <i class="fas fa-lock"></i> Redefinir Senha
+                    </h4>
+                </div>
+                <div class="card-body p-4">
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                        {% if messages %}
+                            {% for category, message in messages %}
+                                <div class="alert alert-{{ 'success' if category == 'success' else 'danger' }} alert-dismissible fade show" role="alert">
+                                    {{ message }}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                    {% endwith %}
+
+                    <p class="text-muted text-center mb-4">
+                        Digite sua nova senha abaixo.
+                    </p>
+
+                    <form method="POST" action="{{ url_for('resetar_senha', token=token) }}" id="formResetarSenha">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+                        <div class="mb-3">
+                            <label for="senha_nova" class="form-label">
+                                <i class="fas fa-key"></i> Nova Senha
+                            </label>
+                            <input type="password" class="form-control form-control-lg" id="senha_nova"
+                                   name="senha_nova" required minlength="6" autofocus>
+                            <small class="text-muted">Mínimo de 6 caracteres</small>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="senha_confirmacao" class="form-label">
+                                <i class="fas fa-check"></i> Confirmar Nova Senha
+                            </label>
+                            <input type="password" class="form-control form-control-lg" id="senha_confirmacao"
+                                   name="senha_confirmacao" required minlength="6">
+                        </div>
+
+                        <div class="d-grid mb-3">
+                            <button type="submit" class="btn btn-success btn-lg">
+                                <i class="fas fa-save"></i> Redefinir Senha
+                            </button>
+                        </div>
+
+                        <div class="text-center">
+                            <a href="{{ url_for('login') }}" class="text-decoration-none">
+                                <i class="fas fa-arrow-left"></i> Voltar ao Login
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="card mt-3 bg-light">
+                <div class="card-body">
+                    <h6 class="text-muted mb-2">
+                        <i class="fas fa-shield-alt"></i> Dicas de Segurança:
+                    </h6>
+                    <ul class="text-muted small mb-0">
+                        <li>Use uma senha forte com letras, números e símbolos</li>
+                        <li>Evite senhas óbvias ou muito simples</li>
+                        <li>Não compartilhe sua senha com ninguém</li>
+                        <li>Altere sua senha regularmente</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.getElementById('formResetarSenha').addEventListener('submit', function(e) {
+    const senhaNew = document.getElementById('senha_nova').value;
+    const senhaConfirm = document.getElementById('senha_confirmacao').value;
+
+    if (senhaNew !== senhaConfirm) {
+        e.preventDefault();
+        alert('As senhas não coincidem. Por favor, verifique.');
+        return false;
+    }
+
+    if (senhaNew.length < 6) {
+        e.preventDefault();
+        alert('A senha deve ter no mínimo 6 caracteres.');
+        return false;
+    }
+});
+</script>
+{% endblock %}

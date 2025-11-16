@@ -1,0 +1,141 @@
+# ======================================
+# Radio Chart Tool - Music ERP - .gitignore
+# ======================================
+#
+# ⚠️ ESTE PROJETO É PROPRIETÁRIO
+# Apenas estrutura básica e screenshots são expostos
+# Lógica de scraping e download NÃO será compartilhada
+#
+# ======================================
+
+# ======================================
+# 🔒 CÓDIGO PROPRIETÁRIO - NÃO EXPOR
+# ======================================
+
+# TODA a lógica Python (scrapers, downloaders, etc)
+radio-chart-tool/*.py
+radio-chart-tool/**/*.py
+*.pyc
+*.pyo
+__pycache__/
+*.so
+
+# Pasta de scrapers completa (lógica proprietária)
+radio-chart-tool/scrapers/
+scrapers/
+
+# Templates e frontend (implementação proprietária)
+radio-chart-tool/templates/
+radio-chart-tool/static/
+templates/
+static/
+
+# ======================================
+# 🗂️ DADOS E DOWNLOADS
+# ======================================
+
+# Banco de dados com músicas
+*.db
+*.sqlite
+*.sqlite3
+
+# Músicas baixadas
+radio-chart-tool/downloads/
+downloads/
+*.mp3
+*.m4a
+*.wav
+*.flac
+
+# FFmpeg binários
+radio-chart-tool/ffmpeg/
+ffmpeg/
+*.exe
+*.dll
+
+# ======================================
+# 🔑 CREDENCIAIS E CONFIGURAÇÃO
+# ======================================
+
+# Variáveis de ambiente
+.env
+*.env
+.env.*
+
+# Configurações
+config.py
+settings.py
+secrets.py
+
+# Logs e cache
+*.log
+*.cache
+.cache/
+
+# ======================================
+# 📦 DEPENDÊNCIAS
+# ======================================
+
+# Virtual environment
+venv/
+env/
+ENV/
+.venv/
+
+# Package management
+pip-log.txt
+pip-delete-this-directory.txt
+
+# ======================================
+# 📝 DOCUMENTAÇÃO TÉCNICA INTERNA
+# ======================================
+
+# Docs proprietários
+ACESSO_REMOTO.md
+INSTRUCOES_COMPLETAS.md
+NOVAS_FONTES_*.md
+WEB_ACCESS_SETUP.md
+
+# Scripts internos
+radio-chart-tool/*.bat
+*.bat
+*.sh
+
+# Tests (implementação proprietária)
+radio-chart-tool/test_*.py
+test_*.py
+radio-chart-tool/debug_*.py
+debug_*.py
+radio-chart-tool/update_*.py
+update_*.py
+radio-chart-tool/clear_*.py
+clear_*.py
+
+# ======================================
+# 💻 IDE E SISTEMA
+# ======================================
+
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# ======================================
+# PERMITIR APENAS
+# ======================================
+
+# Apenas README showcase e screenshot
+!README.md
+!SECURITY.md
+!screenshots/
+!screenshots/*.png
+!screenshots/*.jpg
+
+# Arquivo de exemplo de dependências (sem versões específicas)
+!requirements.txt.example
+
+# Nenhum código será exposto
+# Este é um projeto proprietário para showcase apenas

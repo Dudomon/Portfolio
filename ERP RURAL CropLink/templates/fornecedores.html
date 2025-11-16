@@ -1,0 +1,455 @@
+{% extends "base.html" %}
+
+{% block title %}Fornecedores - CropLink{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col">
+            <h1 class="display-6">
+                <i class="fas fa-truck text-success"></i>
+                Gestão de Fornecedores
+            </h1>
+            <p class="text-muted">Controle de fornecedores, prestadores de serviço e parceiros comerciais</p>
+        </div>
+        <div class="col-auto">
+            <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalAdicionarFornecedor">
+                <i class="fas fa-plus"></i> Adicionar Fornecedor
+            </button>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-6 mb-3">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0">
+                            <i class="fas fa-check-circle fa-2x text-success"></i>
+                        </div>
+                        <div class="ms-3">
+                            <h6 class="text-muted mb-1">Fornecedores Ativos</h6>
+                            <h3 class="mb-0">{{ total_ativos }}</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 mb-3">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0">
+                            <i class="fas fa-times-circle fa-2x text-secondary"></i>
+                        </div>
+                        <div class="ms-3">
+                            <h6 class="text-muted mb-1">Fornecedores Inativos</h6>
+                            <h3 class="mb-0">{{ total_inativos }}</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% if fornecedores %}
+        <div class="card shadow">
+            <div class="card-header bg-white">
+                <h5 class="mb-0">Lista de Fornecedores</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Nome/Razão Social</th>
+                                <th>Nome Fantasia</th>
+                                <th>CNPJ/CPF</th>
+                                <th>Categoria</th>
+                                <th>Contato</th>
+                                <th>Telefone</th>
+                                <th>Status</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for fornecedor in fornecedores %}
+                            <tr>
+                                <td>{{ fornecedor.nome }}</td>
+                                <td>{{ fornecedor.nome_fantasia or '-' }}</td>
+                                <td>{{ fornecedor.cnpj_cpf or '-' }}</td>
+                                <td>
+                                    <span class="badge bg-info">{{ fornecedor.categoria }}</span>
+                                </td>
+                                <td>{{ fornecedor.contato_nome or '-' }}</td>
+                                <td>{{ fornecedor.telefone or '-' }}</td>
+                                <td>
+                                    {% if fornecedor.status == 'ativo' %}
+                                        <span class="badge bg-success">Ativo</span>
+                                    {% else %}
+                                        <span class="badge bg-secondary">Inativo</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <button class="btn btn-sm btn-primary" onclick="editarFornecedor({{ fornecedor.id }}, '{{ fornecedor.nome }}', '{{ fornecedor.nome_fantasia or '' }}', '{{ fornecedor.cnpj_cpf or '' }}', '{{ fornecedor.categoria }}', '{{ fornecedor.contato_nome or '' }}', '{{ fornecedor.telefone or '' }}', '{{ fornecedor.email or '' }}', '{{ fornecedor.endereco or '' }}', '{{ fornecedor.cidade or '' }}', '{{ fornecedor.estado or '' }}', '{{ fornecedor.cep or '' }}', '{{ fornecedor.observacoes or '' }}')">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+
+                                    {% if fornecedor.status == 'ativo' %}
+                                        <button class="btn btn-sm btn-warning" onclick="desativarFornecedor({{ fornecedor.id }})">
+                                            <i class="fas fa-ban"></i>
+                                        </button>
+                                    {% else %}
+                                        <button class="btn btn-sm btn-success" onclick="ativarFornecedor({{ fornecedor.id }})">
+                                            <i class="fas fa-check"></i>
+                                        </button>
+                                    {% endif %}
+
+                                    <button class="btn btn-sm btn-danger" onclick="excluirFornecedor({{ fornecedor.id }})">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    {% else %}
+        <div class="card shadow">
+            <div class="card-body">
+                <div class="text-center py-5">
+                    <i class="fas fa-truck fa-3x text-muted mb-3"></i>
+                    <p class="text-muted">Nenhum fornecedor cadastrado ainda.</p>
+                    <button class="btn btn-success mt-3" data-bs-toggle="modal" data-bs-target="#modalAdicionarFornecedor">
+                        <i class="fas fa-plus"></i> Adicionar Primeiro Fornecedor
+                    </button>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+</div>
+
+<!-- Modal Adicionar Fornecedor -->
+<div class="modal fade" id="modalAdicionarFornecedor" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title">
+                    <i class="fas fa-plus-circle"></i> Adicionar Fornecedor
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="POST" action="{{ url_for('adicionar_fornecedor') }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Nome/Razão Social *</label>
+                            <input type="text" class="form-control" name="nome" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Nome Fantasia</label>
+                            <input type="text" class="form-control" name="nome_fantasia">
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">CNPJ/CPF</label>
+                            <input type="text" class="form-control" name="cnpj_cpf">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Categoria *</label>
+                            <select class="form-control" name="categoria" required>
+                                <option value="">Selecione...</option>
+                                <option value="Insumos Agrícolas">Insumos Agrícolas</option>
+                                <option value="Sementes">Sementes</option>
+                                <option value="Fertilizantes">Fertilizantes</option>
+                                <option value="Defensivos">Defensivos</option>
+                                <option value="Equipamentos">Equipamentos</option>
+                                <option value="Peças e Manutenção">Peças e Manutenção</option>
+                                <option value="Combustível">Combustível</option>
+                                <option value="Serviços">Serviços</option>
+                                <option value="Outros">Outros</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Nome do Contato</label>
+                            <input type="text" class="form-control" name="contato_nome">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Telefone</label>
+                            <input type="text" class="form-control" name="telefone">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">E-mail</label>
+                            <input type="email" class="form-control" name="email">
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Endereço</label>
+                        <input type="text" class="form-control" name="endereco">
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-5 mb-3">
+                            <label class="form-label">Cidade</label>
+                            <input type="text" class="form-control" name="cidade">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Estado</label>
+                            <select class="form-control" name="estado">
+                                <option value="">Selecione...</option>
+                                <option value="AC">Acre</option>
+                                <option value="AL">Alagoas</option>
+                                <option value="AP">Amapá</option>
+                                <option value="AM">Amazonas</option>
+                                <option value="BA">Bahia</option>
+                                <option value="CE">Ceará</option>
+                                <option value="DF">Distrito Federal</option>
+                                <option value="ES">Espírito Santo</option>
+                                <option value="GO">Goiás</option>
+                                <option value="MA">Maranhão</option>
+                                <option value="MT">Mato Grosso</option>
+                                <option value="MS">Mato Grosso do Sul</option>
+                                <option value="MG">Minas Gerais</option>
+                                <option value="PA">Pará</option>
+                                <option value="PB">Paraíba</option>
+                                <option value="PR">Paraná</option>
+                                <option value="PE">Pernambuco</option>
+                                <option value="PI">Piauí</option>
+                                <option value="RJ">Rio de Janeiro</option>
+                                <option value="RN">Rio Grande do Norte</option>
+                                <option value="RS">Rio Grande do Sul</option>
+                                <option value="RO">Rondônia</option>
+                                <option value="RR">Roraima</option>
+                                <option value="SC">Santa Catarina</option>
+                                <option value="SP">São Paulo</option>
+                                <option value="SE">Sergipe</option>
+                                <option value="TO">Tocantins</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label class="form-label">CEP</label>
+                            <input type="text" class="form-control" name="cep">
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Observações</label>
+                        <textarea class="form-control" name="observacoes" rows="3"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-success">
+                        <i class="fas fa-save"></i> Salvar Fornecedor
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Editar Fornecedor -->
+<div class="modal fade" id="modalEditarFornecedor" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title">
+                    <i class="fas fa-edit"></i> Editar Fornecedor
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="POST" id="formEditarFornecedor">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Nome/Razão Social *</label>
+                            <input type="text" class="form-control" name="nome" id="edit_nome" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Nome Fantasia</label>
+                            <input type="text" class="form-control" name="nome_fantasia" id="edit_nome_fantasia">
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">CNPJ/CPF</label>
+                            <input type="text" class="form-control" name="cnpj_cpf" id="edit_cnpj_cpf">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Categoria *</label>
+                            <select class="form-control" name="categoria" id="edit_categoria" required>
+                                <option value="">Selecione...</option>
+                                <option value="Insumos Agrícolas">Insumos Agrícolas</option>
+                                <option value="Sementes">Sementes</option>
+                                <option value="Fertilizantes">Fertilizantes</option>
+                                <option value="Defensivos">Defensivos</option>
+                                <option value="Equipamentos">Equipamentos</option>
+                                <option value="Peças e Manutenção">Peças e Manutenção</option>
+                                <option value="Combustível">Combustível</option>
+                                <option value="Serviços">Serviços</option>
+                                <option value="Outros">Outros</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Nome do Contato</label>
+                            <input type="text" class="form-control" name="contato_nome" id="edit_contato_nome">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Telefone</label>
+                            <input type="text" class="form-control" name="telefone" id="edit_telefone">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">E-mail</label>
+                            <input type="email" class="form-control" name="email" id="edit_email">
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Endereço</label>
+                        <input type="text" class="form-control" name="endereco" id="edit_endereco">
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-5 mb-3">
+                            <label class="form-label">Cidade</label>
+                            <input type="text" class="form-control" name="cidade" id="edit_cidade">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Estado</label>
+                            <select class="form-control" name="estado" id="edit_estado">
+                                <option value="">Selecione...</option>
+                                <option value="AC">Acre</option>
+                                <option value="AL">Alagoas</option>
+                                <option value="AP">Amapá</option>
+                                <option value="AM">Amazonas</option>
+                                <option value="BA">Bahia</option>
+                                <option value="CE">Ceará</option>
+                                <option value="DF">Distrito Federal</option>
+                                <option value="ES">Espírito Santo</option>
+                                <option value="GO">Goiás</option>
+                                <option value="MA">Maranhão</option>
+                                <option value="MT">Mato Grosso</option>
+                                <option value="MS">Mato Grosso do Sul</option>
+                                <option value="MG">Minas Gerais</option>
+                                <option value="PA">Pará</option>
+                                <option value="PB">Paraíba</option>
+                                <option value="PR">Paraná</option>
+                                <option value="PE">Pernambuco</option>
+                                <option value="PI">Piauí</option>
+                                <option value="RJ">Rio de Janeiro</option>
+                                <option value="RN">Rio Grande do Norte</option>
+                                <option value="RS">Rio Grande do Sul</option>
+                                <option value="RO">Rondônia</option>
+                                <option value="RR">Roraima</option>
+                                <option value="SC">Santa Catarina</option>
+                                <option value="SP">São Paulo</option>
+                                <option value="SE">Sergipe</option>
+                                <option value="TO">Tocantins</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label class="form-label">CEP</label>
+                            <input type="text" class="form-control" name="cep" id="edit_cep">
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Observações</label>
+                        <textarea class="form-control" name="observacoes" id="edit_observacoes" rows="3"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Atualizar Fornecedor
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+function editarFornecedor(id, nome, nome_fantasia, cnpj_cpf, categoria, contato_nome, telefone, email, endereco, cidade, estado, cep, observacoes) {
+    document.getElementById('edit_nome').value = nome;
+    document.getElementById('edit_nome_fantasia').value = nome_fantasia;
+    document.getElementById('edit_cnpj_cpf').value = cnpj_cpf;
+    document.getElementById('edit_categoria').value = categoria;
+    document.getElementById('edit_contato_nome').value = contato_nome;
+    document.getElementById('edit_telefone').value = telefone;
+    document.getElementById('edit_email').value = email;
+    document.getElementById('edit_endereco').value = endereco;
+    document.getElementById('edit_cidade').value = cidade;
+    document.getElementById('edit_estado').value = estado;
+    document.getElementById('edit_cep').value = cep;
+    document.getElementById('edit_observacoes').value = observacoes;
+
+    document.getElementById('formEditarFornecedor').action = '/fornecedores/editar/' + id;
+
+    new bootstrap.Modal(document.getElementById('modalEditarFornecedor')).show();
+}
+
+function excluirFornecedor(id) {
+    if (confirm('Tem certeza que deseja excluir este fornecedor?')) {
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = '/fornecedores/excluir/' + id;
+
+        const csrf = document.createElement('input');
+        csrf.type = 'hidden';
+        csrf.name = 'csrf_token';
+        csrf.value = '{{ csrf_token() }}';
+        form.appendChild(csrf);
+
+        document.body.appendChild(form);
+        form.submit();
+    }
+}
+
+function ativarFornecedor(id) {
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = '/fornecedores/ativar/' + id;
+
+    const csrf = document.createElement('input');
+    csrf.type = 'hidden';
+    csrf.name = 'csrf_token';
+    csrf.value = '{{ csrf_token() }}';
+    form.appendChild(csrf);
+
+    document.body.appendChild(form);
+    form.submit();
+}
+
+function desativarFornecedor(id) {
+    if (confirm('Tem certeza que deseja desativar este fornecedor?')) {
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = '/fornecedores/desativar/' + id;
+
+        const csrf = document.createElement('input');
+        csrf.type = 'hidden';
+        csrf.name = 'csrf_token';
+        csrf.value = '{{ csrf_token() }}';
+        form.appendChild(csrf);
+
+        document.body.appendChild(form);
+        form.submit();
+    }
+}
+</script>
+{% endblock %}

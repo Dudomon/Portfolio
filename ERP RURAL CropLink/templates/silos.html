@@ -1,0 +1,1071 @@
+{% extends "base.html" %}
+
+{% block title %}Silos - CropLink{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col">
+            <h1 class="display-6">
+                <i class="fas fa-warehouse text-primary"></i>
+                Gestão de Silos
+            </h1>
+            <p class="text-muted">Controle de armazenamento e movimentação de grãos</p>
+        </div>
+        <div class="col-auto">
+            <button class="btn btn-success me-2" data-bs-toggle="modal" data-bs-target="#modalGerarRelatorio">
+                <i class="fas fa-file-download"></i> Gerar Relatório
+            </button>
+            <button class="btn btn-primary me-2" data-bs-toggle="modal" data-bs-target="#modalAdicionarSilo">
+                <i class="fas fa-plus"></i> Adicionar Silo
+            </button>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card bg-primary text-white"> {# Mantido azul principal #}
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-grow-1">
+                            <h6 class="card-title">Total de Silos</h6>
+                            <h3>{{ silos|length }}</h3>
+                        </div>
+                        <div class="fs-1 opacity-50">
+                            <i class="fas fa-warehouse"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card bg-light text-dark"> {# Neutro / Transparente Moderno #}
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-grow-1">
+                            <h6 class="card-title">Tipos de Grãos</h6>
+                            <h3>{{ graos|length }}</h3>
+                        </div>
+                        <div class="fs-1 opacity-50">
+                            <i class="fas fa-seedling"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card bg-light text-dark"> {# Neutro / Transparente Moderno #}
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-grow-1">
+                            <h6 class="card-title">Capacidade Total</h6>
+                            <h3>{{ (silos|sum(attribute='capacidade_kg')/1000)|round|int }}t</h3>
+                        </div>
+                        <div class="fs-1 opacity-50">
+                            <i class="fas fa-weight-hanging"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card bg-warning text-white"> {# Mantido amarelo para destaque #}
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-grow-1">
+                            <h6 class="card-title">Ocupação Média</h6>
+                            <h3>
+                                {% if silos %}
+                                    {% set total_ocupacao = 0 %}
+                                    {% for silo in silos %}
+                                        {% set total_ocupacao = total_ocupacao + silo.get_percentual_ocupacao() %}
+                                    {% endfor %}
+                                    {{ "%.1f"|format(total_ocupacao / silos|length) }}%
+                                {% else %}
+                                    0.0%
+                                {% endif %}
+                            </h3>
+                        </div>
+                        <div class="fs-1 opacity-50">
+                            <i class="fas fa-chart-pie"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card shadow">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">Silos - Ocupação Atual</h5>
+            <div>
+                <button class="btn btn-primary me-2" data-bs-toggle="modal" data-bs-target="#modalLancamentoGrao">
+                    <i class="fas fa-plus"></i> Lançar Grãos
+                </button>
+                <button class="btn btn-info" data-bs-toggle="modal" data-bs-target="#modalMovimentacao">
+                    <i class="fas fa-exchange-alt"></i> Movimentação
+                </button>
+            </div>
+        </div>
+        <div class="card-body">
+            {% if silos %}
+                <div class="row">
+                    {% for silo in silos %}
+                    {% set estoque_total = silo.get_estoque_total() %}
+                    {% set percentual_ocupacao = silo.get_percentual_ocupacao() %}
+                    {% set capacidade_disponivel = silo.get_capacidade_disponivel() %}
+                    <div class="col-lg-4 col-md-6 mb-4">
+                        <div class="card border 
+                            {% if percentual_ocupacao > 90 %}border-danger
+                            {% elif percentual_ocupacao > 75 %}border-warning
+                            {% else %}border-primary{% endif %}">
+                            <div class="card-header 
+                                {% if percentual_ocupacao > 90 %}bg-danger text-white
+                                {% elif percentual_ocupacao > 75 %}bg-warning text-dark
+                                {% else %}bg-primary text-white{% endif %}">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <h6 class="mb-0">
+                                        <i class="fas fa-warehouse"></i>
+                                        {{ silo.nome }}
+                                    </h6>
+                                    <small>
+                                        {{ "{:,.0f}".format(silo.capacidade_kg) }} kg
+                                    </small>
+                                </div>
+                            </div>
+                            <div class="card-body text-center">
+                                <div class="mb-3">
+                                    <h2 class="
+                                        {% if percentual_ocupacao > 90 %}text-danger
+                                        {% elif percentual_ocupacao > 75 %}text-warning
+                                        {% else %}text-primary{% endif %}">
+                                        {{ "%.1f"|format(percentual_ocupacao) }}%
+                                    </h2>
+                                    <p class="text-muted mb-0">Ocupação</p>
+                                </div>
+
+                                <div class="progress mb-3" style="height: 25px;">
+                                    <div class="progress-bar 
+                                        {% if percentual_ocupacao > 90 %}bg-danger
+                                        {% elif percentual_ocupacao > 75 %}bg-warning
+                                        {% else %}bg-primary{% endif %}" 
+                                        style="width: {{ percentual_ocupacao }}%;">
+                                        {{ "%.0f"|format(percentual_ocupacao) }}%
+                                    </div>
+                                </div>
+
+                                <div class="row text-center">
+                                    <div class="col-6">
+                                        <small class="text-muted">Estoque</small>
+                                        <div class="fw-bold">{{ "{:,.0f}".format(estoque_total) }} kg</div>
+                                        <small class="text-muted">{{ "{:,.0f}".format(estoque_total / 60) }} sacas</small>
+                                    </div>
+                                    <div class="col-6">
+                                        <small class="text-muted">Disponível</small>
+                                        <div class="fw-bold text-primary">{{ "{:,.0f}".format(capacidade_disponivel) }} kg</div>
+                                        <small class="text-muted">{{ "{:,.0f}".format(capacidade_disponivel / 60) }} sacas</small>
+                                    </div>
+                                </div>
+
+                                <div class="mt-3">
+                                    <button class="btn btn-outline-primary btn-sm me-1" onclick="verDetalhes({{ silo.id }})">
+                                        <i class="fas fa-eye"></i> Ver Detalhes
+                                    </button>
+                                    <button class="btn btn-outline-warning btn-sm me-1" onclick="confirmarEsvaziarSilo({{ silo.id }}, '{{ silo.nome }}')">
+                                        <i class="fas fa-broom"></i> Esvaziar
+                                    </button>
+                                    <button class="btn btn-outline-danger btn-sm" onclick="confirmarDeleteSilo({{ silo.id }}, '{{ silo.nome }}')">
+                                        <i class="fas fa-trash"></i> Deletar
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="text-center py-5">
+                    <i class="fas fa-warehouse fa-3x text-muted mb-3"></i>
+                    <p class="text-muted">Nenhum silo cadastrado ainda.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalAdicionarSilo" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Adicionar Silo</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="POST" action="{{ url_for('adicionar_silo') }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="nome" class="form-label">Nome do Silo *</label>
+                        <input type="text" class="form-control" id="nome" name="nome" required placeholder="Ex: Silo A, Silo Central, etc.">
+                    </div>
+                    <div class="mb-3">
+                        <label for="capacidade_kg" class="form-label">Capacidade (kg) *</label>
+                        <input type="number" class="form-control" id="capacidade_kg" name="capacidade_kg" required step="0.01" placeholder="Ex: 50000">
+                        <div class="form-text">Capacidade máxima de armazenamento em quilogramas</div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Adicionar Silo</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Gerar Relatório -->
+<div class="modal fade" id="modalGerarRelatorio" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title">
+                    <i class="fas fa-file-download"></i>
+                    Gerar Relatório de Entrada de Grãos
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body text-center py-4">
+                <p class="mb-4 text-muted">Escolha o formato do relatório que deseja gerar:</p>
+
+                <div class="row g-3">
+                    <div class="col-6">
+                        <a href="{{ url_for('relatorio_silos_csv') }}" class="btn btn-outline-success btn-lg w-100 h-100 d-flex flex-column align-items-center justify-content-center py-4" style="min-height: 150px;">
+                            <i class="fas fa-file-csv fa-3x mb-3"></i>
+                            <h5 class="mb-2">CSV</h5>
+                            <small class="text-muted">Para Excel e<br>planilhas</small>
+                        </a>
+                    </div>
+                    <div class="col-6">
+                        <a href="{{ url_for('relatorio_silos_pdf') }}" class="btn btn-outline-danger btn-lg w-100 h-100 d-flex flex-column align-items-center justify-content-center py-4" style="min-height: 150px;">
+                            <i class="fas fa-file-pdf fa-3x mb-3"></i>
+                            <h5 class="mb-2">PDF</h5>
+                            <small class="text-muted">Documento<br>formatado</small>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="alert alert-info mt-4 mb-0 text-start">
+                    <i class="fas fa-info-circle"></i>
+                    <small>
+                        <strong>Dica:</strong> Use CSV para editar dados no Excel ou PDF para impressão e visualização profissional.
+                    </small>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalLancamentoGrao" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-plus text-primary"></i>
+                    Lançar Grãos (Entrada)
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="POST" action="{{ url_for('movimentacao_silo') }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                <input type="hidden" name="tipo" value="Entrada">
+                <div class="modal-body">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="nome_grao" class="form-label">Tipo de Grão *</label>
+                            <input type="text" class="form-control" id="nome_grao" name="nome_grao" required 
+                                    placeholder="Ex: Soja, Milho, Trigo, etc." 
+                                    list="graos_sugestoes">
+                            <datalist id="graos_sugestoes">
+                                {% for grao in graos %}
+                                <option value="{{ grao.nome }}">
+                                {% endfor %}
+                            </datalist>
+                            <small class="form-text text-muted">Digite o nome do grão. Se já existir, será reutilizado automaticamente</small>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-12">
+                            <label for="silo_destino" class="form-label">Silo de Destino *</label>
+                            <select class="form-select" id="silo_destino" name="silo_id" required onchange="verificarCapacidadeSilo()">
+                                <option value="">Selecione o silo de destino</option>
+                                {% for silo in silos %}
+                                <option value="{{ silo.id }}" data-capacidade="{{ silo.capacidade_kg }}" data-ocupacao="{{ silo.get_estoque_total() }}">
+                                    {{ silo.nome }} - Disponível: {{ "{:,.0f}".format(silo.get_capacidade_disponivel()) }} kg ({{ "%.1f"|format(silo.get_percentual_ocupacao()) }}% ocupado)
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-12">
+                            <div class="alert alert-warning" id="alertaCapacidade" style="display: none;">
+                                <i class="fas fa-exclamation-triangle"></i> <span id="mensagemCapacidade"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-12">
+                            <h6 class="text-primary border-bottom pb-2 mb-3">
+                                <i class="fas fa-truck"></i> Dados de Transporte
+                            </h6>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="placa_caminhao" class="form-label">Placa do Caminhão *</label>
+                            <input type="text" class="form-control" id="placa_caminhao" name="placa_caminhao" required 
+                                    placeholder="Ex: ABC-1234" maxlength="20" style="text-transform: uppercase;">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="nome_motorista" class="form-label">Nome do Motorista *</label>
+                            <input type="text" class="form-control" id="nome_motorista" name="nome_motorista" required 
+                                    placeholder="Ex: João Silva" maxlength="100">
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="peso_entrada" class="form-label">Peso de Entrada (kg) *</label>
+                            <input type="text" class="form-control numero-formatado" id="peso_entrada" name="peso_entrada_kg" required 
+                                    placeholder="Ex: 50000" oninput="formatarNumero(this); calcularTara()">
+                            <small class="form-text text-muted">Digite números sem pontos (ex: 50000 = 50 mil kg)</small>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="peso_saida" class="form-label">Peso de Saída (kg) *</label>
+                            <input type="text" class="form-control numero-formatado" id="peso_saida" name="peso_saida_kg" required 
+                                    placeholder="Ex: 23000" oninput="formatarNumero(this); calcularTara()">
+                            <small class="form-text text-muted">Digite números sem pontos (ex: 23000 = 23 mil kg)</small>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-12">
+                            <div class="alert alert-info" id="infoTara" style="display: none;">
+                                <i class="fas fa-balance-scale"></i> <strong>Peso Líquido (Tara): </strong><span id="resultadoTara">0 kg</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-12">
+                            <h6 class="text-primary border-bottom pb-2 mb-3">
+                                <i class="fas fa-leaf"></i> Origem e Qualidade
+                            </h6>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="talhao_select" class="form-label">Talhão de Origem</label>
+                            <select class="form-select" id="talhao_select" name="talhao_id">
+                                <option value="">Selecione um talhão (opcional)</option>
+                                {% for talhao in talhoes %}
+                                <option value="{{ talhao.id }}">{{ talhao.nome }} - {{ talhao.get_area_display() }}</option>
+                                {% endfor %}
+                            </select>
+                            <small class="form-text text-muted d-block mb-2">
+                                Selecione o talhão cadastrado ou deixe vazio
+                            </small>
+                            <button type="button" class="btn btn-sm btn-outline-success" onclick="abrirDesenhoTalhao()">
+                                <i class="fas fa-map-marked-alt"></i> Desenhar Novo Talhão
+                            </button>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="umidade" class="form-label">Umidade (%)</label>
+                            <input type="number" class="form-control" id="umidade" name="umidade"
+                                    placeholder="Ex: 14.5" step="0.1" min="0" max="100">
+                            <small class="form-text text-muted">Percentual de umidade dos grãos</small>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-12">
+                            <label for="observacao_lancamento" class="form-label">Observação</label>
+                            <textarea class="form-control" id="observacao_lancamento" name="observacao" rows="3" placeholder="Notas adicionais sobre a colheita..."></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> Lançar Grãos
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalMovimentacao" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-exchange-alt text-info"></i>
+                    Movimentação de Grãos (Saída)
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="POST" action="{{ url_for('movimentacao_silo') }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                <input type="hidden" name="tipo" value="Saída">
+                <div class="modal-body">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="silo_origem" class="form-label">Silo de Origem *</label>
+                            <select class="form-select" id="silo_origem" name="silo_id" required onchange="carregarGraosSilo()">
+                                <option value="">Selecione o silo de origem</option>
+                                {% for silo in silos %}
+                                <option value="{{ silo.id }}">
+                                    {{ silo.nome }} - Estoque: {{ "{:,.0f}".format(silo.get_estoque_total()) }} kg
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="grao_saida" class="form-label">Grão *</label>
+                            <select class="form-select" id="grao_saida" name="grao_id" required disabled>
+                                <option value="">Primeiro selecione o silo de origem</option>
+                            </select>
+                            <small class="form-text text-muted">Os grãos disponíveis serão carregados após selecionar o silo</small>
+                        </div>
+                    </div>
+
+
+                    <div class="row mb-3">
+                        <div class="col-12">
+                            <h6 class="text-primary border-bottom pb-2 mb-3">
+                                <i class="fas fa-truck"></i> Dados de Transporte
+                            </h6>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="placa_caminhao_saida" class="form-label">Placa do Caminhão *</label>
+                            <input type="text" class="form-control" id="placa_caminhao_saida" name="placa_caminhao" required 
+                                    placeholder="Ex: ABC-1234" maxlength="20" style="text-transform: uppercase;">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="nome_motorista_saida" class="form-label">Nome do Motorista *</label>
+                            <input type="text" class="form-control" id="nome_motorista_saida" name="nome_motorista" required 
+                                    placeholder="Ex: João Silva" maxlength="100">
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="peso_entrada_saida" class="form-label">Peso de Entrada (kg) *</label>
+                            <input type="text" class="form-control numero-formatado" id="peso_entrada_saida" name="peso_entrada_kg" required 
+                                    placeholder="Ex: 50000" oninput="formatarNumero(this); calcularTaraSaida()">
+                            <small class="form-text text-muted">Digite números sem pontos (ex: 50000 = 50 mil kg)</small>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="peso_saida_saida" class="form-label">Peso de Saída (kg) *</label>
+                            <input type="text" class="form-control numero-formatado" id="peso_saida_saida" name="peso_saida_kg" required 
+                                    placeholder="Ex: 23000" oninput="formatarNumero(this); calcularTaraSaida()">
+                            <small class="form-text text-muted">Digite números sem pontos (ex: 23000 = 23 mil kg)</small>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-12">
+                            <div class="alert alert-info" id="infoTaraSaida" style="display: none;">
+                                <i class="fas fa-balance-scale"></i> <strong>Peso Líquido (Tara): </strong><span id="resultadoTaraSaida">0 kg</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-12">
+                            <label for="observacao_saida" class="form-label">Observação</label>
+                            <textarea class="form-control" id="observacao_saida" name="observacao" rows="3" placeholder="Destino, cliente, transporte..."></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-info">
+                        <i class="fas fa-exchange-alt"></i> Registrar Saída
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Funções de cálculo de sacas
+function calcularSacasLancamento() {
+    const quantidade = parseFloat(document.getElementById('quantidade_lancamento').value) || 0;
+    mostrarSacas(quantidade, 'infoSacasLancamento', 'resultadoSacasLancamento');
+}
+
+function calcularSacasSaida() {
+    const quantidade = parseFloat(document.getElementById('quantidade_saida').value) || 0;
+    mostrarSacas(quantidade, 'infoSacasSaida', 'resultadoSacasSaida');
+}
+
+function mostrarSacas(quantidade, infoId, resultadoId) {
+    const infoDiv = document.getElementById(infoId);
+    const resultadoSpan = document.getElementById(resultadoId);
+
+    if (quantidade > 0) {
+        const sacas = quantidade / 60;
+        const sacasInteiras = Math.floor(sacas);
+        const pesoRestante = quantidade % 60;
+
+        let texto = `${quantidade.toFixed(1)} kg = ${sacas.toFixed(2)} sacas`;
+        if (sacasInteiras > 0 && pesoRestante > 0) {
+            texto += ` (${sacasInteiras} sacas + ${pesoRestante.toFixed(1)} kg)`;
+        }
+
+        resultadoSpan.textContent = texto;
+        infoDiv.style.display = 'block';
+    } else {
+        infoDiv.style.display = 'none';
+    }
+}
+
+// Verificar capacidade do silo para lançamento (SIMPLIFICADO)
+function verificarCapacidadeSilo() {
+    const siloSelect = document.getElementById('silo_destino');
+    const quantidadeInput = document.getElementById('quantidade_lancamento');
+    
+    if (!siloSelect || !quantidadeInput) {
+        return; // Falha silenciosa - não é crítico
+    }
+
+    const siloId = parseInt(siloSelect.value);
+    const quantidade = parseFloat(quantidadeInput.value) || 0;
+
+    // Só verificar se tiver dados
+    if (siloId && quantidade > 0) {
+        const silo = silosData.find(s => s.id === siloId);
+        if (silo) {
+            const capacidadeDisponivel = silo.capacidade - silo.ocupacao;
+            if (quantidade > capacidadeDisponivel) {
+                quantidadeInput.classList.add('is-invalid');
+                console.warn(`Capacidade excedida: ${quantidade} kg > ${capacidadeDisponivel} kg disponível`);
+            } else {
+                quantidadeInput.classList.remove('is-invalid');
+            }
+        }
+    }
+}
+
+// Carregar grãos disponíveis no silo selecionado via API
+function carregarGraosSilo() {
+    const siloSelect = document.getElementById('silo_origem');
+    const graoSelect = document.getElementById('grao_saida');
+
+    const siloId = parseInt(siloSelect.value);
+
+    // Limpar opções anteriores
+    graoSelect.innerHTML = '<option value="">Carregando...</option>';
+    graoSelect.disabled = true;
+
+    if (siloId) {
+        // Fazer requisição AJAX para buscar grãos do silo
+        fetch(`/api/silos/${siloId}/graos`)
+            .then(response => response.json())
+            .then(graos => {
+                graoSelect.innerHTML = '<option value="">Selecione o grão</option>';
+
+                if (graos.length > 0) {
+                    graos.forEach(grao => {
+                        const option = document.createElement('option');
+                        option.value = grao.id;
+                        option.textContent = `${grao.nome} - Disponível: ${grao.estoque.toFixed(1)} kg (${(grao.estoque / 60).toFixed(1)} sacas)`;
+                        option.setAttribute('data-estoque', grao.estoque);
+                        graoSelect.appendChild(option);
+                    });
+                    graoSelect.disabled = false;
+                } else {
+                    graoSelect.innerHTML = '<option value="">Nenhum grão disponível neste silo</option>';
+                }
+            })
+            .catch(error => {
+                console.error('Erro ao carregar grãos:', error);
+                graoSelect.innerHTML = '<option value="">Erro ao carregar grãos</option>';
+            });
+    } else {
+        graoSelect.innerHTML = '<option value="">Primeiro selecione o silo</option>';
+    }
+
+    // Limpar alertas
+    const alertaEstoque = document.getElementById('alertaEstoque');
+    if (alertaEstoque) alertaEstoque.style.display = 'none';
+}
+
+// Verificar estoque disponível para saída
+function verificarEstoqueDisponivel() {
+    const graoSelect = document.getElementById('grao_saida');
+    const quantidadeInput = document.getElementById('quantidade_saida');
+    const alertaEstoque = document.getElementById('alertaEstoque');
+    const mensagemEstoque = document.getElementById('mensagemEstoque');
+
+    const graoOption = graoSelect.options[graoSelect.selectedIndex];
+    const quantidade = parseFloat(quantidadeInput.value) || 0;
+
+    if (graoOption && graoOption.value && quantidade > 0) {
+        const estoqueDisponivel = parseFloat(graoOption.getAttribute('data-estoque') || 0);
+
+        if (quantidade > estoqueDisponivel) {
+            mensagemEstoque.textContent = `Quantidade excede estoque disponível! Disponível: ${estoqueDisponivel.toFixed(1)} kg`;
+            alertaEstoque.style.display = 'block';
+            quantidadeInput.classList.add('is-invalid');
+        } else {
+            alertaEstoque.style.display = 'none';
+            quantidadeInput.classList.remove('is-invalid');
+        }
+    } else {
+        alertaEstoque.style.display = 'none';
+        quantidadeInput.classList.remove('is-invalid');
+    }
+}
+
+// Adicionar eventos para verificação em tempo real
+document.addEventListener('DOMContentLoaded', function() {
+    const graoSaida = document.getElementById('grao_saida');
+    const quantidadeSaida = document.getElementById('quantidade_saida');
+
+    if (graoSaida) {
+        graoSaida.addEventListener('change', verificarEstoqueDisponivel);
+    }
+
+    if (quantidadeSaida) {
+        quantidadeSaida.addEventListener('input', verificarEstoqueDisponivel);
+    }
+});
+
+// Função para ver detalhes do silo
+function verDetalhes(siloId) {
+    window.location.href = `/silos/${siloId}/historico`;
+}
+
+// Event listeners SIMPLIFICADOS para o módulo de silos
+document.addEventListener('DOMContentLoaded', function() {
+    // Cálculo de sacas para lançamento
+    const quantidadeLancamento = document.getElementById('quantidade_lancamento');
+    if (quantidadeLancamento) {
+        quantidadeLancamento.addEventListener('input', calcularSacasLancamento);
+    }
+
+    // Cálculo de sacas para saída  
+    const quantidadeSaida = document.getElementById('quantidade_saida');
+    if (quantidadeSaida) {
+        quantidadeSaida.addEventListener('input', calcularSacasSaida);
+    }
+    
+    // Listeners para cálculo automático por pesos
+    const pesoEntrada = document.getElementById('peso_entrada');
+    const pesoSaida = document.getElementById('peso_saida');
+    if (pesoEntrada && pesoSaida) {
+        pesoEntrada.addEventListener('input', calcularTara);
+        pesoSaida.addEventListener('input', calcularTara);
+    }
+    
+    const pesoEntradaSaida = document.getElementById('peso_entrada_saida');
+    const pesoSaidaSaida = document.getElementById('peso_saida_saida');
+    if (pesoEntradaSaida && pesoSaidaSaida) {
+        pesoEntradaSaida.addEventListener('input', calcularTaraSaida);
+        pesoSaidaSaida.addEventListener('input', calcularTaraSaida);
+    }
+});
+
+function confirmarEsvaziarSilo(siloId, nomeSilo) {
+    if (confirm(`⚠️ ESVAZIAR SILO: "${nomeSilo}"\n\nEsta ação irá:\n✓ Remover TODAS as movimentações registradas\n✓ Zerar TODAS as quantidades de grãos\n✓ Permitir exclusão posterior do silo\n\n🚨 ATENÇÃO: Esta ação não pode ser desfeita!\n\nDeseja continuar?`)) {
+        // Criar formulário para submeter POST com CSRF token
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = `/silos/${siloId}/esvaziar`;
+        form.style.display = 'none';
+        
+        // Adicionar CSRF token
+        const csrfToken = document.querySelector('meta[name=csrf-token]');
+        if (csrfToken) {
+            const csrfInput = document.createElement('input');
+            csrfInput.type = 'hidden';
+            csrfInput.name = 'csrf_token';
+            csrfInput.value = csrfToken.getAttribute('content');
+            form.appendChild(csrfInput);
+        }
+        
+        document.body.appendChild(form);
+        form.submit();
+    }
+}
+
+function confirmarDeleteSilo(siloId, nomeSilo) {
+    if (confirm(`Tem certeza que deseja deletar o silo "${nomeSilo}"?\n\nATENÇÃO: Esta ação não pode ser desfeita!\n\nSe houver movimentações registradas, o silo não será deletado.`)) {
+        // Criar formulário para submeter POST com CSRF token
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = `/silos/${siloId}/deletar`;
+        form.style.display = 'none';
+
+        // Adicionar CSRF token
+        const csrfToken = document.querySelector('meta[name=csrf-token]');
+        if (csrfToken) {
+            const csrfInput = document.createElement('input');
+            csrfInput.type = 'hidden';
+            csrfInput.name = 'csrf_token';
+            csrfInput.value = csrfToken.getAttribute('content');
+            form.appendChild(csrfInput);
+        }
+
+        document.body.appendChild(form);
+        form.submit();
+    }
+}
+
+// Função para abrir modal de desenho de talhão
+function abrirDesenhoTalhao() {
+    const modal = new bootstrap.Modal(document.getElementById('modalDesenhoTalhao'));
+    modal.show();
+
+    // Inicializar mapa quando modal abrir
+    setTimeout(() => {
+        if (!window.mapaTalhaoInit) {
+            inicializarMapaTalhao();
+        }
+    }, 300);
+}
+
+// Variáveis globais para o mapa de desenho
+let mapaTalhao = null;
+let desenhoAtual = null;
+let pontosDesenho = [];
+let marcadoresVertices = [];
+let estaDesenhando = false;
+let listenerClique = null;
+window.mapaTalhaoInit = false;
+
+function inicializarMapaTalhao() {
+    if (window.mapaTalhaoInit) return;
+
+    // Centro do Brasil como padrão
+    const centro = { lat: -14.235, lng: -51.925 };
+
+    mapaTalhao = new google.maps.Map(document.getElementById('mapDesenho'), {
+        zoom: 12,
+        center: centro,
+        mapTypeId: 'satellite',
+        streetViewControl: false,
+        mapTypeControl: true,
+        fullscreenControl: true
+    });
+
+    // Tentar usar geolocalização do navegador
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+                const pos = {
+                    lat: position.coords.latitude,
+                    lng: position.coords.longitude
+                };
+                mapaTalhao.setCenter(pos);
+                mapaTalhao.setZoom(15);
+            },
+            () => {
+                // Se não conseguir geolocalização, manter zoom 12
+                console.log('Geolocalização não disponível, usando localização padrão');
+            }
+        );
+    }
+
+    window.mapaTalhaoInit = true;
+}
+
+function iniciarDesenhoRapido() {
+    if (estaDesenhando) return;
+
+    estaDesenhando = true;
+    pontosDesenho = [];
+
+    // Limpar desenho anterior
+    if (desenhoAtual) {
+        desenhoAtual.setMap(null);
+        desenhoAtual = null;
+    }
+
+    // Limpar marcadores
+    marcadoresVertices.forEach(m => m.setMap(null));
+    marcadoresVertices = [];
+
+    // Atualizar interface
+    document.getElementById('btnIniciarDesenho').disabled = true;
+    document.getElementById('btnCancelarDesenho').disabled = false;
+    document.getElementById('btnSalvarTalhaoRapido').disabled = true;
+    document.getElementById('statusDesenho').textContent = '0 pontos';
+    document.getElementById('statusDesenho').className = 'badge bg-primary';
+
+    mapaTalhao.setOptions({ draggableCursor: 'crosshair' });
+
+    // Listener para adicionar pontos (sem limite)
+    listenerClique = mapaTalhao.addListener('click', function(event) {
+        if (!estaDesenhando) {
+            console.log('Clique ignorado: desenho não está ativo');
+            return;
+        }
+
+        console.log(`Ponto ${pontosDesenho.length + 1} adicionado:`, event.latLng.lat(), event.latLng.lng());
+
+        pontosDesenho.push(event.latLng);
+
+        // Criar círculo visual simples (não requer Map ID)
+        const circulo = new google.maps.Circle({
+            strokeColor: '#ffffff',
+            strokeOpacity: 1,
+            strokeWeight: 3,
+            fillColor: '#28a745',
+            fillOpacity: 1,
+            map: mapaTalhao,
+            center: event.latLng,
+            radius: 3, // raio em metros
+            clickable: false,
+            zIndex: 100
+        });
+        marcadoresVertices.push(circulo);
+
+        // Atualizar contador
+        const contador = document.getElementById('statusDesenho');
+        if (contador) {
+            contador.textContent = `${pontosDesenho.length} ponto${pontosDesenho.length > 1 ? 's' : ''}`;
+        }
+
+        // Criar/atualizar polígono
+        if (pontosDesenho.length >= 2) {
+            if (desenhoAtual) {
+                desenhoAtual.setMap(null);
+            }
+
+            desenhoAtual = new google.maps.Polygon({
+                paths: pontosDesenho,
+                fillColor: '#28a745',
+                fillOpacity: 0.4,
+                strokeWeight: 3,
+                strokeColor: '#28a745',
+                map: mapaTalhao,
+                clickable: false
+            });
+
+            console.log(`Polígono atualizado com ${pontosDesenho.length} pontos`);
+
+            if (pontosDesenho.length >= 3) {
+                if (contador) {
+                    contador.className = 'badge bg-success';
+                }
+                const btnSalvar = document.getElementById('btnSalvarTalhaoRapido');
+                if (btnSalvar) {
+                    btnSalvar.disabled = false;
+                }
+            }
+        }
+    });
+}
+
+function cancelarDesenhoRapido() {
+    estaDesenhando = false;
+
+    if (listenerClique) {
+        google.maps.event.removeListener(listenerClique);
+        listenerClique = null;
+    }
+
+    if (desenhoAtual) {
+        desenhoAtual.setMap(null);
+        desenhoAtual = null;
+    }
+
+    // Remover círculos marcadores
+    marcadoresVertices.forEach(m => m.setMap(null));
+    marcadoresVertices = [];
+    pontosDesenho = [];
+
+    mapaTalhao.setOptions({ draggableCursor: '' });
+
+    document.getElementById('btnIniciarDesenho').disabled = false;
+    document.getElementById('btnCancelarDesenho').disabled = true;
+    document.getElementById('btnSalvarTalhaoRapido').disabled = true;
+    document.getElementById('statusDesenho').textContent = '0 pontos';
+    document.getElementById('statusDesenho').className = 'badge bg-primary';
+}
+
+function salvarTalhaoRapido() {
+    if (pontosDesenho.length < 3) {
+        alert('Desenhe pelo menos 3 pontos para formar um talhão!');
+        return;
+    }
+
+    const nome = document.getElementById('nomeTalhaoRapido').value.trim();
+    if (!nome) {
+        alert('Digite um nome para o talhão!');
+        document.getElementById('nomeTalhaoRapido').focus();
+        return;
+    }
+
+    // Calcular área
+    const areaMetrosQuadrados = google.maps.geometry.spherical.computeArea(pontosDesenho);
+    const areaHectares = areaMetrosQuadrados / 10000;
+    const areaAlqueires = areaHectares / 2.42;
+
+    // Converter coordenadas para JSON
+    const coordenadas = JSON.stringify(pontosDesenho.map(p => ({
+        lat: p.lat(),
+        lng: p.lng()
+    })));
+
+    // Preparar dados
+    const formData = new FormData();
+    formData.append('nome', nome);
+    formData.append('area_hectares', areaHectares.toFixed(4));
+    formData.append('area_alqueires', areaAlqueires.toFixed(4));
+    formData.append('coordenadas', coordenadas);
+    formData.append('cor', '#28a745');
+    formData.append('observacao', document.getElementById('observacaoTalhaoRapido').value.trim());
+
+    // Adicionar CSRF token
+    const csrfToken = document.querySelector('meta[name=csrf-token]');
+    if (csrfToken) {
+        formData.append('csrf_token', csrfToken.getAttribute('content'));
+    }
+
+    // Salvar via AJAX
+    fetch('/talhoes/salvar', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Adicionar talhão ao select
+            const select = document.getElementById('talhao_select');
+            const option = document.createElement('option');
+            option.value = data.talhao.id;
+            option.textContent = `${data.talhao.nome} - ${areaHectares.toFixed(2)} ha`;
+            option.selected = true;
+            select.appendChild(option);
+
+            // Fechar modal
+            bootstrap.Modal.getInstance(document.getElementById('modalDesenhoTalhao')).hide();
+
+            // Limpar formulário
+            document.getElementById('nomeTalhaoRapido').value = '';
+            document.getElementById('observacaoTalhaoRapido').value = '';
+            cancelarDesenhoRapido();
+
+            alert('Talhão salvo com sucesso e selecionado!');
+        } else {
+            alert('Erro ao salvar talhão: ' + (data.error || 'Erro desconhecido'));
+        }
+    })
+    .catch(error => {
+        console.error('Erro:', error);
+        alert('Erro ao salvar talhão. Verifique o console.');
+    });
+}
+</script>
+
+<!-- Modal de Desenho de Talhão -->
+<div class="modal fade" id="modalDesenhoTalhao" tabindex="-1" aria-labelledby="modalDesenhoTalhaoLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title" id="modalDesenhoTalhaoLabel">
+                    <i class="fas fa-map-marked-alt"></i> Desenhar Novo Talhão
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-8">
+                        <div id="mapDesenho" style="height: 500px; width: 100%; border-radius: 8px;"></div>
+
+                        <div class="d-flex justify-content-between align-items-center mt-3">
+                            <div>
+                                <button type="button" class="btn btn-success" id="btnIniciarDesenho" onclick="iniciarDesenhoRapido()">
+                                    <i class="fas fa-pencil-alt"></i> Iniciar Desenho
+                                </button>
+                                <button type="button" class="btn btn-warning" id="btnCancelarDesenho" onclick="cancelarDesenhoRapido()" disabled>
+                                    <i class="fas fa-times"></i> Cancelar
+                                </button>
+                            </div>
+                            <div>
+                                <span class="badge bg-primary" id="statusDesenho">0 pontos</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <h6 class="card-title text-success">
+                                    <i class="fas fa-info-circle"></i> Dados do Talhão
+                                </h6>
+
+                                <div class="mb-3">
+                                    <label for="nomeTalhaoRapido" class="form-label">Nome *</label>
+                                    <input type="text" class="form-control" id="nomeTalhaoRapido" placeholder="Ex: Talhão 01" required>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="observacaoTalhaoRapido" class="form-label">Observação</label>
+                                    <textarea class="form-control" id="observacaoTalhaoRapido" rows="3" placeholder="Observações adicionais (opcional)"></textarea>
+                                </div>
+
+                                <div class="alert alert-info">
+                                    <small>
+                                        <strong>Como usar:</strong>
+                                        <ol class="mb-0 ps-3">
+                                            <li>Clique em "Iniciar Desenho"</li>
+                                            <li>Clique no mapa para adicionar pontos</li>
+                                            <li>Mínimo 3 pontos</li>
+                                            <li>Preencha o nome e salve</li>
+                                        </ol>
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times"></i> Fechar
+                </button>
+                <button type="button" class="btn btn-success" id="btnSalvarTalhaoRapido" onclick="salvarTalhaoRapido()" disabled>
+                    <i class="fas fa-save"></i> Salvar Talhão
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Google Maps API com biblioteca de geometria -->
+<!-- CONFIGURE A VARIÁVEL DE AMBIENTE GOOGLE_MAPS_API_KEY -->
+<script src="https://maps.googleapis.com/maps/api/js?key={{ config.get('GOOGLE_MAPS_API_KEY', 'YOUR_API_KEY_HERE') }}&libraries=geometry"></script>
+
+{% endblock %}

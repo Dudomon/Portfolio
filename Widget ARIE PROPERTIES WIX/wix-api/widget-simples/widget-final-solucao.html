@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consulta de Boletos - Solução Final</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f5f5;
+        }
+
+        .widget-container {
+            max-width: 100%;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            overflow: hidden;
+            margin: 20px auto;
+        }
+
+        .widget-header {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            padding: 25px;
+            text-align: center;
+        }
+
+        .widget-header h2 {
+            font-size: 1.8em;
+            margin-bottom: 8px;
+        }
+
+        .widget-form {
+            padding: 25px;
+            background: #f8f9fa;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 600;
+            color: #333;
+            font-size: 14px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-consultar {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 30px;
+        }
+
+        .loading-spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #4facfe;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .results {
+            display: none;
+            padding: 25px;
+        }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .dashboard-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            text-align: center;
+            border-left: 4px solid;
+        }
+
+        .dashboard-card.vencido { border-left-color: #e74c3c; }
+        .dashboard-card.a-vencer { border-left-color: #f39c12; }
+        .dashboard-card.pago { border-left-color: #27ae60; }
+
+        .boletos-list {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+
+        .boletos-list h4 {
+            background: #f8f9fa;
+            padding: 15px;
+            margin: 0;
+            border-bottom: 1px solid #e1e5e9;
+            font-size: 16px;
+        }
+
+        .boleto-item {
+            padding: 15px;
+            border-bottom: 1px solid #e1e5e9;
+            transition: background 0.3s ease;
+        }
+
+        .boleto-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .boleto-status {
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 11px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .status-vencido { background: #fee; color: #e74c3c; }
+        .status-a-vencer { background: #fff3cd; color: #f39c12; }
+        .status-pago { background: #d4edda; color: #27ae60; }
+
+        .boleto-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .btn-segunda-via {
+            background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+
+        .boleto-actions {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #e1e5e9;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .error, .success-message {
+            display: none;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        .error {
+            background: #fee;
+            color: #e74c3c;
+        }
+
+        .success-message {
+            background: #d4edda;
+            color: #27ae60;
+        }
+
+        .debug-log-container {
+            margin-top: 20px;
+            border: 1px solid #ddd;
+            padding: 10px;
+            border-radius: 8px;
+        }
+
+        .debug-log {
+            background-color: #f5f5f5;
+            height: 200px;
+            overflow-y: scroll;
+            padding: 8px;
+            font-family: monospace;
+            font-size: 12px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        .modo-info {
+            background: #fff3cd;
+            color: #856404;
+            padding: 10px;
+            border-radius: 8px;
+            margin: 10px 0;
+            font-size: 14px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="widget-container">
+        <div class="widget-header">
+            <h2>🧾 Consulta de Boletos</h2>
+            <p>Digite seus dados para consultar</p>
+        </div>
+
+        <div id="modoInfo" class="modo-info">
+            Verificando modo de operação...
+        </div>
+
+        <div class="widget-form">
+            <form id="consultaForm">
+                <div class="form-group">
+                    <label for="cpfCnpj">CPF/CNPJ:</label>
+                    <input type="text" id="cpfCnpj" value="374.554.078-66" placeholder="Digite seu CPF ou CNPJ" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="nome">Nome:</label>
+                    <input type="text" id="nome" value="THAIS CRISTINA JULIO BASTOS" placeholder="Digite seu nome completo" required>
+                </div>
+                
+                <button type="submit" class="btn-consultar">
+                    🔍 Consultar Boletos
+                </button>
+            </form>
+        </div>
+
+        <div class="loading" id="loading">
+            <div class="loading-spinner"></div>
+            <p>Consultando seus boletos...</p>
+        </div>
+
+        <div class="error" id="error"></div>
+        <div class="success-message" id="success"></div>
+
+        <div class="results" id="results">
+            <div class="dashboard" id="dashboard"></div>
+            
+            <div class="boletos-list">
+                <h4>📋 Seus Boletos</h4>
+                <div id="boletosList"></div>
+            </div>
+        </div>
+
+        <div class="debug-log-container">
+            <h4>Debug Log</h4>
+            <div id="debugLog" class="debug-log"></div>
+        </div>
+    </div>
+
+    <script>
+        // Configurações
+        const USAR_DADOS_SIMULADOS = true; // Fallback para dados simulados se backend falhar
+        
+        // URLs possíveis para testar
+        const urlsParaTestar = [
+            `${window.location.origin}/_functions/get_teste`,
+            `${window.location.origin}/_dev/get_teste`,
+            `${window.location.origin}/_api/get_teste`
+        ];
+        
+        // Estado do backend
+        let backendFuncionando = false;
+        let urlBase = null;
+        
+        // Função para logar mensagens
+        function log(mensagem) {
+            const logDiv = document.getElementById('debugLog');
+            const timestamp = new Date().toLocaleTimeString();
+            logDiv.innerHTML += `[${timestamp}] ${mensagem}\n`;
+            logDiv.scrollTop = logDiv.scrollHeight;
+            console.log(`[${timestamp}] ${mensagem}`);
+        }
+        
+        // Função para mostrar mensagens
+        function mostrarMensagem(tipo, mensagem) {
+            const errorDiv = document.getElementById('error');
+            const successDiv = document.getElementById('success');
+            
+            if (tipo === 'error') {
+                errorDiv.textContent = mensagem;
+                errorDiv.style.display = 'block';
+                successDiv.style.display = 'none';
+            } else {
+                successDiv.textContent = mensagem;
+                successDiv.style.display = 'block';
+                errorDiv.style.display = 'none';
+            }
+        }
+        
+        // Função para formatar CPF/CNPJ
+        function formatarCpfCnpj(valor) {
+            const numeros = valor.replace(/\D/g, '');
+            
+            if (numeros.length <= 11) {
+                return numeros.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
+            } else {
+                return numeros.replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/, '$1.$2.$3/$4-$5');
+            }
+        }
+        
+        // Função para formatar moeda
+        function formatarMoeda(valor) {
+            return new Intl.NumberFormat('pt-BR', {
+                style: 'currency',
+                currency: 'BRL'
+            }).format(valor || 0);
+        }
+        
+        // Função para formatar data
+        function formatarData(dataString) {
+            if (!dataString) return 'N/A';
+            const data = new Date(dataString);
+            return data.toLocaleDateString('pt-BR');
+        }
+        
+        // Função para determinar status do boleto
+        function determinarStatus(boleto) {
+            const hoje = new Date();
+            const vencimento = new Date(boleto.dataVencimento);
+            
+            if (boleto.situacao === 'Pago' || boleto.valorPago > 0) {
+                return 'pago';
+            } else if (vencimento < hoje) {
+                return 'vencido';
+            } else {
+                return 'a-vencer';
+            }
+        }
+        
+        // Função para buscar boletos via backend
+        async function buscarBoletosViaBackend(cpfCnpj) {
+            log(`Buscando boletos via backend para CPF/CNPJ: ${cpfCnpj}`);
+            
+            try {
+                const url = `${urlBase}/get_boletosDetalhes?cpfCnpj=${encodeURIComponent(cpfCnpj)}`;
+                log(`URL da requisição: ${url}`);
+                
+                const response = await fetch(url, {
+                    method: 'GET',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                
+                log(`Resposta do backend recebida. Status: ${response.status}`);
+                
+                if (!response.ok) {
+                    throw new Error(`Erro HTTP ${response.status}`);
+                }
+                
+                const data = await response.json();
+                log(`Dados recebidos: ${JSON.stringify(data).substring(0, 200)}...`);
+                
+                if (!data.success) {
+                    throw new Error(data.error || 'Backend retornou erro');
+                }
+                
+                log(`Busca concluída. ${data.boletos.length} boletos encontrados.`);
+                return data.boletos || [];
+                
+            } catch (error) {
+                log(`ERRO em buscarBoletosViaBackend: ${error.message}`);
+                throw error;
+            }
+        }
+        
+        // Função para gerar dados simulados
+        function gerarDadosSimulados() {
+            log('Gerando dados simulados...');
+            
+            return [
+                {
+                    numero: '12345',
+                    valorOriginal: 1500.00,
+                    valorAtual: 1500.00,
+                    dataVencimento: '2024-12-15',
+                    situacao: 'Vencido',
+                    billReceivableId: 'BR001',
+                    installmentId: 'INST001',
+                    podeSegundaVia: true,
+                    nossoNumero: '123456789'
+                },
+                {
+                    numero: '12346',
+                    valorOriginal: 2000.00,
+                    valorAtual: 2000.00,
+                    dataVencimento: '2025-01-15',
+                    situacao: 'A Vencer',
+                    billReceivableId: 'BR002',
+                    installmentId: 'INST002',
+                    podeSegundaVia: true,
+                    nossoNumero: '123456790'
+                },
+                {
+                    numero: '12347',
+                    valorOriginal: 1800.00,
+                    valorAtual: 0,
+                    dataVencimento: '2024-11-15',
+                    situacao: 'Pago',
+                    billReceivableId: 'BR003',
+                    installmentId: 'INST003',
+                    podeSegundaVia: false,
+                    nossoNumero: '123456791'
+                }
+            ];
+        }
+        
+        // Função para buscar boletos (com fallback)
+        async function buscarBoletos(cpfCnpj, nome) {
+            log('Iniciando busca de boletos...');
+            
+            try {
+                // Tentar via backend se estiver funcionando
+                if (backendFuncionando && urlBase) {
+                    return await buscarBoletosViaBackend(cpfCnpj);
+                } else {
+                    throw new Error('Backend não disponível');
+                }
+            } catch (error) {
+                log(`Erro na busca via backend: ${error.message}`);
+                
+                // Fallback para dados simulados
+                if (USAR_DADOS_SIMULADOS) {
+                    log('Usando dados simulados como fallback');
+                    return gerarDadosSimulados();
+                } else {
+                    throw error;
+                }
+            }
+        }
+        
+        // Função para gerar segunda via
+        async function gerarSegundaVia(billReceivableId, installmentId, botaoElement) {
+            const textoOriginal = botaoElement.textContent;
+            log('--- Iniciando geração de segunda via ---');
+            
+            try {
+                log(`Parâmetros: billReceivableId=${billReceivableId}, installmentId=${installmentId}`);
+                
+                // Mostrar loading no botão
+                botaoElement.textContent = 'Gerando...';
+                botaoElement.disabled = true;
+                botaoElement.style.background = '#95a5a6';
+                
+                // Tentar via backend se estiver funcionando
+                if (backendFuncionando && urlBase) {
+                    const url = `${urlBase}/get_segundaVia?billReceivableId=${billReceivableId}&installmentId=${installmentId}`;
+                    log(`URL da requisição: ${url}`);
+                    
+                    const response = await fetch(url, {
+                        method: 'GET',
+                        headers: { 'Content-Type': 'application/json' }
+                    });
+                    
+                    log(`Resposta do backend recebida. Status: ${response.status}`);
+                    
+                    if (!response.ok) {
+                        throw new Error(`Erro HTTP ${response.status}`);
+                    }
+                    
+                    const data = await response.json();
+                    log(`Dados recebidos: ${JSON.stringify(data)}`);
+                    
+                    if (data.success && data.downloadUrl) {
+                        log(`Sucesso! URL do boleto recebida: ${data.downloadUrl}`);
+                        window.open(data.downloadUrl, '_blank');
+                        mostrarMensagem('success', 'Segunda via gerada com sucesso! O download foi iniciado.');
+                        return;
+                    } else {
+                        throw new Error(data.error || 'Não foi possível gerar a segunda via');
+                    }
+                } else {
+                    throw new Error('Backend não disponível');
+                }
+                
+            } catch (error) {
+                log(`ERRO em gerarSegundaVia: ${error.message}`);
+                
+                // Fallback para simulação
+                if (USAR_DADOS_SIMULADOS) {
+                    log('Simulando geração de segunda via...');
+                    
+                    // Simular delay
+                    await new Promise(resolve => setTimeout(resolve, 1000));
+                    
+                    mostrarMensagem('success', 'Segunda via simulada gerada com sucesso!');
+                    alert('Em um ambiente real, o PDF do boleto seria aberto automaticamente.');
+                } else {
+                    mostrarMensagem('error', `Erro ao gerar segunda via: ${error.message}`);
+                }
+                
+            } finally {
+                // Restaurar botão ao final da operação
+                botaoElement.textContent = textoOriginal;
+                botaoElement.disabled = false;
+                botaoElement.style.background = '';
+                log('--- Fim da operação de segunda via ---');
+            }
+        }
+        
+        // Função para exibir dashboard
+        function exibirDashboard(boletos) {
+            const dashboard = document.getElementById('dashboard');
+            
+            let totalVencido = 0, totalAVencer = 0, totalPago = 0;
+            let countVencido = 0, countAVencer = 0, countPago = 0;
+            
+            boletos.forEach(boleto => {
+                const status = determinarStatus(boleto);
+                const valor = parseFloat(boleto.valorOriginal || 0);
+                
+                switch (status) {
+                    case 'vencido':
+                        totalVencido += valor;
+                        countVencido++;
+                        break;
+                    case 'a-vencer':
+                        totalAVencer += valor;
+                        countAVencer++;
+                        break;
+                    case 'pago':
+                        totalPago += valor;
+                        countPago++;
+                        break;
+                }
+            });
+            
+            dashboard.innerHTML = `
+                <div class="dashboard-card vencido">
+                    <h4>⚠️ Vencidos</h4>
+                    <div class="valor">${formatarMoeda(totalVencido)}</div>
+                    <p>${countVencido} boleto(s)</p>
+                </div>
+                <div class="dashboard-card a-vencer">
+                    <h4>⏰ A Vencer</h4>
+                    <div class="valor">${formatarMoeda(totalAVencer)}</div>
+                    <p>${countAVencer} boleto(s)</p>
+                </div>
+                <div class="dashboard-card pago">
+                    <h4>✅ Pagos</h4>
+                    <div class="valor">${formatarMoeda(totalPago)}</div>
+                    <p>${countPago} boleto(s)</p>
+                </div>
+            `;
+        }
+        
+        // Função para exibir lista de boletos
+        function exibirBoletos(boletos) {
+            const boletosList = document.getElementById('boletosList');
+            
+            if (boletos.length === 0) {
+                boletosList.innerHTML = '<div class="boleto-item">Nenhum boleto encontrado para este CPF/CNPJ.</div>';
+                return;
+            }
+            
+            boletosList.innerHTML = boletos.map(boleto => {
+                const status = determinarStatus(boleto);
+                const statusClass = `status-${status}`;
+                const statusText = status === 'vencido' ? 'Vencido' : 
+                                 status === 'a-vencer' ? 'A Vencer' : 'Pago';
+                
+                return `
+                    <div class="boleto-item">
+                        <div class="boleto-header">
+                            <div class="boleto-numero">Boleto #${boleto.numero || 'N/A'}</div>
+                            <div class="boleto-status ${statusClass}">${statusText}</div>
+                        </div>
+                        <div class="boleto-details">
+                            <div class="boleto-detail">
+                                <label>Valor:</label>
+                                <span>${formatarMoeda(boleto.valorOriginal)}</span>
+                            </div>
+                            <div class="boleto-detail">
+                                <label>Vencimento:</label>
+                                <span>${formatarData(boleto.dataVencimento)}</span>
+                            </div>
+                            <div class="boleto-detail">
+                                <label>Situação:</label>
+                                <span>${boleto.situacao || 'N/A'}</span>
+                            </div>
+                            <div class="boleto-detail">
+                                <label>Nosso Número:</label>
+                                <span>${boleto.nossoNumero || 'N/A'}</span>
+                            </div>
+                        </div>
+                        ${boleto.podeSegundaVia ? `
+                            <div class="boleto-actions">
+                                <button 
+                                    class="btn-segunda-via" 
+                                    onclick="gerarSegundaVia('${boleto.billReceivableId}', '${boleto.installmentId}', this)"
+                                    title="Gerar segunda via do boleto"
+                                >
+                                    💾 Imprimir Segunda Via
+                                </button>
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        // Função para testar backend
+        async function testarBackend() {
+            log('Testando backend...');
+            
+            for (const url of urlsParaTestar) {
+                try {
+                    log(`Testando URL: ${url}`);
+                    
+                    const response = await fetch(url, {
+                        method: 'GET',
+                        headers: { 'Content-Type': 'application/json' }
+                    });
+                    
+                    log(`Status: ${response.status}`);
+                    
+                    if (response.ok) {
+                        const data = await response.json();
+                        log(`Resposta: ${JSON.stringify(data)}`);
+                        
+                        if (data.success) {
+                            backendFuncionando = true;
+                            urlBase = url.replace('/get_teste', '');
+                            log(`✅ Backend funcionando! URL base: ${urlBase}`);
+                            return true;
+                        }
+                    }
+                } catch (error) {
+                    log(`Erro ao testar ${url}: ${error.message}`);
+                }
+            }
+            
+            log('❌ Backend não está funcionando');
+            return false;
+        }
+        
+        // Função para atualizar modo de operação
+        function atualizarModoOperacao() {
+            const modoInfo = document.getElementById('modoInfo');
+            
+            if (backendFuncionando) {
+                modoInfo.textContent = '✅ Modo Real: Conectado ao backend do Wix';
+                modoInfo.style.background = '#d4edda';
+                modoInfo.style.color = '#155724';
+            } else {
+                modoInfo.textContent = '⚠️ Modo Simulado: Usando dados de exemplo (backend não disponível)';
+                modoInfo.style.background = '#fff3cd';
+                modoInfo.style.color = '#856404';
+            }
+        }
+        
+        // Event listener para o formulário
+        document.getElementById('consultaForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const cpfCnpj = document.getElementById('cpfCnpj').value.trim();
+            const nome = document.getElementById('nome').value.trim();
+            
+            if (!cpfCnpj || !nome) {
+                mostrarMensagem('error', 'Por favor, preencha todos os campos.');
+                return;
+            }
+            
+            // Mostrar loading
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('results').style.display = 'none';
+            document.querySelector('.btn-consultar').disabled = true;
+            document.getElementById('error').style.display = 'none';
+            document.getElementById('success').style.display = 'none';
+            
+            try {
+                const boletos = await buscarBoletos(cpfCnpj, nome);
+                
+                // Exibir resultados
+                exibirDashboard(boletos);
+                exibirBoletos(boletos);
+                
+                document.getElementById('results').style.display = 'block';
+                
+                if (boletos.length > 0) {
+                    mostrarMensagem('success', `Encontrados ${boletos.length} boleto(s).`);
+                } else {
+                    mostrarMensagem('error', 'Nenhum boleto encontrado para este CPF/CNPJ.');
+                }
+                
+            } catch (error) {
+                mostrarMensagem('error', 'Erro ao consultar boletos. Verifique seus dados e tente novamente.');
+                log(`Erro na consulta: ${error.message}`);
+            } finally {
+                // Esconder loading
+                document.getElementById('loading').style.display = 'none';
+                document.querySelector('.btn-consultar').disabled = false;
+            }
+        });
+        
+        // Máscara para CPF/CNPJ
+        document.getElementById('cpfCnpj').addEventListener('input', (e) => {
+            let valor = e.target.value.replace(/\D/g, '');
+            
+            if (valor.length <= 11) {
+                valor = valor.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
+            } else {
+                valor = valor.replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/, '$1.$2.$3/$4-$5');
+            }
+            
+            e.target.value = valor;
+        });
+        
+        // Inicialização
+        async function inicializar() {
+            log('Inicializando widget...');
+            log(`URL atual: ${window.location.href}`);
+            log(`Origin: ${window.location.origin}`);
+            
+            // Testar backend
+            await testarBackend();
+            atualizarModoOperacao();
+            
+            log('Inicialização concluída.');
+        }
+        
+        // Iniciar
+        inicializar();
+    </script>
+</body>
+</html>

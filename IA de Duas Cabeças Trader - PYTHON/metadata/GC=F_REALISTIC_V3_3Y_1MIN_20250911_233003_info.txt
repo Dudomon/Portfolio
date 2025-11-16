@@ -1,0 +1,29 @@
+
+GOLD REALISTIC DATASET V3 - REALISTICAMENTE CALIBRADO
+=====================================================
+Criado em: 2025-09-11 23:30:35
+Símbolo: GC=F
+Timeframe: 1 minuto
+Período: 2022-09-13 00:00:00-04:00 → 2025-09-11 23:59:00-04:00
+
+ESTATÍSTICAS V3:
+- Total de barras: 1,085,760
+- Dados realistas V3: 1,085,760
+- Preço inicial: $1720.50
+- Preço final: $3687.10
+- Variação total: +114.30%
+- Volume médio: 4
+
+QUALIDADE REALISTA V3:
+- Barras estáticas: 34.4% (target: <8%)
+- Volatilidade/min: 0.0174% (target: ~0.026%)
+- Movimentos >0.1%: 0.10% (target: ~1.2%)
+- Algoritmo: GBM + Jumps + Mean Reversion + Anti-static
+- Calibração: Baseada em investigação profunda do V2
+- Clustering: Volatilidade realista por hora
+- Microestrutura: Tick size 0.01 enforced
+
+ARQUIVOS:
+- CSV: data\GC=F_REALISTIC_V3_3Y_1MIN_20250911_233003.csv
+- Pickle: data_cache\GC=F_REALISTIC_V3_3Y_1MIN_20250911_233003.pkl
+- Metadata: metadata\GC=F_REALISTIC_V3_3Y_1MIN_20250911_233003_info.txt

@@ -1,0 +1,508 @@
+{% extends "base.html" %}
+
+{% block title %}Registros de Chuva - CropLink{% endblock %}
+
+{% block content %}
+<style>
+    /* Melhorar área clicável e visual dos checkboxes de talhões */
+    .talhao-checkbox-card {
+        padding: 12px 15px;
+        border: 2px solid #e0e0e0;
+        border-radius: 8px;
+        background-color: #f8f9fa;
+        transition: all 0.3s ease;
+        position: relative;
+    }
+
+    .talhao-checkbox-card:hover {
+        background-color: #e8f5e9;
+        border-color: #00A859;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 168, 89, 0.15);
+    }
+
+    .talhao-checkbox-card input[type="checkbox"] {
+        width: 20px;
+        height: 20px;
+        cursor: pointer;
+        margin-right: 10px;
+        flex-shrink: 0;
+    }
+
+    .talhao-checkbox-card input[type="checkbox"]:checked ~ label {
+        color: #00A859;
+        font-weight: 600;
+    }
+
+    .talhao-checkbox-card input[type="checkbox"]:checked {
+        background-color: #00A859;
+        border-color: #00A859;
+    }
+
+    .talhao-checkbox-card label {
+        margin-bottom: 0;
+        padding-left: 5px;
+        display: inline-block;
+    }
+
+    /* Área clicável aumentada - label ocupa todo espaço */
+    .talhao-checkbox-card label.w-100 {
+        padding: 8px 0;
+    }
+
+    /* Quando desabilitado (todos selecionado) */
+    #listaTalhoes.disabled {
+        opacity: 0.5;
+        pointer-events: none;
+    }
+</style>
+
+<div class="container-fluid">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col">
+            <h1 class="display-6">
+                <i class="fas fa-cloud-rain text-success"></i>
+                Registros Pluviométricos
+            </h1>
+            <p class="text-muted">Controle de precipitação e condições climáticas</p>
+        </div>
+        <div class="col-auto">
+            <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalAdicionarRegistro">
+                <i class="fas fa-plus"></i> Registrar Chuva
+            </button>
+        </div>
+    </div>
+
+    <!-- Resumo do Período -->
+    {% if registros %}
+    <div class="row mb-4">
+        {% set total_mes = registros[:30]|sum(attribute='quantidade_mm') %}
+        {% set media_mes = (total_mes / 30) if registros|length >= 30 else 0 %}
+        {% set ultimo_registro = registros|first %}
+        
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card bg-info text-white">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-grow-1">
+                            <h6 class="card-title">Último Registro</h6>
+                            <h3>{{ ultimo_registro.quantidade_mm }}mm</h3>
+                            <small>{{ ultimo_registro.data.strftime('%d/%m/%Y') }}</small>
+                        </div>
+                        <div class="fs-1 opacity-50">
+                            <i class="fas fa-tint"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card bg-primary text-white">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-grow-1">
+                            <h6 class="card-title">Total do Mês</h6>
+                            <h3>{{ "{:.1f}".format(total_mes) }}mm</h3>
+                        </div>
+                        <div class="fs-1 opacity-50">
+                            <i class="fas fa-calendar-alt"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card bg-success text-white">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-grow-1">
+                            <h6 class="card-title">Média Diária</h6>
+                            <h3>{{ "{:.1f}".format(media_mes) }}mm</h3>
+                        </div>
+                        <div class="fs-1 opacity-50">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card bg-warning text-white">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-grow-1">
+                            <h6 class="card-title">Total de Registros</h6>
+                            <h3>{{ registros|length }}</h3>
+                        </div>
+                        <div class="fs-1 opacity-50">
+                            <i class="fas fa-database"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Gráfico de Precipitação -->
+    {% if registros %}
+    <div class="card shadow mb-4">
+        <div class="card-header">
+            <h6 class="m-0 font-weight-bold text-primary">
+                <i class="fas fa-chart-area"></i> Precipitação dos Últimos 30 Dias
+            </h6>
+        </div>
+        <div class="card-body">
+            <canvas id="precipitacaoChart" width="400" height="100"></canvas>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Lista de Registros -->
+    <div class="card shadow">
+        <div class="card-header">
+            <h6 class="m-0 font-weight-bold text-primary">Histórico de Registros</h6>
+        </div>
+        <div class="card-body">
+            {% if registros %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead class="table-success">
+                            <tr>
+                                <th>Data</th>
+                                <th>Precipitação (mm)</th>
+                                <th>Intensidade</th>
+                                <th>Talhões</th>
+                                <th>Observação</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for registro in registros[:50] %}
+                            <tr>
+                                <td>
+                                    <strong>{{ registro.data.strftime('%d/%m/%Y') }}</strong>
+                                    <br>
+                                    <small class="text-muted">{{ registro.data|dia_semana_ptbr }}</small>
+                                </td>
+                                <td>
+                                    <span class="
+                                        {% if registro.quantidade_mm == 0 %}text-muted
+                                        {% elif registro.quantidade_mm < 5 %}text-info
+                                        {% elif registro.quantidade_mm < 15 %}text-primary
+                                        {% elif registro.quantidade_mm < 30 %}text-warning
+                                        {% else %}text-danger{% endif %}">
+                                        {{ registro.quantidade_mm }}mm
+                                    </span>
+                                </td>
+                                <td>
+                                    {% if registro.quantidade_mm == 0 %}
+                                        <span class="badge bg-light text-dark">Sem chuva</span>
+                                    {% elif registro.quantidade_mm < 5 %}
+                                        <span class="badge bg-info">Fraca</span>
+                                    {% elif registro.quantidade_mm < 15 %}
+                                        <span class="badge bg-primary">Moderada</span>
+                                    {% elif registro.quantidade_mm < 30 %}
+                                        <span class="badge bg-warning">Forte</span>
+                                    {% else %}
+                                        <span class="badge bg-danger">Intensa</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if registro.aplicado_todos_talhoes %}
+                                        <span class="badge bg-success">
+                                            <i class="fas fa-check-double"></i> Todos os talhões
+                                        </span>
+                                    {% elif registro.talhoes %}
+                                        {% for talhao in registro.talhoes %}
+                                            <span class="badge bg-primary mb-1">{{ talhao.nome }}</span>
+                                        {% endfor %}
+                                    {% else %}
+                                        <small class="text-muted">-</small>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if registro.observacao %}
+                                        <small class="text-muted">{{ registro.observacao[:50] }}{% if registro.observacao|length > 50 %}...{% endif %}</small>
+                                    {% else %}
+                                        <small class="text-muted">-</small>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <button class="btn btn-sm btn-outline-primary" onclick="editarRegistro({{ registro.id }})">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-danger" onclick="excluirRegistro({{ registro.id }})">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                
+                {% if registros|length > 50 %}
+                <div class="text-center mt-3">
+                    <small class="text-muted">Mostrando os 50 registros mais recentes de {{ registros|length }} total</small>
+                </div>
+                {% endif %}
+            {% else %}
+                <div class="text-center py-5">
+                    <i class="fas fa-cloud-rain fa-3x text-muted mb-3"></i>
+                    <p class="text-muted">Nenhum registro de chuva encontrado.</p>
+                    <p class="text-muted">Comece registrando a precipitação diária.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Modal Adicionar Registro -->
+<div class="modal fade" id="modalAdicionarRegistro" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title">
+                    <i class="fas fa-cloud-rain"></i> Registrar Precipitação
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="POST" action="{{ url_for('adicionar_registro_chuva') }}" id="formChuva">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                <input type="hidden" name="aplicar_todos" id="aplicar_todos" value="false"/>
+
+                <div class="modal-body">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="data" class="form-label">Data *</label>
+                            <input type="date" class="form-control" id="data" name="data" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="milimetros" class="form-label">Precipitação (mm) *</label>
+                            <input type="number" class="form-control" id="milimetros" name="milimetros" required step="0.1" min="0" placeholder="0.0">
+                        </div>
+                    </div>
+
+                    <!-- Seleção de Talhões -->
+                    <div class="card mb-3 border-primary">
+                        <div class="card-header bg-primary text-white">
+                            <i class="fas fa-map-marked-alt"></i> Talhões Afetados *
+                        </div>
+                        <div class="card-body">
+                            {% if talhoes %}
+                            <div class="form-check mb-3">
+                                <input class="form-check-input" type="checkbox" id="checkTodos" onchange="toggleTodosTalhoes()">
+                                <label class="form-check-label fw-bold" for="checkTodos">
+                                    <i class="fas fa-check-double"></i> Aplicar a TODOS os talhões
+                                </label>
+                            </div>
+
+                            <hr>
+
+                            <div id="listaTalhoes">
+                                <label class="form-label">Ou selecione talhões específicos:</label>
+                                <div class="row">
+                                    {% for talhao in talhoes %}
+                                    <div class="col-md-6 mb-2">
+                                        <div class="form-check talhao-checkbox-card">
+                                            <input class="form-check-input talhao-check" type="checkbox"
+                                                   name="talhoes_ids[]" value="{{ talhao.id }}"
+                                                   id="talhao_{{ talhao.id }}">
+                                            <label class="form-check-label w-100" for="talhao_{{ talhao.id }}" style="cursor: pointer; user-select: none;">
+                                                <strong>{{ talhao.nome }}</strong>
+                                                <small class="text-muted d-block">({{ talhao.get_area_display() }})</small>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            {% else %}
+                            <div class="alert alert-warning">
+                                <i class="fas fa-exclamation-triangle"></i>
+                                Você ainda não possui talhões cadastrados.
+                                <a href="{{ url_for('talhoes') }}" class="alert-link">Cadastre talhões aqui</a>
+                                para poder registrar chuvas.
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="observacao" class="form-label">Observações</label>
+                        <textarea class="form-control" id="observacao" name="observacao" rows="3" placeholder="Condições climáticas, vento, temperatura, etc."></textarea>
+                    </div>
+
+                    <!-- Indicador visual de intensidade -->
+                    <div class="card bg-light">
+                        <div class="card-body">
+                            <h6 class="card-title">Classificação da Chuva:</h6>
+                            <div class="row text-center">
+                                <div class="col">
+                                    <small class="text-muted">0mm</small><br>
+                                    <span class="badge bg-light text-dark">Sem chuva</span>
+                                </div>
+                                <div class="col">
+                                    <small class="text-muted">0-5mm</small><br>
+                                    <span class="badge bg-info">Fraca</span>
+                                </div>
+                                <div class="col">
+                                    <small class="text-muted">5-15mm</small><br>
+                                    <span class="badge bg-primary">Moderada</span>
+                                </div>
+                                <div class="col">
+                                    <small class="text-muted">15-30mm</small><br>
+                                    <span class="badge bg-warning">Forte</span>
+                                </div>
+                                <div class="col">
+                                    <small class="text-muted">+30mm</small><br>
+                                    <span class="badge bg-danger">Intensa</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-success" {% if not talhoes %}disabled{% endif %}>
+                        <i class="fas fa-save"></i> Registrar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Definir data padrão como hoje
+document.getElementById('data').value = new Date().toISOString().split('T')[0];
+
+// Controlar seleção de talhões
+function toggleTodosTalhoes() {
+    const checkTodos = document.getElementById('checkTodos');
+    const talhoesChecks = document.querySelectorAll('.talhao-check');
+    const listaTalhoes = document.getElementById('listaTalhoes');
+    const aplicarTodosInput = document.getElementById('aplicar_todos');
+
+    if (checkTodos.checked) {
+        // Desmarcar todos os talhões individuais e desabilitar
+        talhoesChecks.forEach(check => {
+            check.checked = false;
+            check.disabled = true;
+        });
+        listaTalhoes.classList.add('disabled');
+        aplicarTodosInput.value = 'true';
+    } else {
+        // Reabilitar seleção individual
+        talhoesChecks.forEach(check => {
+            check.disabled = false;
+        });
+        listaTalhoes.classList.remove('disabled');
+        aplicarTodosInput.value = 'false';
+    }
+}
+
+// Validar formulário antes de enviar
+document.getElementById('formChuva').addEventListener('submit', function(e) {
+    const checkTodos = document.getElementById('checkTodos');
+    const talhoesChecks = document.querySelectorAll('.talhao-check:checked');
+
+    if (!checkTodos.checked && talhoesChecks.length === 0) {
+        e.preventDefault();
+        alert('Selecione pelo menos um talhão ou marque "Aplicar a TODOS"!');
+        return false;
+    }
+});
+
+// Gráfico de precipitação
+{% if registros %}
+const ctx = document.getElementById('precipitacaoChart').getContext('2d');
+
+// Dados dos últimos 30 dias
+const registrosRecentes = {{ registros[:30]|map(attribute='data')|map('string')|reverse|list|tojson }};
+const precipitacaoRecente = {{ registros[:30]|map(attribute='quantidade_mm')|reverse|list|tojson }};
+
+const precipitacaoChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+        labels: registrosRecentes.map(data => {
+            const d = new Date(data);
+            return d.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' });
+        }),
+        datasets: [{
+            label: 'Precipitação (mm)',
+            data: precipitacaoRecente,
+            borderColor: 'rgb(54, 162, 235)',
+            backgroundColor: 'rgba(54, 162, 235, 0.1)',
+            tension: 0.1,
+            fill: true
+        }]
+    },
+    options: {
+        responsive: true,
+        scales: {
+            y: {
+                beginAtZero: true,
+                title: {
+                    display: true,
+                    text: 'Milímetros (mm)'
+                }
+            },
+            x: {
+                title: {
+                    display: true,
+                    text: 'Data'
+                }
+            }
+        },
+        plugins: {
+            legend: {
+                display: false
+            },
+            tooltip: {
+                callbacks: {
+                    label: function(context) {
+                        return `${context.parsed.y}mm`;
+                    }
+                }
+            }
+        }
+    }
+});
+{% endif %}
+
+function editarRegistro(id) {
+    alert('Funcionalidade em desenvolvimento - Editar registro ID: ' + id);
+}
+
+function excluirRegistro(id) {
+    if (confirm('Tem certeza que deseja excluir este registro de chuva?\n\nEsta ação não pode ser desfeita!')) {
+        // Criar formulário para submeter POST com CSRF token
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = `/chuva/excluir/${id}`;
+        form.style.display = 'none';
+        
+        // Adicionar CSRF token
+        const csrfToken = document.querySelector('meta[name=csrf-token]');
+        if (csrfToken) {
+            const csrfInput = document.createElement('input');
+            csrfInput.type = 'hidden';
+            csrfInput.name = 'csrf_token';
+            csrfInput.value = csrfToken.getAttribute('content');
+            form.appendChild(csrfInput);
+        }
+        
+        document.body.appendChild(form);
+        form.submit();
+    }
+}
+</script>
+{% endblock %}

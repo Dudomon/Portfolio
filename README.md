@@ -99,6 +99,18 @@ Complete broadcasting platform with live streaming, podcast management, news fee
 
 ---
 
+### 8. [💬 AWS Serverless AI Chatbot](./AWS-Serverless-Chatbot)
+**Production-ready serverless chatbot with NLP and conversation persistence**
+
+Cloud-native AI chatbot built with AWS Lambda, API Gateway, and DynamoDB. Features intelligent intent detection, conversation history tracking, and auto-scaling serverless architecture.
+
+**Tech Stack:** Python, AWS Lambda, API Gateway, DynamoDB, AWS SAM, NLP
+**Status:** Production-ready
+
+[📂 View Project](./AWS-Serverless-Chatbot)
+
+---
+
 ## 🛠️ Technical Skills
 
 ### Languages & Frameworks
@@ -107,21 +119,24 @@ Complete broadcasting platform with live streaming, podcast management, news fee
 - **Web**: JavaScript, HTML5, CSS3, PHP
 - **CMS**: WORDPRESS (Elementor, Custom Plugins, Theme Development)
 - **Database**: PostgreSQL, MySQL, SQLite
+- **Cloud**: AWS (Lambda, API Gateway, DynamoDB, S3, RDS, EC2, Polly, CloudWatch)
 
 ### Specialized Areas
-- **AI/ML**: Deep Reinforcement Learning (PPO), Transformer Networks, Trading Systems
+- **AI/ML**: Deep Reinforcement Learning (PPO), Transformer Networks, NLP, Trading Systems
+- **Cloud Architecture**: Serverless (Lambda), Infrastructure as Code (AWS SAM), Auto-scaling
 - **Web Scraping**: Advanced scraping, anti-blocking, multi-source aggregation
 - **ERP Systems**: Multi-tenant architecture, inventory management, financial modules
 - **API Integration**: REST, Spotify, WordPress, Sienge, MetaTrader5
-- **DevOps**: Git, Docker, Gunicorn, Nginx
+- **DevOps**: Git, Docker, Gunicorn, Nginx, CI/CD
 
 ---
 
 ## 📊 Portfolio Highlights
 
-- **7 Complete Projects** across different domains
-- **5 Production Systems** serving real users (including 1 live website)
+- **8 Complete Projects** across different domains
+- **6 Production Systems** serving real users (including 1 live website)
 - **2 Proprietary Systems** (code protected for IP)
+- **Cloud-Native**: AWS serverless architecture experience
 - **Multi-language**: Bilingual documentation (EN/PT-BR)
 - **Enterprise-grade**: Scalable, secure, documented
 
@@ -230,6 +245,18 @@ Plataforma completa de broadcasting com streaming ao vivo, gerenciamento de podc
 
 ---
 
+### 8. [💬 Chatbot IA Serverless AWS](./AWS-Serverless-Chatbot)
+**Chatbot serverless pronto para produção com NLP e persistência de conversas**
+
+Chatbot IA cloud-native construído com AWS Lambda, API Gateway e DynamoDB. Recursos incluem detecção inteligente de intenções, rastreamento de histórico de conversas e arquitetura serverless com auto-scaling.
+
+**Stack Técnica:** Python, AWS Lambda, API Gateway, DynamoDB, AWS SAM, NLP
+**Status:** Pronto para produção
+
+[📂 Ver Projeto](./AWS-Serverless-Chatbot)
+
+---
+
 ## 🛠️ Competências Técnicas
 
 ### Linguagens & Frameworks
@@ -238,21 +265,24 @@ Plataforma completa de broadcasting com streaming ao vivo, gerenciamento de podc
 - **Web**: JavaScript, HTML5, CSS3, PHP
 - **CMS**: WORDPRESS (Elementor, Plugins Customizados, Desenvolvimento Temas)
 - **Database**: PostgreSQL, MySQL, SQLite
+- **Cloud**: AWS (Lambda, API Gateway, DynamoDB, S3, RDS, EC2, Polly, CloudWatch)
 
 ### Áreas Especializadas
-- **IA/ML**: Deep Reinforcement Learning (PPO), Transformer Networks, Trading Systems
+- **IA/ML**: Deep Reinforcement Learning (PPO), Transformer Networks, NLP, Trading Systems
+- **Arquitetura Cloud**: Serverless (Lambda), Infrastructure as Code (AWS SAM), Auto-scaling
 - **Web Scraping**: Scraping avançado, anti-bloqueio, agregação multi-fonte
 - **Sistemas ERP**: Arquitetura multi-tenant, gestão de inventário, módulos financeiros
 - **Integração API**: REST, Spotify, WordPress, Sienge, MetaTrader5
-- **DevOps**: Git, Docker, Gunicorn, Nginx
+- **DevOps**: Git, Docker, Gunicorn, Nginx, CI/CD
 
 ---
 
 ## 📊 Destaques do Portfólio
 
-- **7 Projetos Completos** em diferentes domínios
-- **5 Sistemas em Produção** servindo usuários reais (incluindo 1 site ao vivo)
+- **8 Projetos Completos** em diferentes domínios
+- **6 Sistemas em Produção** servindo usuários reais (incluindo 1 site ao vivo)
 - **2 Sistemas Proprietários** (código protegido por PI)
+- **Cloud-Native**: Experiência com arquitetura serverless AWS
 - **Multi-idioma**: Documentação bilíngue (EN/PT-BR)
 - **Nível Empresarial**: Escalável, seguro, documentado
 

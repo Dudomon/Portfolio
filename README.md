@@ -111,19 +111,33 @@ Cloud-native AI chatbot built with AWS Lambda, API Gateway, and DynamoDB. Featur
 
 ---
 
+### 9. [📺 IPTV Streaming Aggregator](./IPTV-Streaming-Aggregator)
+**Multi-source IPTV channel management & streaming platform** *(Proprietary - Showcase Only)*
+
+Enterprise IPTV management system built for OESCTV that aggregates 300+ channels from multiple third-party providers. Features UX-optimized admin dashboard with real-time stream health monitoring, achieving 68% faster task completion and 99.5% platform uptime.
+
+**Tech Stack:** Python, Flask, React, Material-UI, MySQL, Redis, Docker, Nginx, Celery, FFmpeg, AWS (EC2, RDS, CloudFront), WebSocket
+**Status:** Production - **Code Protected (Client Proprietary)**
+
+[📂 View Project](./IPTV-Streaming-Aggregator)
+
+---
+
 ## 🛠️ Technical Skills
 
 ### Languages & Frameworks
-- **Python**: Flask, PyTorch, Stable-Baselines3, BeautifulSoup, Scrapy
+- **Python**: Flask, PyTorch, Stable-Baselines3, BeautifulSoup, Scrapy, Celery
 - **Mobile**: Flutter, Dart
-- **Web**: JavaScript, HTML5, CSS3, PHP
+- **Web**: JavaScript, React, HTML5, CSS3, PHP, Material-UI
 - **CMS**: WORDPRESS (Elementor, Custom Plugins, Theme Development)
-- **Database**: PostgreSQL, MySQL, SQLite
-- **Cloud**: AWS (Lambda, API Gateway, DynamoDB, S3, RDS, EC2, Polly, CloudWatch)
+- **Database**: PostgreSQL, MySQL, SQLite, Redis
+- **Cloud**: AWS (Lambda, API Gateway, DynamoDB, S3, RDS, EC2, Polly, CloudWatch, CloudFront)
 
 ### Specialized Areas
 - **AI/ML**: Deep Reinforcement Learning (PPO), Transformer Networks, NLP, Trading Systems
 - **Cloud Architecture**: Serverless (Lambda), Infrastructure as Code (AWS SAM), Auto-scaling
+- **Video Streaming**: IPTV, HLS, RTMP, FFmpeg, Stream Health Monitoring
+- **UX/UI Design**: User Research, WCAG 2.1 AA Compliance, Responsive Design, WebSocket
 - **Web Scraping**: Advanced scraping, anti-blocking, multi-source aggregation
 - **ERP Systems**: Multi-tenant architecture, inventory management, financial modules
 - **API Integration**: REST, Spotify, WordPress, Sienge, MetaTrader5
@@ -133,10 +147,11 @@ Cloud-native AI chatbot built with AWS Lambda, API Gateway, and DynamoDB. Featur
 
 ## 📊 Portfolio Highlights
 
-- **8 Complete Projects** across different domains
-- **6 Production Systems** serving real users (including 1 live website)
-- **2 Proprietary Systems** (code protected for IP)
+- **9 Complete Projects** across different domains
+- **7 Production Systems** serving real users (including 1 live website)
+- **3 Proprietary Systems** (code protected for IP)
 - **Cloud-Native**: AWS serverless architecture experience
+- **UX/UI Design**: User-centered design with 68% efficiency improvements
 - **Multi-language**: Bilingual documentation (EN/PT-BR)
 - **Enterprise-grade**: Scalable, secure, documented
 
@@ -257,19 +272,33 @@ Chatbot IA cloud-native construído com AWS Lambda, API Gateway e DynamoDB. Recu
 
 ---
 
+### 9. [📺 Agregador de Streaming IPTV](./IPTV-Streaming-Aggregator)
+**Plataforma de gestão de canais IPTV multi-fonte** *(Proprietário - Apenas Showcase)*
+
+Sistema IPTV empresarial construído para OESCTV que agrega 300+ canais de múltiplos provedores terceirizados. Dashboard administrativo otimizado para UX com monitoramento de saúde de streams em tempo real, alcançando 68% mais rapidez na conclusão de tarefas e 99,5% de uptime.
+
+**Stack Técnica:** Python, Flask, React, Material-UI, MySQL, Redis, Docker, Nginx, Celery, FFmpeg, AWS (EC2, RDS, CloudFront), WebSocket
+**Status:** Produção - **Código Protegido (Proprietário do Cliente)**
+
+[📂 Ver Projeto](./IPTV-Streaming-Aggregator)
+
+---
+
 ## 🛠️ Competências Técnicas
 
 ### Linguagens & Frameworks
-- **Python**: Flask, PyTorch, Stable-Baselines3, BeautifulSoup, Scrapy
+- **Python**: Flask, PyTorch, Stable-Baselines3, BeautifulSoup, Scrapy, Celery
 - **Mobile**: Flutter, Dart
-- **Web**: JavaScript, HTML5, CSS3, PHP
+- **Web**: JavaScript, React, HTML5, CSS3, PHP, Material-UI
 - **CMS**: WORDPRESS (Elementor, Plugins Customizados, Desenvolvimento Temas)
-- **Database**: PostgreSQL, MySQL, SQLite
-- **Cloud**: AWS (Lambda, API Gateway, DynamoDB, S3, RDS, EC2, Polly, CloudWatch)
+- **Database**: PostgreSQL, MySQL, SQLite, Redis
+- **Cloud**: AWS (Lambda, API Gateway, DynamoDB, S3, RDS, EC2, Polly, CloudWatch, CloudFront)
 
 ### Áreas Especializadas
 - **IA/ML**: Deep Reinforcement Learning (PPO), Transformer Networks, NLP, Trading Systems
 - **Arquitetura Cloud**: Serverless (Lambda), Infrastructure as Code (AWS SAM), Auto-scaling
+- **Streaming de Vídeo**: IPTV, HLS, RTMP, FFmpeg, Monitoramento de Saúde de Streams
+- **UX/UI Design**: Pesquisa de Usuário, Conformidade WCAG 2.1 AA, Design Responsivo, WebSocket
 - **Web Scraping**: Scraping avançado, anti-bloqueio, agregação multi-fonte
 - **Sistemas ERP**: Arquitetura multi-tenant, gestão de inventário, módulos financeiros
 - **Integração API**: REST, Spotify, WordPress, Sienge, MetaTrader5
@@ -279,10 +308,11 @@ Chatbot IA cloud-native construído com AWS Lambda, API Gateway e DynamoDB. Recu
 
 ## 📊 Destaques do Portfólio
 
-- **8 Projetos Completos** em diferentes domínios
-- **6 Sistemas em Produção** servindo usuários reais (incluindo 1 site ao vivo)
-- **2 Sistemas Proprietários** (código protegido por PI)
+- **9 Projetos Completos** em diferentes domínios
+- **7 Sistemas em Produção** servindo usuários reais (incluindo 1 site ao vivo)
+- **3 Sistemas Proprietários** (código protegido por PI)
 - **Cloud-Native**: Experiência com arquitetura serverless AWS
+- **UX/UI Design**: Design centrado no usuário com 68% de melhoria em eficiência
 - **Multi-idioma**: Documentação bilíngue (EN/PT-BR)
 - **Nível Empresarial**: Escalável, seguro, documentado
 

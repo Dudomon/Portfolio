@@ -1,0 +1,41 @@
+version: "3.9"
+
+services:
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib:0.104.0
+    command: ["--config=/etc/otel-collector-config.yaml"]
+    volumes:
+      - ./otel-collector-config.yaml:/etc/otel-collector-config.yaml
+    ports:
+      - "4318:4318"
+
+  backend:
+    build: ./backend
+    environment:
+      APP_ENV: docker
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      EMBEDDING_MODEL: sentence-transformers/all-MiniLM-L6-v2
+      CHROMA_PATH: /data/chroma
+      OTLP_ENDPOINT: http://otel-collector:4318/v1/traces
+      OTLP_INSECURE: "true"
+      RAG_TOP_K: 3
+      API_KEYS: ${API_KEYS:-demo-key}
+      RATE_LIMIT_PER_MIN: 60
+    volumes:
+      - chroma-data:/data/chroma
+    depends_on:
+      - otel-collector
+    ports:
+      - "8000:8000"
+
+  frontend:
+    build: ./frontend
+    environment:
+      NEXT_PUBLIC_API_BASE: http://backend:8000
+    depends_on:
+      - backend
+    ports:
+      - "3000:3000"
+
+volumes:
+  chroma-data:

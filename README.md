@@ -123,6 +123,16 @@ Enterprise IPTV management system built for OESCTV that aggregates 300+ channels
 
 ---
 
+### 10. [SaaS RAG + Observability](./Saas%20Rag%20+%20Observabilidade)
+Production-oriented support assistant with retrieval augmented generation, tenant isolation, and OpenTelemetry tracing. Frontend in Next.js and backend in FastAPI, ships with fallback mode when no LLM key is set.
+
+**Tech Stack:** FastAPI, Python, OpenTelemetry, OpenAI (optional), Next.js, React, TypeScript, Docker
+**Status:** Prototype
+
+[View Project](./Saas%20Rag%20+%20Observabilidade)
+
+---
+
 ## 🛠️ Technical Skills
 
 ### Languages & Frameworks
@@ -145,12 +155,39 @@ Enterprise IPTV management system built for OESCTV that aggregates 300+ channels
 
 ---
 
-## 📊 Portfolio Highlights
+### 10. [Real-Time Analytics Pipeline](./Real-Time-Analytics-Pipeline)
+**Enterprise-grade streaming analytics platform for e-commerce monitoring**
 
-- **9 Complete Projects** across different domains
+Production-ready data pipeline that processes 100K+ events/second with sub-second latency. Features Apache Kafka for ingestion, Apache Flink for stream processing, ClickHouse for OLAP analytics, and React dashboard with real-time WebSocket updates.
+
+**Tech Stack:** Apache Kafka, Apache Flink, ClickHouse, FastAPI, React, Redis, Docker, WebSocket
+**Status:** Production-ready
+
+[View Project](./Real-Time-Analytics-Pipeline)
+
+---
+
+### 11. [E-Commerce Microservices Platform](./Microservices-ECommerce-Platform)
+**Distributed microservices architecture with Kubernetes orchestration**
+
+Complete e-commerce platform implementing microservices patterns including Event-Driven communication, Saga pattern for distributed transactions, Event Sourcing, and CQRS. Deployed on Kubernetes with Helm charts, featuring auto-scaling, health monitoring, and distributed tracing.
+
+**Tech Stack:** Python, FastAPI, Go, Kubernetes, Helm, RabbitMQ, PostgreSQL, MongoDB, Redis, Prometheus, Grafana, Jaeger
+**Status:** Production-ready
+
+[View Project](./Microservices-ECommerce-Platform)
+
+---
+
+## Portfolio Highlights
+
+- **11 Complete Projects** across different domains
 - **7 Production Systems** serving real users (including 1 live website)
 - **3 Proprietary Systems** (code protected for IP)
 - **Cloud-Native**: AWS serverless architecture experience
+- **Microservices**: Event-driven architecture with Kubernetes
+- **Data Engineering**: Real-time streaming pipeline with Kafka + Flink
+- **Distributed Systems**: Saga pattern, Event Sourcing, CQRS
 - **UX/UI Design**: User-centered design with 68% efficiency improvements
 - **Multi-language**: Bilingual documentation (EN/PT-BR)
 - **Enterprise-grade**: Scalable, secure, documented
@@ -284,6 +321,16 @@ Sistema IPTV empresarial construído para OESCTV que agrega 300+ canais de múlt
 
 ---
 
+### 10. [SaaS RAG + Observabilidade](./Saas%20Rag%20+%20Observabilidade)
+Assistente de suporte orientado a RAG com isolamento por tenant e tracing via OpenTelemetry. Frontend Next.js e backend FastAPI, com fallback determinístico quando não há chave de LLM configurada.
+
+**Stack Técnica:** FastAPI, Python, OpenTelemetry, OpenAI (opcional), Next.js, React, TypeScript, Docker
+**Status:** Protótipo
+
+[Ver Projeto](./Saas%20Rag%20+%20Observabilidade)
+
+---
+
 ## 🛠️ Competências Técnicas
 
 ### Linguagens & Frameworks
@@ -306,12 +353,39 @@ Sistema IPTV empresarial construído para OESCTV que agrega 300+ canais de múlt
 
 ---
 
-## 📊 Destaques do Portfólio
+### 10. [Real-Time Analytics Pipeline](./Real-Time-Analytics-Pipeline)
+**Plataforma de analytics em streaming de nível empresarial**
 
-- **9 Projetos Completos** em diferentes domínios
+Pipeline de dados production-ready que processa mais de 100.000 eventos por segundo com latência sub-segundo. Utiliza Apache Kafka para ingestão, Apache Flink para processamento de stream, ClickHouse para analytics OLAP, e dashboard React com atualizações WebSocket em tempo real.
+
+**Stack Técnica:** Apache Kafka, Apache Flink, ClickHouse, FastAPI, React, Redis, Docker, WebSocket
+**Status:** Pronto para produção
+
+[Ver Projeto](./Real-Time-Analytics-Pipeline)
+
+---
+
+### 11. [Plataforma E-Commerce com Microservices](./Microservices-ECommerce-Platform)
+**Arquitetura distribuída de microservices com orquestração Kubernetes**
+
+Plataforma de e-commerce completa implementando padrões de microservices incluindo comunicação Event-Driven, Saga pattern para transações distribuídas, Event Sourcing, e CQRS. Deploy em Kubernetes com Helm charts, com auto-scaling, monitoramento de saúde, e distributed tracing.
+
+**Stack Técnica:** Python, FastAPI, Go, Kubernetes, Helm, RabbitMQ, PostgreSQL, MongoDB, Redis, Prometheus, Grafana, Jaeger
+**Status:** Pronto para produção
+
+[Ver Projeto](./Microservices-ECommerce-Platform)
+
+---
+
+## Destaques do Portfólio
+
+- **11 Projetos Completos** em diferentes domínios
 - **7 Sistemas em Produção** servindo usuários reais (incluindo 1 site ao vivo)
 - **3 Sistemas Proprietários** (código protegido por PI)
 - **Cloud-Native**: Experiência com arquitetura serverless AWS
+- **Microservices**: Arquitetura event-driven com Kubernetes
+- **Data Engineering**: Pipeline de streaming em tempo real com Kafka + Flink
+- **Sistemas Distribuídos**: Saga pattern, Event Sourcing, CQRS
 - **UX/UI Design**: Design centrado no usuário com 68% de melhoria em eficiência
 - **Multi-idioma**: Documentação bilíngue (EN/PT-BR)
 - **Nível Empresarial**: Escalável, seguro, documentado

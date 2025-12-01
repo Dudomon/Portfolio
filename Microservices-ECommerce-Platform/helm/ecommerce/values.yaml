@@ -1,0 +1,183 @@
+global:
+  namespace: ecommerce
+  imagePullPolicy: IfNotPresent
+
+orderService:
+  name: order-service
+  replicaCount: 2
+  image:
+    repository: order-service
+    tag: latest
+  service:
+    type: ClusterIP
+    port: 8002
+  resources:
+    requests:
+      memory: "256Mi"
+      cpu: "250m"
+    limits:
+      memory: "512Mi"
+      cpu: "500m"
+  autoscaling:
+    enabled: true
+    minReplicas: 2
+    maxReplicas: 10
+    targetCPUUtilizationPercentage: 70
+    targetMemoryUtilizationPercentage: 80
+
+productService:
+  name: product-service
+  replicaCount: 2
+  image:
+    repository: product-service
+    tag: latest
+  service:
+    type: ClusterIP
+    port: 8001
+  resources:
+    requests:
+      memory: "256Mi"
+      cpu: "250m"
+    limits:
+      memory: "512Mi"
+      cpu: "500m"
+
+paymentService:
+  name: payment-service
+  replicaCount: 2
+  image:
+    repository: payment-service
+    tag: latest
+  service:
+    type: ClusterIP
+    port: 8003
+  resources:
+    requests:
+      memory: "256Mi"
+      cpu: "250m"
+    limits:
+      memory: "512Mi"
+      cpu: "500m"
+
+notificationService:
+  name: notification-service
+  replicaCount: 2
+  image:
+    repository: notification-service
+    tag: latest
+  resources:
+    requests:
+      memory: "256Mi"
+      cpu: "250m"
+    limits:
+      memory: "512Mi"
+      cpu: "500m"
+
+rabbitmq:
+  enabled: true
+  replicaCount: 1
+  image:
+    repository: rabbitmq
+    tag: 3.12-management-alpine
+  service:
+    type: ClusterIP
+    amqpPort: 5672
+    managementPort: 15672
+  persistence:
+    enabled: true
+    size: 10Gi
+  resources:
+    requests:
+      memory: "512Mi"
+      cpu: "250m"
+    limits:
+      memory: "1Gi"
+      cpu: "500m"
+
+postgres:
+  enabled: true
+  replicaCount: 1
+  image:
+    repository: postgres
+    tag: 15-alpine
+  service:
+    type: ClusterIP
+    port: 5432
+  persistence:
+    enabled: true
+    size: 20Gi
+  resources:
+    requests:
+      memory: "512Mi"
+      cpu: "250m"
+    limits:
+      memory: "1Gi"
+      cpu: "500m"
+
+mongodb:
+  enabled: true
+  replicaCount: 1
+  image:
+    repository: mongo
+    tag: 7.0
+  service:
+    type: ClusterIP
+    port: 27017
+  persistence:
+    enabled: true
+    size: 20Gi
+  resources:
+    requests:
+      memory: "512Mi"
+      cpu: "250m"
+    limits:
+      memory: "1Gi"
+      cpu: "500m"
+
+redis:
+  enabled: true
+  replicaCount: 1
+  image:
+    repository: redis
+    tag: 7.2-alpine
+  service:
+    type: ClusterIP
+    port: 6379
+  persistence:
+    enabled: true
+    size: 5Gi
+  resources:
+    requests:
+      memory: "256Mi"
+      cpu: "100m"
+    limits:
+      memory: "512Mi"
+      cpu: "250m"
+
+ingress:
+  enabled: true
+  className: nginx
+  annotations: {}
+  hosts:
+    - host: ecommerce.local
+      paths:
+        - path: /api/orders
+          pathType: Prefix
+          service: order-service
+          port: 8002
+        - path: /api/products
+          pathType: Prefix
+          service: product-service
+          port: 8001
+        - path: /api/payments
+          pathType: Prefix
+          service: payment-service
+          port: 8003
+
+monitoring:
+  prometheus:
+    enabled: true
+  grafana:
+    enabled: true
+  jaeger:
+    enabled: true

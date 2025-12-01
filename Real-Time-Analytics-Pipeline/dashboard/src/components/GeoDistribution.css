@@ -1,0 +1,65 @@
+.geo-distribution {
+  max-height: 600px;
+  overflow-y: auto;
+}
+
+.no-data {
+  text-align: center;
+  color: #999;
+  padding: 2rem;
+}
+
+.geo-list {
+  margin-top: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.geo-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem;
+  background: #f9f9f9;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.geo-item:hover {
+  background: #f0f0f0;
+  transform: translateX(4px);
+}
+
+.geo-country {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.country-flag {
+  font-size: 1.5rem;
+}
+
+.country-name {
+  font-weight: 600;
+  color: #333;
+}
+
+.geo-stats {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.25rem;
+}
+
+.geo-revenue {
+  font-weight: 700;
+  color: #FF9800;
+  font-size: 1rem;
+}
+
+.geo-users {
+  font-size: 0.85rem;
+  color: #666;
+}

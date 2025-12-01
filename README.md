@@ -85,21 +85,7 @@ Music library management system with automated chart scraping, Spotify integrati
 
 ---
 
-### 7. [📻 Rádio Entre Rios 105.5 FM - **WORDPRESS** Website](./Site%20Rádio)
-**Professional radio station website built on WORDPRESS platform**
-
-🌐 **LIVE SITE:** [www.radioentrerios.com.br](http://www.radioentrerios.com.br)
-
-Complete broadcasting platform with live streaming, podcast management, news feed, and custom Elementor page builder integration.
-
-**Tech Stack:** WORDPRESS, Elementor Pro, PHP, MySQL, Custom Plugins
-**Status:** Live Production
-
-[📂 View Project](./Site%20Rádio)
-
----
-
-### 8. [💬 AWS Serverless AI Chatbot](./AWS-Serverless-Chatbot)
+### 7. [💬 AWS Serverless AI Chatbot](./AWS-Serverless-Chatbot)
 **Production-ready serverless chatbot with NLP and conversation persistence**
 
 Cloud-native AI chatbot built with AWS Lambda, API Gateway, and DynamoDB. Features intelligent intent detection, conversation history tracking, and auto-scaling serverless architecture.
@@ -111,7 +97,7 @@ Cloud-native AI chatbot built with AWS Lambda, API Gateway, and DynamoDB. Featur
 
 ---
 
-### 9. [📺 IPTV Streaming Aggregator](./IPTV-Streaming-Aggregator)
+### 8. [📺 IPTV Streaming Aggregator](./IPTV-Streaming-Aggregator)
 **Multi-source IPTV channel management & streaming platform** *(Proprietary - Showcase Only)*
 
 Enterprise IPTV management system built for OESCTV that aggregates 300+ channels from multiple third-party providers. Features UX-optimized admin dashboard with real-time stream health monitoring, achieving 68% faster task completion and 99.5% platform uptime.
@@ -123,7 +109,7 @@ Enterprise IPTV management system built for OESCTV that aggregates 300+ channels
 
 ---
 
-### 10. [SaaS RAG + Observability](./Saas%20Rag%20+%20Observabilidade)
+### 9. [SaaS RAG + Observability](./Saas%20Rag%20+%20Observabilidade)
 Production-oriented support assistant with retrieval augmented generation, tenant isolation, and OpenTelemetry tracing. Frontend in Next.js and backend in FastAPI, ships with fallback mode when no LLM key is set.
 
 **Tech Stack:** FastAPI, Python, OpenTelemetry, OpenAI (optional), Next.js, React, TypeScript, Docker
@@ -182,7 +168,7 @@ Complete e-commerce platform implementing microservices patterns including Event
 ## Portfolio Highlights
 
 - **11 Complete Projects** across different domains
-- **7 Production Systems** serving real users (including 1 live website)
+- **6 Production Systems** serving real users (including 1 live mobile app)
 - **3 Proprietary Systems** (code protected for IP)
 - **Cloud-Native**: AWS serverless architecture experience
 - **Microservices**: Event-driven architecture with Kubernetes
@@ -283,21 +269,7 @@ Sistema de gestão de biblioteca musical com scraping automatizado de charts, in
 
 ---
 
-### 7. [📻 Rádio Entre Rios 105.5 FM - Site **WORDPRESS**](./Site%20Rádio)
-**Site profissional de rádio construído na plataforma WORDPRESS**
-
-🌐 **SITE AO VIVO:** [www.radioentrerios.com.br](http://www.radioentrerios.com.br)
-
-Plataforma completa de broadcasting com streaming ao vivo, gerenciamento de podcasts, feed de notícias e integração customizada com Elementor page builder.
-
-**Stack Técnica:** WORDPRESS, Elementor Pro, PHP, MySQL, Plugins Customizados
-**Status:** Produção Ao Vivo
-
-[📂 Ver Projeto](./Site%20Rádio)
-
----
-
-### 8. [💬 Chatbot IA Serverless AWS](./AWS-Serverless-Chatbot)
+### 7. [💬 Chatbot IA Serverless AWS](./AWS-Serverless-Chatbot)
 **Chatbot serverless pronto para produção com NLP e persistência de conversas**
 
 Chatbot IA cloud-native construído com AWS Lambda, API Gateway e DynamoDB. Recursos incluem detecção inteligente de intenções, rastreamento de histórico de conversas e arquitetura serverless com auto-scaling.
@@ -309,7 +281,7 @@ Chatbot IA cloud-native construído com AWS Lambda, API Gateway e DynamoDB. Recu
 
 ---
 
-### 9. [📺 Agregador de Streaming IPTV](./IPTV-Streaming-Aggregator)
+### 8. [📺 Agregador de Streaming IPTV](./IPTV-Streaming-Aggregator)
 **Plataforma de gestão de canais IPTV multi-fonte** *(Proprietário - Apenas Showcase)*
 
 Sistema IPTV empresarial construído para OESCTV que agrega 300+ canais de múltiplos provedores terceirizados. Dashboard administrativo otimizado para UX com monitoramento de saúde de streams em tempo real, alcançando 68% mais rapidez na conclusão de tarefas e 99,5% de uptime.
@@ -321,7 +293,7 @@ Sistema IPTV empresarial construído para OESCTV que agrega 300+ canais de múlt
 
 ---
 
-### 10. [SaaS RAG + Observabilidade](./Saas%20Rag%20+%20Observabilidade)
+### 9. [SaaS RAG + Observabilidade](./Saas%20Rag%20+%20Observabilidade)
 Assistente de suporte orientado a RAG com isolamento por tenant e tracing via OpenTelemetry. Frontend Next.js e backend FastAPI, com fallback determinístico quando não há chave de LLM configurada.
 
 **Stack Técnica:** FastAPI, Python, OpenTelemetry, OpenAI (opcional), Next.js, React, TypeScript, Docker
@@ -380,7 +352,7 @@ Plataforma de e-commerce completa implementando padrões de microservices inclui
 ## Destaques do Portfólio
 
 - **11 Projetos Completos** em diferentes domínios
-- **7 Sistemas em Produção** servindo usuários reais (incluindo 1 site ao vivo)
+- **6 Sistemas em Produção** servindo usuários reais (incluindo 1 app mobile ao vivo)
 - **3 Sistemas Proprietários** (código protegido por PI)
 - **Cloud-Native**: Experiência com arquitetura serverless AWS
 - **Microservices**: Arquitetura event-driven com Kubernetes

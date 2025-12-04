@@ -1,0 +1,40 @@
+# Core dependencies for GCP Data Engineering Platform
+
+# Apache Beam for Dataflow pipelines
+apache-beam[gcp]==2.52.0
+
+# PySpark for Dataproc jobs
+pyspark==3.5.0
+
+# Google Cloud clients
+google-cloud-bigquery==3.13.0
+google-cloud-pubsub==2.18.4
+google-cloud-storage==2.12.0
+google-cloud-dataproc==5.8.0
+google-cloud-dataflow-client==0.8.5
+google-cloud-monitoring==2.16.0
+google-cloud-logging==3.8.0
+
+# Data quality and validation
+great-expectations==0.18.8
+
+# API framework
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+pydantic==2.5.0
+
+# Airflow (for local testing, Cloud Composer provides this)
+apache-airflow==2.7.0
+apache-airflow-providers-google==10.10.0
+
+# dbt for SQL transformations
+dbt-bigquery==1.7.0
+
+# Utilities
+python-dotenv==1.0.0
+PyYAML==6.0.1
+requests==2.31.0
+
+# Testing
+pytest==7.4.3
+pytest-cov==4.1.0

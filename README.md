@@ -122,22 +122,28 @@ Production-oriented support assistant with retrieval augmented generation, tenan
 ## 🛠️ Technical Skills
 
 ### Languages & Frameworks
-- **Python**: Flask, PyTorch, Stable-Baselines3, BeautifulSoup, Scrapy, Celery
+- **Python**: Flask, FastAPI, PyTorch, Stable-Baselines3, Apache Beam, PySpark, BeautifulSoup, Scrapy, Celery
 - **Mobile**: Flutter, Dart
 - **Web**: JavaScript, React, HTML5, CSS3, PHP, Material-UI
 - **CMS**: WORDPRESS (Elementor, Custom Plugins, Theme Development)
-- **Database**: PostgreSQL, MySQL, SQLite, Redis
+- **Database**: PostgreSQL, MySQL, SQLite, Redis, BigQuery, ClickHouse, MongoDB
 - **Cloud**: AWS (Lambda, API Gateway, DynamoDB, S3, RDS, EC2, Polly, CloudWatch, CloudFront)
+- **Cloud**: GCP (BigQuery, Dataflow, Dataproc, Pub/Sub, Cloud Composer, Cloud Storage, Cloud Run, Vertex AI)
 
 ### Specialized Areas
+- **Data Engineering**: Apache Beam, Apache Spark, Apache Flink, Apache Kafka, dbt, Great Expectations
+- **Pipeline Orchestration**: Apache Airflow, Cloud Composer, DAG design, workflow management
+- **Data Quality**: Great Expectations, schema validation, automated testing, SLA monitoring
+- **Big Data**: Hadoop, Spark (PySpark), distributed computing, performance optimization
 - **AI/ML**: Deep Reinforcement Learning (PPO), Transformer Networks, NLP, Trading Systems
-- **Cloud Architecture**: Serverless (Lambda), Infrastructure as Code (AWS SAM), Auto-scaling
+- **Cloud Architecture**: Serverless (Lambda, Cloud Run), Infrastructure as Code (Terraform, AWS SAM), Auto-scaling
+- **GCP Services**: BigQuery optimization, Dataflow streaming, Dataproc cluster management, Pub/Sub messaging
 - **Video Streaming**: IPTV, HLS, RTMP, FFmpeg, Stream Health Monitoring
 - **UX/UI Design**: User Research, WCAG 2.1 AA Compliance, Responsive Design, WebSocket
 - **Web Scraping**: Advanced scraping, anti-blocking, multi-source aggregation
 - **ERP Systems**: Multi-tenant architecture, inventory management, financial modules
 - **API Integration**: REST, Spotify, WordPress, Sienge, MetaTrader5
-- **DevOps**: Git, Docker, Gunicorn, Nginx, CI/CD
+- **DevOps**: Git, Docker, Kubernetes, Helm, Terraform, CI/CD, Monitoring (Prometheus, Grafana)
 
 ---
 
@@ -165,15 +171,30 @@ Complete e-commerce platform implementing microservices patterns including Event
 
 ---
 
+### 12. [GCP Data Engineering Platform](./GCP-DataEngineering-Platform)
+**Production-grade data engineering platform with comprehensive observability**
+
+End-to-end data platform on Google Cloud Platform featuring batch and streaming pipelines, automated data quality validation, and business intelligence integration. Implements industry best practices for pipeline monitoring, troubleshooting, and performance optimization.
+
+**Tech Stack:** Python, Apache Beam, Apache Spark, BigQuery, Dataflow, Dataproc, Pub/Sub, Cloud Composer (Airflow), dbt, Great Expectations, FastAPI, Terraform
+**Status:** Production-ready
+
+[View Project](./GCP-DataEngineering-Platform)
+
+---
+
 ## Portfolio Highlights
 
-- **11 Complete Projects** across different domains
+- **12 Complete Projects** across different domains
 - **6 Production Systems** serving real users (including 1 live mobile app)
 - **3 Proprietary Systems** (code protected for IP)
-- **Cloud-Native**: AWS serverless architecture experience
+- **Multi-Cloud**: AWS serverless + GCP data platform experience
 - **Microservices**: Event-driven architecture with Kubernetes
-- **Data Engineering**: Real-time streaming pipeline with Kafka + Flink
+- **Data Engineering**: Kafka + Flink + Spark + Beam pipelines
+- **GCP Expertise**: BigQuery, Dataflow, Dataproc, Cloud Composer, Pub/Sub
+- **Data Quality**: Great Expectations, automated validation, monitoring
 - **Distributed Systems**: Saga pattern, Event Sourcing, CQRS
+- **Pipeline Orchestration**: Airflow DAGs, dependency management, SLA monitoring
 - **UX/UI Design**: User-centered design with 68% efficiency improvements
 - **Multi-language**: Bilingual documentation (EN/PT-BR)
 - **Enterprise-grade**: Scalable, secure, documented
@@ -306,22 +327,28 @@ Assistente de suporte orientado a RAG com isolamento por tenant e tracing via Op
 ## 🛠️ Competências Técnicas
 
 ### Linguagens & Frameworks
-- **Python**: Flask, PyTorch, Stable-Baselines3, BeautifulSoup, Scrapy, Celery
+- **Python**: Flask, FastAPI, PyTorch, Stable-Baselines3, Apache Beam, PySpark, BeautifulSoup, Scrapy, Celery
 - **Mobile**: Flutter, Dart
 - **Web**: JavaScript, React, HTML5, CSS3, PHP, Material-UI
 - **CMS**: WORDPRESS (Elementor, Plugins Customizados, Desenvolvimento Temas)
-- **Database**: PostgreSQL, MySQL, SQLite, Redis
+- **Database**: PostgreSQL, MySQL, SQLite, Redis, BigQuery, ClickHouse, MongoDB
 - **Cloud**: AWS (Lambda, API Gateway, DynamoDB, S3, RDS, EC2, Polly, CloudWatch, CloudFront)
+- **Cloud**: GCP (BigQuery, Dataflow, Dataproc, Pub/Sub, Cloud Composer, Cloud Storage, Cloud Run, Vertex AI)
 
 ### Áreas Especializadas
+- **Engenharia de Dados**: Apache Beam, Apache Spark, Apache Flink, Apache Kafka, dbt, Great Expectations
+- **Orquestração de Pipelines**: Apache Airflow, Cloud Composer, design de DAGs, gerenciamento de workflows
+- **Qualidade de Dados**: Great Expectations, validação de schema, testes automatizados, monitoramento SLA
+- **Big Data**: Hadoop, Spark (PySpark), computação distribuída, otimização de performance
 - **IA/ML**: Deep Reinforcement Learning (PPO), Transformer Networks, NLP, Trading Systems
-- **Arquitetura Cloud**: Serverless (Lambda), Infrastructure as Code (AWS SAM), Auto-scaling
+- **Arquitetura Cloud**: Serverless (Lambda, Cloud Run), Infrastructure as Code (Terraform, AWS SAM), Auto-scaling
+- **Serviços GCP**: Otimização BigQuery, Dataflow streaming, gerenciamento cluster Dataproc, mensageria Pub/Sub
 - **Streaming de Vídeo**: IPTV, HLS, RTMP, FFmpeg, Monitoramento de Saúde de Streams
 - **UX/UI Design**: Pesquisa de Usuário, Conformidade WCAG 2.1 AA, Design Responsivo, WebSocket
 - **Web Scraping**: Scraping avançado, anti-bloqueio, agregação multi-fonte
 - **Sistemas ERP**: Arquitetura multi-tenant, gestão de inventário, módulos financeiros
 - **Integração API**: REST, Spotify, WordPress, Sienge, MetaTrader5
-- **DevOps**: Git, Docker, Gunicorn, Nginx, CI/CD
+- **DevOps**: Git, Docker, Kubernetes, Helm, Terraform, CI/CD, Monitoramento (Prometheus, Grafana)
 
 ---
 
@@ -349,15 +376,30 @@ Plataforma de e-commerce completa implementando padrões de microservices inclui
 
 ---
 
+### 12. [Plataforma de Engenharia de Dados GCP](./GCP-DataEngineering-Platform)
+**Plataforma de engenharia de dados production-grade com observabilidade completa**
+
+Plataforma de dados end-to-end no Google Cloud Platform com pipelines batch e streaming, validação automatizada de qualidade de dados, e integração com business intelligence. Implementa as melhores práticas da indústria para monitoramento de pipelines, troubleshooting, e otimização de performance.
+
+**Stack Técnica:** Python, Apache Beam, Apache Spark, BigQuery, Dataflow, Dataproc, Pub/Sub, Cloud Composer (Airflow), dbt, Great Expectations, FastAPI, Terraform
+**Status:** Pronto para produção
+
+[Ver Projeto](./GCP-DataEngineering-Platform)
+
+---
+
 ## Destaques do Portfólio
 
-- **11 Projetos Completos** em diferentes domínios
+- **12 Projetos Completos** em diferentes domínios
 - **6 Sistemas em Produção** servindo usuários reais (incluindo 1 app mobile ao vivo)
 - **3 Sistemas Proprietários** (código protegido por PI)
-- **Cloud-Native**: Experiência com arquitetura serverless AWS
+- **Multi-Cloud**: AWS serverless + plataforma de dados GCP
 - **Microservices**: Arquitetura event-driven com Kubernetes
-- **Data Engineering**: Pipeline de streaming em tempo real com Kafka + Flink
+- **Data Engineering**: Pipelines Kafka + Flink + Spark + Beam
+- **Expertise GCP**: BigQuery, Dataflow, Dataproc, Cloud Composer, Pub/Sub
+- **Qualidade de Dados**: Great Expectations, validação automatizada, monitoramento
 - **Sistemas Distribuídos**: Saga pattern, Event Sourcing, CQRS
+- **Orquestração de Pipelines**: DAGs Airflow, gerenciamento de dependências, monitoramento SLA
 - **UX/UI Design**: Design centrado no usuário com 68% de melhoria em eficiência
 - **Multi-idioma**: Documentação bilíngue (EN/PT-BR)
 - **Nível Empresarial**: Escalável, seguro, documentado

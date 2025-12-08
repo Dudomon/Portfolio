@@ -126,14 +126,16 @@ Production-oriented support assistant with retrieval augmented generation, tenan
 - **Mobile**: Flutter, Dart
 - **Web**: JavaScript, React, HTML5, CSS3, PHP, Material-UI
 - **CMS**: WORDPRESS (Elementor, Custom Plugins, Theme Development)
-- **Database**: PostgreSQL, MySQL, SQLite, Redis, BigQuery, ClickHouse, MongoDB
-- **Cloud**: AWS (Lambda, API Gateway, DynamoDB, S3, RDS, EC2, Polly, CloudWatch, CloudFront)
+- **Database**: PostgreSQL, MySQL, SQLite, Redis, BigQuery, ClickHouse, MongoDB, **Amazon Redshift**
+- **Cloud**: AWS (Lambda, API Gateway, DynamoDB, S3, RDS, EC2, Polly, CloudWatch, CloudFront, **EKS**, **ECR**, **Redshift**)
 - **Cloud**: GCP (BigQuery, Dataflow, Dataproc, Pub/Sub, Cloud Composer, Cloud Storage, Cloud Run, Vertex AI)
 
 ### Specialized Areas
+- **MLOps**: **MLflow** (experiment tracking, model registry, deployment), DVC, Optuna, Model Monitoring, A/B Testing, Continuous Training, Model Versioning
 - **Data Engineering**: Apache Beam, Apache Spark, Apache Flink, Apache Kafka, dbt, Great Expectations
 - **Pipeline Orchestration**: Apache Airflow, Cloud Composer, DAG design, workflow management
 - **Data Quality**: Great Expectations, schema validation, automated testing, SLA monitoring
+- **Data Warehousing**: **Amazon Redshift**, BigQuery, ETL/ELT pipelines, OLAP analytics
 - **Big Data**: Hadoop, Spark (PySpark), distributed computing, performance optimization
 - **AI/ML**: Deep Reinforcement Learning (PPO), Transformer Networks, NLP, Trading Systems
 - **Cloud Architecture**: Serverless (Lambda, Cloud Run), Infrastructure as Code (Terraform, AWS SAM), Auto-scaling
@@ -143,7 +145,8 @@ Production-oriented support assistant with retrieval augmented generation, tenan
 - **Web Scraping**: Advanced scraping, anti-blocking, multi-source aggregation
 - **ERP Systems**: Multi-tenant architecture, inventory management, financial modules
 - **API Integration**: REST, Spotify, WordPress, Sienge, MetaTrader5
-- **DevOps**: Git, Docker, Kubernetes, Helm, Terraform, CI/CD, Monitoring (Prometheus, Grafana)
+- **DevOps**: Git, Docker, **Kubernetes**, Helm, Terraform, **CI/CD** (GitHub Actions, Jenkins, AWS CodePipeline), Monitoring (Prometheus, Grafana)
+- **Agile Methodologies**: Scrum, Kanban, Sprint Planning, Daily Stand-ups, Retrospectives
 
 ---
 
@@ -183,17 +186,34 @@ End-to-end data platform on Google Cloud Platform featuring batch and streaming 
 
 ---
 
+### 13. [MLOps Platform with MLflow, Kubernetes & CI/CD](./MLOps-Platform-MLflow)
+**Enterprise MLOps platform with end-to-end ML lifecycle management**
+
+Production-grade MLOps platform implementing experiment tracking with MLflow, model registry, automated deployment on Kubernetes (AWS EKS), and comprehensive CI/CD pipelines. Features AWS Redshift integration for analytics, Prometheus/Grafana monitoring, and Agile workflow automation.
+
+**Tech Stack:** MLflow, Kubernetes, Helm, AWS (EKS, RDS, S3, Redshift, ECR), Docker, Terraform, Python, FastAPI, Prometheus, Grafana, GitHub Actions, Optuna, DVC
+**Status:** Production-ready
+
+[View Project](./MLOps-Platform-MLflow)
+
+---
+
 ## Portfolio Highlights
 
-- **12 Complete Projects** across different domains
+- **13 Complete Projects** across different domains
 - **6 Production Systems** serving real users (including 1 live mobile app)
 - **3 Proprietary Systems** (code protected for IP)
-- **Multi-Cloud**: AWS serverless + GCP data platform experience
-- **Microservices**: Event-driven architecture with Kubernetes
+- **MLOps Excellence**: MLflow experiment tracking, model registry, automated deployment, CI/CD
+- **Multi-Cloud**: AWS (EKS, Redshift, Lambda) + GCP data platform experience
+- **Kubernetes Expertise**: Container orchestration, Helm charts, auto-scaling, service mesh
+- **CI/CD Mastery**: GitHub Actions, automated testing, infrastructure as code
+- **Data Warehousing**: Amazon Redshift + BigQuery for analytics at scale
+- **Microservices**: Event-driven architecture with Kubernetes orchestration
 - **Data Engineering**: Kafka + Flink + Spark + Beam pipelines
 - **GCP Expertise**: BigQuery, Dataflow, Dataproc, Cloud Composer, Pub/Sub
 - **Data Quality**: Great Expectations, automated validation, monitoring
 - **Distributed Systems**: Saga pattern, Event Sourcing, CQRS
+- **Agile Methodologies**: Scrum, sprint planning, continuous delivery
 - **Pipeline Orchestration**: Airflow DAGs, dependency management, SLA monitoring
 - **UX/UI Design**: User-centered design with 68% efficiency improvements
 - **Multi-language**: Bilingual documentation (EN/PT-BR)
@@ -388,17 +408,34 @@ Plataforma de dados end-to-end no Google Cloud Platform com pipelines batch e st
 
 ---
 
+### 13. [Plataforma MLOps com MLflow, Kubernetes & CI/CD](./MLOps-Platform-MLflow)
+**Plataforma MLOps empresarial com gerenciamento completo do ciclo de vida de ML**
+
+Plataforma MLOps production-grade implementando rastreamento de experimentos com MLflow, registro de modelos, deployment automatizado no Kubernetes (AWS EKS), e pipelines CI/CD completos. Inclui integração com AWS Redshift para analytics, monitoramento com Prometheus/Grafana, e automação de workflow Agile.
+
+**Stack Técnica:** MLflow, Kubernetes, Helm, AWS (EKS, RDS, S3, Redshift, ECR), Docker, Terraform, Python, FastAPI, Prometheus, Grafana, GitHub Actions, Optuna, DVC
+**Status:** Pronto para produção
+
+[Ver Projeto](./MLOps-Platform-MLflow)
+
+---
+
 ## Destaques do Portfólio
 
-- **12 Projetos Completos** em diferentes domínios
+- **13 Projetos Completos** em diferentes domínios
 - **6 Sistemas em Produção** servindo usuários reais (incluindo 1 app mobile ao vivo)
 - **3 Sistemas Proprietários** (código protegido por PI)
-- **Multi-Cloud**: AWS serverless + plataforma de dados GCP
-- **Microservices**: Arquitetura event-driven com Kubernetes
+- **MLOps Excellence**: Rastreamento de experimentos MLflow, registro de modelos, deployment automatizado, CI/CD
+- **Multi-Cloud**: AWS (EKS, Redshift, Lambda) + plataforma de dados GCP
+- **Expertise Kubernetes**: Orquestração de containers, Helm charts, auto-scaling, service mesh
+- **Maestria CI/CD**: GitHub Actions, testes automatizados, infraestrutura como código
+- **Data Warehousing**: Amazon Redshift + BigQuery para analytics em escala
+- **Microservices**: Arquitetura event-driven com orquestração Kubernetes
 - **Data Engineering**: Pipelines Kafka + Flink + Spark + Beam
 - **Expertise GCP**: BigQuery, Dataflow, Dataproc, Cloud Composer, Pub/Sub
 - **Qualidade de Dados**: Great Expectations, validação automatizada, monitoramento
 - **Sistemas Distribuídos**: Saga pattern, Event Sourcing, CQRS
+- **Metodologias Ágeis**: Scrum, planejamento de sprints, entrega contínua
 - **Orquestração de Pipelines**: DAGs Airflow, gerenciamento de dependências, monitoramento SLA
 - **UX/UI Design**: Design centrado no usuário com 68% de melhoria em eficiência
 - **Multi-idioma**: Documentação bilíngue (EN/PT-BR)
@@ -420,4 +457,4 @@ Plataforma de dados end-to-end no Google Cloud Platform com pipelines batch e st
 
 ---
 
-**Last Update:** November 2024
+**Last Update:** December 2024

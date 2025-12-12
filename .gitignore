@@ -37,3 +37,9 @@ credentials.json
 
 # Claude local
 .claude/settings.local.json
+
+# CVs (não versionar)
+cv.md
+cv_en.md
+CV.md
+CV_EN.md

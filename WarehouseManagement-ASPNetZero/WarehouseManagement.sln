@@ -1,0 +1,57 @@
+
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{F1A2B3C4-D5E6-7F8G-9H0I-J1K2L3M4N5O6}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{G2B3C4D5-E6F7-8G9H-0I1J-K2L3M4N5O6P7}"
+EndProject
+
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WarehouseManagement.Core", "src\WarehouseManagement.Core\WarehouseManagement.Core.csproj", "{H3C4D5E6-F7G8-9H0I-1J2K-L3M4N5O6P7Q8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WarehouseManagement.Application", "src\WarehouseManagement.Application\WarehouseManagement.Application.csproj", "{I4D5E6F7-G8H9-0I1J-2K3L-M4N5O6P7Q8R9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WarehouseManagement.EntityFrameworkCore", "src\WarehouseManagement.EntityFrameworkCore\WarehouseManagement.EntityFrameworkCore.csproj", "{J5E6F7G8-H9I0-1J2K-3L4M-N5O6P7Q8R9S0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WarehouseManagement.Web.Mvc", "src\WarehouseManagement.Web.Mvc\WarehouseManagement.Web.Mvc.csproj", "{K6F7G8H9-I0J1-2K3L-4M5N-O6P7Q8R9S0T1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WarehouseManagement.Tests", "tests\WarehouseManagement.Tests\WarehouseManagement.Tests.csproj", "{L7G8H9I0-J1K2-3L4M-5N6O-P7Q8R9S0T1U2}"
+EndProject
+
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{H3C4D5E6-F7G8-9H0I-1J2K-L3M4N5O6P7Q8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{H3C4D5E6-F7G8-9H0I-1J2K-L3M4N5O6P7Q8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{H3C4D5E6-F7G8-9H0I-1J2K-L3M4N5O6P7Q8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{H3C4D5E6-F7G8-9H0I-1J2K-L3M4N5O6P7Q8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{I4D5E6F7-G8H9-0I1J-2K3L-M4N5O6P7Q8R9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{I4D5E6F7-G8H9-0I1J-2K3L-M4N5O6P7Q8R9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{I4D5E6F7-G8H9-0I1J-2K3L-M4N5O6P7Q8R9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{I4D5E6F7-G8H9-0I1J-2K3L-M4N5O6P7Q8R9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{J5E6F7G8-H9I0-1J2K-3L4M-N5O6P7Q8R9S0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{J5E6F7G8-H9I0-1J2K-3L4M-N5O6P7Q8R9S0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{J5E6F7G8-H9I0-1J2K-3L4M-N5O6P7Q8R9S0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{J5E6F7G8-H9I0-1J2K-3L4M-N5O6P7Q8R9S0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{K6F7G8H9-I0J1-2K3L-4M5N-O6P7Q8R9S0T1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{K6F7G8H9-I0J1-2K3L-4M5N-O6P7Q8R9S0T1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{K6F7G8H9-I0J1-2K3L-4M5N-O6P7Q8R9S0T1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{K6F7G8H9-I0J1-2K3L-4M5N-O6P7Q8R9S0T1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{L7G8H9I0-J1K2-3L4M-5N6O-P7Q8R9S0T1U2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{L7G8H9I0-J1K2-3L4M-5N6O-P7Q8R9S0T1U2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{L7G8H9I0-J1K2-3L4M-5N6O-P7Q8R9S0T1U2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{L7G8H9I0-J1K2-3L4M-5N6O-P7Q8R9S0T1U2}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{H3C4D5E6-F7G8-9H0I-1J2K-L3M4N5O6P7Q8} = {F1A2B3C4-D5E6-7F8G-9H0I-J1K2L3M4N5O6}
+		{I4D5E6F7-G8H9-0I1J-2K3L-M4N5O6P7Q8R9} = {F1A2B3C4-D5E6-7F8G-9H0I-J1K2L3M4N5O6}
+		{J5E6F7G8-H9I0-1J2K-3L4M-N5O6P7Q8R9S0} = {F1A2B3C4-D5E6-7F8G-9H0I-J1K2L3M4N5O6}
+		{K6F7G8H9-I0J1-2K3L-4M5N-O6P7Q8R9S0T1} = {F1A2B3C4-D5E6-7F8G-9H0I-J1K2L3M4N5O6}
+		{L7G8H9I0-J1K2-3L4M-5N6O-P7Q8R9S0T1U2} = {G2B3C4D5-E6F7-8G9H-0I1J-K2L3M4N5O6P7}
+	EndGlobalSection
+EndGlobal

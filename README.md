@@ -13,7 +13,31 @@ Welcome to my software development portfolio! Here you'll find a selection of my
 
 ## 📱 Projects
 
-### 1. [📻 Entre Rios 105.5 FM - Radio App](./App%20mobile%20Rádio)
+### 1. [Fleet Management System - ASP.NET Core MVC](./FleetManagement-ASPNET-Core)
+**Enterprise fleet management system for transportation and logistics operations**
+
+Production-ready system for bulk hauling companies to manage vehicles, drivers, routes, shipments, and maintenance schedules. Built with Clean Architecture, full audit trails, and real-time tracking capabilities.
+
+**Tech Stack:** ASP.NET Core 8 MVC, C#, Entity Framework Core, SQL Server, JWT Authentication, AutoMapper, FluentValidation, xUnit, Docker
+**Status:** Production-ready
+
+[View Project](./FleetManagement-ASPNET-Core)
+
+---
+
+### 2. [Warehouse Management System - ASPNetZero](./WarehouseManagement-ASPNetZero)
+**Multi-tenant SaaS WMS with ASP.NET Boilerplate framework**
+
+Enterprise-grade warehouse management system built with ASPNetZero framework. Features multi-tenant architecture, inventory management, order processing, picking/packing workflows, background jobs, and granular permission system.
+
+**Tech Stack:** ASPNetZero 9.0, C#, ABP Framework, Entity Framework Core, SQL Server, Multi-Tenancy, Hangfire, SignalR
+**Status:** Production-ready
+
+[View Project](./WarehouseManagement-ASPNetZero)
+
+---
+
+### 3. [📻 Entre Rios 105.5 FM - Radio App](./App%20mobile%20Rádio)
 **Cross-platform mobile app built with Flutter**
 
 Full-featured radio streaming application with real-time news feed, podcast management, and WordPress backend integration.
@@ -25,7 +49,7 @@ Full-featured radio streaming application with real-time news feed, podcast mana
 
 ---
 
-### 2. [🤖 Two-Headed AI Trader](./IA%20de%20Duas%20Cabeças%20Trader%20-%20PYTHON)
+### 4. [🤖 Two-Headed AI Trader](./IA%20de%20Duas%20Cabeças%20Trader%20-%20PYTHON)
 **Automated trading system with Deep Reinforcement Learning**
 
 Advanced algorithmic trading bot using PPO (Proximal Policy Optimization) with dual-head architecture (Transformer + GRU) for financial markets.
@@ -37,7 +61,7 @@ Advanced algorithmic trading bot using PPO (Proximal Policy Optimization) with d
 
 ---
 
-### 3. [🌾 CropLink - Agricultural Management ERP](./ERP%20RURAL%20CropLink)
+### 5. [🌾 CropLink - Agricultural Management ERP](./ERP%20RURAL%20CropLink)
 **Complete farm management system built with Flask**
 
 Multi-tenant agricultural ERP with inventory control, machinery management, silos tracking, financial module, and HR management.
@@ -49,7 +73,7 @@ Multi-tenant agricultural ERP with inventory control, machinery management, silo
 
 ---
 
-### 4. [🏢 ARIE Properties - Wix Integration Widget](./Widget%20ARIE%20PROPERTIES%20WIX)
+### 6. [🏢 ARIE Properties - Wix Integration Widget](./Widget%20ARIE%20PROPERTIES%20WIX)
 **Custom Wix widget for financial consultation and payment management**
 
 Enterprise integration system between Wix platform and Sienge ERP API for invoice consultation and payment slip generation.
@@ -61,7 +85,7 @@ Enterprise integration system between Wix platform and Sienge ERP API for invoic
 
 ---
 
-### 5. [📰 Autonomous News Aggregation System](./Sistema%20de%20Notícias%20AUTONOMO%20-%20PHP)
+### 7. [📰 Autonomous News Aggregation System](./Sistema%20de%20Notícias%20AUTONOMO%20-%20PHP)
 **Advanced news aggregation with intelligent scraping** *(Proprietary - Showcase Only)*
 
 Enterprise-grade autonomous news platform with multi-source aggregation, anti-duplicate engine, and WordPress integration.
@@ -73,7 +97,7 @@ Enterprise-grade autonomous news platform with multi-source aggregation, anti-du
 
 ---
 
-### 6. [🎵 Radio Chart Tool - Music Management ERP](./ERP%20de%20download%20de%20Músicas%20automático)
+### 8. [🎵 Radio Chart Tool - Music Management ERP](./ERP%20de%20download%20de%20Músicas%20automático)
 **Automated music chart monitoring for radio stations** *(Proprietary - Showcase Only)*
 
 Music library management system with automated chart scraping, Spotify integration, and approval workflows.
@@ -85,7 +109,7 @@ Music library management system with automated chart scraping, Spotify integrati
 
 ---
 
-### 7. [💬 AWS Serverless AI Chatbot](./AWS-Serverless-Chatbot)
+### 9. [💬 AWS Serverless AI Chatbot](./AWS-Serverless-Chatbot)
 **Production-ready serverless chatbot with NLP and conversation persistence**
 
 Cloud-native AI chatbot built with AWS Lambda, API Gateway, and DynamoDB. Features intelligent intent detection, conversation history tracking, and auto-scaling serverless architecture.
@@ -97,7 +121,7 @@ Cloud-native AI chatbot built with AWS Lambda, API Gateway, and DynamoDB. Featur
 
 ---
 
-### 8. [📺 IPTV Streaming Aggregator](./IPTV-Streaming-Aggregator)
+### 10. [📺 IPTV Streaming Aggregator](./IPTV-Streaming-Aggregator)
 **Multi-source IPTV channel management & streaming platform** *(Proprietary - Showcase Only)*
 
 Enterprise IPTV management system built for OESCTV that aggregates 300+ channels from multiple third-party providers. Features UX-optimized admin dashboard with real-time stream health monitoring, achieving 68% faster task completion and 99.5% platform uptime.
@@ -109,7 +133,7 @@ Enterprise IPTV management system built for OESCTV that aggregates 300+ channels
 
 ---
 
-### 9. [SaaS RAG + Observability](./Saas%20Rag%20+%20Observabilidade)
+### 11. [SaaS RAG + Observability](./Saas%20Rag%20+%20Observabilidade)
 Production-oriented support assistant with retrieval augmented generation, tenant isolation, and OpenTelemetry tracing. Frontend in Next.js and backend in FastAPI, ships with fallback mode when no LLM key is set.
 
 **Tech Stack:** FastAPI, Python, OpenTelemetry, OpenAI (optional), Next.js, React, TypeScript, Docker
@@ -122,16 +146,21 @@ Production-oriented support assistant with retrieval augmented generation, tenan
 ## 🛠️ Technical Skills
 
 ### Languages & Frameworks
+- **C# / .NET**: ASP.NET Core 8 MVC, ASP.NET Core Web API, Entity Framework Core, ASPNetZero, ABP Framework, LINQ, Dapper
 - **Python**: Flask, FastAPI, PyTorch, Stable-Baselines3, Apache Beam, PySpark, BeautifulSoup, Scrapy, Celery
+- **PHP**: 8.2+, PSR-12, Composer, RESTful APIs, JWT Authentication
 - **Mobile**: Flutter, Dart
-- **Web**: JavaScript, React, HTML5, CSS3, PHP, Material-UI
+- **Web**: JavaScript, React, HTML5, CSS3, Material-UI
 - **CMS**: WORDPRESS (Elementor, Custom Plugins, Theme Development)
-- **Database**: PostgreSQL, MySQL, SQLite, Redis, BigQuery, ClickHouse, MongoDB, **Amazon Redshift**
-- **Cloud**: AWS (Lambda, API Gateway, DynamoDB, S3, RDS, EC2, Polly, CloudWatch, CloudFront, **EKS**, **ECR**, **Redshift**)
+- **Database**: PostgreSQL, MySQL, SQLite, Redis, BigQuery, ClickHouse, MongoDB, Amazon Redshift
+- **Cloud**: AWS (Lambda, API Gateway, DynamoDB, S3, RDS, EC2, Polly, CloudWatch, CloudFront, EKS, ECR, Redshift, **Bedrock**, **KMS**, **SQS**, **X-Ray**)
 - **Cloud**: GCP (BigQuery, Dataflow, Dataproc, Pub/Sub, Cloud Composer, Cloud Storage, Cloud Run, Vertex AI)
 
 ### Specialized Areas
-- **MLOps**: **MLflow** (experiment tracking, model registry, deployment), DVC, Optuna, Model Monitoring, A/B Testing, Continuous Training, Model Versioning
+- **.NET Development**: ASP.NET Core MVC, Web API, Clean Architecture, Repository Pattern, Unit of Work, Dependency Injection, ASPNetZero/ABP Framework, Multi-tenancy, Background Jobs (Hangfire)
+- **LLM Integration**: AWS Bedrock (Claude 3.5 Sonnet), OpenAI API (GPT-4), Google Gemini, Multi-provider abstraction, Intelligent routing
+- **LLMOps**: Quality evaluation (LLM-as-judge), Cost tracking and optimization, Anomaly detection, A/B testing, Model Context Protocol (MCP)
+- **MLOps**: MLflow (experiment tracking, model registry, deployment), DVC, Optuna, Model Monitoring, A/B Testing, Continuous Training, Model Versioning
 - **Data Engineering**: Apache Beam, Apache Spark, Apache Flink, Apache Kafka, dbt, Great Expectations
 - **Pipeline Orchestration**: Apache Airflow, Cloud Composer, DAG design, workflow management
 - **Data Quality**: Great Expectations, schema validation, automated testing, SLA monitoring
@@ -146,11 +175,13 @@ Production-oriented support assistant with retrieval augmented generation, tenan
 - **ERP Systems**: Multi-tenant architecture, inventory management, financial modules
 - **API Integration**: REST, Spotify, WordPress, Sienge, MetaTrader5
 - **DevOps**: Git, Docker, **Kubernetes**, Helm, Terraform, **CI/CD** (GitHub Actions, Jenkins, AWS CodePipeline), Monitoring (Prometheus, Grafana)
+- **Testing**: xUnit, Moq, FluentAssertions, AutoFixture, Shouldly, NSubstitute, Integration Testing, Unit Testing
 - **Agile Methodologies**: Scrum, Kanban, Sprint Planning, Daily Stand-ups, Retrospectives
+- **Transportation & Logistics Domain**: Fleet Management, Warehouse Management (WMS), Route Optimization, Inventory Control, Order Processing
 
 ---
 
-### 10. [Real-Time Analytics Pipeline](./Real-Time-Analytics-Pipeline)
+### 12. [Real-Time Analytics Pipeline](./Real-Time-Analytics-Pipeline)
 **Enterprise-grade streaming analytics platform for e-commerce monitoring**
 
 Production-ready data pipeline that processes 100K+ events/second with sub-second latency. Features Apache Kafka for ingestion, Apache Flink for stream processing, ClickHouse for OLAP analytics, and React dashboard with real-time WebSocket updates.
@@ -162,7 +193,7 @@ Production-ready data pipeline that processes 100K+ events/second with sub-secon
 
 ---
 
-### 11. [E-Commerce Microservices Platform](./Microservices-ECommerce-Platform)
+### 13. [E-Commerce Microservices Platform](./Microservices-ECommerce-Platform)
 **Distributed microservices architecture with Kubernetes orchestration**
 
 Complete e-commerce platform implementing microservices patterns including Event-Driven communication, Saga pattern for distributed transactions, Event Sourcing, and CQRS. Deployed on Kubernetes with Helm charts, featuring auto-scaling, health monitoring, and distributed tracing.
@@ -174,7 +205,7 @@ Complete e-commerce platform implementing microservices patterns including Event
 
 ---
 
-### 12. [GCP Data Engineering Platform](./GCP-DataEngineering-Platform)
+### 14. [GCP Data Engineering Platform](./GCP-DataEngineering-Platform)
 **Production-grade data engineering platform with comprehensive observability**
 
 End-to-end data platform on Google Cloud Platform featuring batch and streaming pipelines, automated data quality validation, and business intelligence integration. Implements industry best practices for pipeline monitoring, troubleshooting, and performance optimization.
@@ -186,7 +217,7 @@ End-to-end data platform on Google Cloud Platform featuring batch and streaming 
 
 ---
 
-### 13. [MLOps Platform with MLflow, Kubernetes & CI/CD](./MLOps-Platform-MLflow)
+### 15. [MLOps Platform with MLflow, Kubernetes & CI/CD](./MLOps-Platform-MLflow)
 **Enterprise MLOps platform with end-to-end ML lifecycle management**
 
 Production-grade MLOps platform implementing experiment tracking with MLflow, model registry, automated deployment on Kubernetes (AWS EKS), and comprehensive CI/CD pipelines. Features AWS Redshift integration for analytics, Prometheus/Grafana monitoring, and Agile workflow automation.
@@ -198,13 +229,41 @@ Production-grade MLOps platform implementing experiment tracking with MLflow, mo
 
 ---
 
+### 16. [Legal Document Analyzer with AWS Bedrock](./legal-doc-analyzer-bedrock)
+**Production-grade legal document analysis platform for public sector**
+
+Document analysis platform using AWS Bedrock (Claude 3.5 Sonnet) with high-volume async processing via SQS, Redis caching for cost optimization, comprehensive observability (CloudWatch, X-Ray), and enterprise security (KMS encryption, JWT auth). Features RESTful APIs, automated CI/CD, and complete infrastructure as code with Terraform.
+
+**Tech Stack:** PHP 8.2, AWS Bedrock (Claude 3.5 Sonnet), AWS (S3, SQS, KMS, CloudWatch, X-Ray), Redis, Terraform, GitHub Actions
+**Status:** Production-ready
+
+[View Project](./legal-doc-analyzer-bedrock)
+
+---
+
+### 17. [Multi-LLM Gateway with LLMOps & Model Context Protocol](./multi-llm-gateway)
+**Intelligent gateway for multiple LLM providers with cost optimization and quality monitoring**
+
+Multi-provider LLM gateway abstracting AWS Bedrock (Claude), OpenAI (GPT-4), and Google Gemini with intelligent cost-optimized routing, automatic failover, and comprehensive LLMOps. Implements Model Context Protocol (MCP 2024-11-05) for standardized tool calling, LLM-as-judge quality evaluation, anomaly detection, and real-time cost tracking.
+
+**Tech Stack:** PHP 8.2, AWS Bedrock, OpenAI API, Google Gemini, Model Context Protocol (MCP), Redis, CloudWatch
+**Status:** Production-ready
+
+[View Project](./multi-llm-gateway)
+
+---
+
 ## Portfolio Highlights
 
-- **13 Complete Projects** across different domains
-- **6 Production Systems** serving real users (including 1 live mobile app)
+- **17 Complete Projects** across different domains
+- **ASP.NET Core Expertise**: 2 production-ready systems (Fleet Management MVC + Warehouse Management with ASPNetZero)
+- **8 Production Systems** serving real users (including 1 live mobile app)
 - **3 Proprietary Systems** (code protected for IP)
+- **LLM Integration**: AWS Bedrock (Claude 3.5 Sonnet), OpenAI GPT-4, Google Gemini
+- **LLMOps**: Quality evaluation (LLM-as-judge), cost tracking, anomaly detection
+- **Model Context Protocol (MCP)**: Standardized tool calling and context management
 - **MLOps Excellence**: MLflow experiment tracking, model registry, automated deployment, CI/CD
-- **Multi-Cloud**: AWS (EKS, Redshift, Lambda) + GCP data platform experience
+- **Multi-Cloud**: AWS (Bedrock, EKS, Redshift, Lambda) + GCP data platform experience
 - **Kubernetes Expertise**: Container orchestration, Helm charts, auto-scaling, service mesh
 - **CI/CD Mastery**: GitHub Actions, automated testing, infrastructure as code
 - **Data Warehousing**: Amazon Redshift + BigQuery for analytics at scale
@@ -348,14 +407,18 @@ Assistente de suporte orientado a RAG com isolamento por tenant e tracing via Op
 
 ### Linguagens & Frameworks
 - **Python**: Flask, FastAPI, PyTorch, Stable-Baselines3, Apache Beam, PySpark, BeautifulSoup, Scrapy, Celery
+- **PHP**: 8.2+, PSR-12, Composer, APIs RESTful, Autenticação JWT
 - **Mobile**: Flutter, Dart
-- **Web**: JavaScript, React, HTML5, CSS3, PHP, Material-UI
+- **Web**: JavaScript, React, HTML5, CSS3, Material-UI
 - **CMS**: WORDPRESS (Elementor, Plugins Customizados, Desenvolvimento Temas)
-- **Database**: PostgreSQL, MySQL, SQLite, Redis, BigQuery, ClickHouse, MongoDB
-- **Cloud**: AWS (Lambda, API Gateway, DynamoDB, S3, RDS, EC2, Polly, CloudWatch, CloudFront)
+- **Database**: PostgreSQL, MySQL, SQLite, Redis, BigQuery, ClickHouse, MongoDB, Amazon Redshift
+- **Cloud**: AWS (Lambda, API Gateway, DynamoDB, S3, RDS, EC2, Polly, CloudWatch, CloudFront, EKS, ECR, Redshift, **Bedrock**, **KMS**, **SQS**, **X-Ray**)
 - **Cloud**: GCP (BigQuery, Dataflow, Dataproc, Pub/Sub, Cloud Composer, Cloud Storage, Cloud Run, Vertex AI)
 
 ### Áreas Especializadas
+- **Integração LLM**: AWS Bedrock (Claude 3.5 Sonnet), OpenAI API (GPT-4), Google Gemini, Abstração multi-provedor, Roteamento inteligente
+- **LLMOps**: Avaliação de qualidade (LLM-as-judge), Rastreamento e otimização de custos, Detecção de anomalias, Testes A/B, Model Context Protocol (MCP)
+- **MLOps**: MLflow (rastreamento de experimentos, registro de modelos, deployment), DVC, Optuna, Monitoramento de Modelos, Testes A/B, Treinamento Contínuo, Versionamento de Modelos
 - **Engenharia de Dados**: Apache Beam, Apache Spark, Apache Flink, Apache Kafka, dbt, Great Expectations
 - **Orquestração de Pipelines**: Apache Airflow, Cloud Composer, design de DAGs, gerenciamento de workflows
 - **Qualidade de Dados**: Great Expectations, validação de schema, testes automatizados, monitoramento SLA
@@ -420,13 +483,40 @@ Plataforma MLOps production-grade implementando rastreamento de experimentos com
 
 ---
 
+### 14. [Analisador de Documentos Jurídicos com AWS Bedrock](./legal-doc-analyzer-bedrock)
+**Plataforma de análise de documentos jurídicos para setor público**
+
+Plataforma de análise documental usando AWS Bedrock (Claude 3.5 Sonnet) com processamento assíncrono de alto volume via SQS, caching Redis para otimização de custos, observabilidade completa (CloudWatch, X-Ray), e segurança empresarial (encriptação KMS, autenticação JWT). Inclui APIs RESTful, CI/CD automatizado, e infraestrutura completa como código com Terraform.
+
+**Stack Técnica:** PHP 8.2, AWS Bedrock (Claude 3.5 Sonnet), AWS (S3, SQS, KMS, CloudWatch, X-Ray), Redis, Terraform, GitHub Actions
+**Status:** Pronto para produção
+
+[Ver Projeto](./legal-doc-analyzer-bedrock)
+
+---
+
+### 15. [Gateway Multi-LLM com LLMOps & Model Context Protocol](./multi-llm-gateway)
+**Gateway inteligente para múltiplos provedores de LLM com otimização de custos**
+
+Gateway multi-provedor abstraindo AWS Bedrock (Claude), OpenAI (GPT-4), e Google Gemini com roteamento inteligente otimizado por custo, failover automático, e LLMOps completo. Implementa Model Context Protocol (MCP 2024-11-05) para chamadas de ferramentas padronizadas, avaliação de qualidade com LLM-as-judge, detecção de anomalias, e rastreamento de custos em tempo real.
+
+**Stack Técnica:** PHP 8.2, AWS Bedrock, OpenAI API, Google Gemini, Model Context Protocol (MCP), Redis, CloudWatch
+**Status:** Pronto para produção
+
+[Ver Projeto](./multi-llm-gateway)
+
+---
+
 ## Destaques do Portfólio
 
-- **13 Projetos Completos** em diferentes domínios
-- **6 Sistemas em Produção** servindo usuários reais (incluindo 1 app mobile ao vivo)
+- **15 Projetos Completos** em diferentes domínios
+- **8 Sistemas em Produção** servindo usuários reais (incluindo 1 app mobile ao vivo)
 - **3 Sistemas Proprietários** (código protegido por PI)
+- **Integração LLM**: AWS Bedrock (Claude 3.5 Sonnet), OpenAI GPT-4, Google Gemini
+- **LLMOps**: Avaliação de qualidade (LLM-as-judge), rastreamento de custos, detecção de anomalias
+- **Model Context Protocol (MCP)**: Chamadas de ferramentas padronizadas e gerenciamento de contexto
 - **MLOps Excellence**: Rastreamento de experimentos MLflow, registro de modelos, deployment automatizado, CI/CD
-- **Multi-Cloud**: AWS (EKS, Redshift, Lambda) + plataforma de dados GCP
+- **Multi-Cloud**: AWS (Bedrock, EKS, Redshift, Lambda) + plataforma de dados GCP
 - **Expertise Kubernetes**: Orquestração de containers, Helm charts, auto-scaling, service mesh
 - **Maestria CI/CD**: GitHub Actions, testes automatizados, infraestrutura como código
 - **Data Warehousing**: Amazon Redshift + BigQuery para analytics em escala

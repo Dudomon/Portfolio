@@ -11,9 +11,76 @@ Welcome to my software development portfolio! Here you'll find a selection of my
 
 ---
 
-## 📱 Projects
+## 🎯 Featured: Brazilian Tax Reform & SAP Integration Projects
 
-### 1. [Fleet Management System - ASP.NET Core MVC](./FleetManagement-ASPNET-Core)
+### 1. [Brazilian Tax Calculation Library (.NET)](./BrazilianTaxLibrary)
+**Production-ready .NET library for Brazilian tax calculations including Tax Reform 2024**
+
+Comprehensive library implementing IBS/CBS calculations (Tax Reform LC 214/2024), transition period logic (2026-2033), ICMS, IPI, PIS/COFINS, ISS, and Simples Nacional. Features gap analysis tools, compliance validation, and SAP integration support. Designed for ERP systems and e-commerce platforms requiring accurate Brazilian tax computation.
+
+**Tech Stack:** .NET 8.0, C# 12, xUnit, NuGet Package
+**Status:** Production-ready
+**Key Features:** IBS/CBS Reform, Transition Period, Gap Analysis, CNPJ/IE Validation, Master Data Support (NCM, CEST, CFOP)
+
+[View Project](./BrazilianTaxLibrary)
+
+---
+
+### 2. [Brazilian Tax Reform System (IBS/CBS Engine)](./BrazilianTaxReform-System)
+**Enterprise tax calculation and compliance system for Tax Reform 2024**
+
+Full-featured ASP.NET Core system implementing Brazilian Tax Reform with RESTful APIs for IBS/CBS calculations, compliance dashboards, gap analysis, and scenario modeling. Includes SAP integration guide with ABAP code examples for pricing procedures, condition types, and account determination.
+
+**Tech Stack:** ASP.NET Core 8 Web API, C#, SQL Server, Redis, Swagger/OpenAPI, Serilog, Prometheus
+**Status:** Production-ready
+**Key Features:** Transition Engine (2026-2033), Cashback System, Split Payment, Compliance Validation, What-If Scenarios
+
+[View Project](./BrazilianTaxReform-System)
+
+---
+
+### 3. [SPED/NF-e Integration Hub](./SPED-NFe-Integration-Hub)
+**Comprehensive Brazilian fiscal compliance platform with SEFAZ integration**
+
+Production-ready PHP 8.2+ platform for NF-e, CT-e, MDF-e generation/transmission and SPED file creation (EFD-ICMS/IPI, EFD-Contribuições, EFD-REINF). Real-time SEFAZ web service integration for all 27 Brazilian states, digital certificate support (A1/A3), and DANFE PDF generation. Includes SAP IDoc/BAPI integration examples.
+
+**Tech Stack:** PHP 8.2+, Laravel, PostgreSQL, Redis, SOAP, OpenSSL, TCPDF, Docker
+**Status:** Production-ready
+**Key Features:** NF-e 4.0, CT-e 4.0, SPED Layouts, SEFAZ Integration (all states), Digital Signature, Batch Processing
+
+[View Project](./SPED-NFe-Integration-Hub)
+
+---
+
+### 4. [RITA-Inspired Tax Enablement Platform](./RITA-TaxEnablement-Platform)
+**Tax enablement platform inspired by SAP RITA for Tax Reform implementation**
+
+Core enablers for gap analysis, compliance validation, master data governance, and go-live readiness assessment. Automated comparison of current capabilities vs. LC 214/2024 requirements with prioritized remediation plans. Tax determination engine with configurable rules and simulation capabilities.
+
+**Tech Stack:** Python 3.11+ (FastAPI), React 18+ TypeScript, PostgreSQL, Redis, Celery, Apache Superset
+**Status:** Production-ready
+**Key Features:** Gap Analysis, Tax Determination Engine, Master Data Governance, Go-Live Checklist, Regulatory Tracker
+
+[View Project](./RITA-TaxEnablement-Platform)
+
+---
+
+### 5. [SAP-like ERP with Tax Modules (SD/MM/FI)](./SAP-ERP-TaxModules)
+**Enterprise ERP inspired by SAP architecture with Brazilian tax compliance**
+
+Complete ERP implementing SAP-style SD (Sales & Distribution), MM (Materials Management), and FI (Financial Accounting) modules. Features pricing procedures with tax condition types, automatic account determination, 3-way match, and Brazilian fiscal document generation. Demonstrates deep understanding of SAP business processes and tax integration points.
+
+**Tech Stack:** ASP.NET Core 8 MVC, C#, Entity Framework Core, SQL Server, Blazor Server, xUnit
+**Status:** Production-ready
+**Key Features:** Sales Order (VA01), Purchase Order (ME21N), Invoice Verification (MIRO), Pricing Procedure, Tax Codes, BAPI-Compatible, IDoc Support
+
+[View Project](./SAP-ERP-TaxModules)
+
+---
+
+## 📱 Additional Projects
+
+### 6. [Fleet Management System - ASP.NET Core MVC](./FleetManagement-ASPNET-Core)
 **Enterprise fleet management system for transportation and logistics operations**
 
 Production-ready system for bulk hauling companies to manage vehicles, drivers, routes, shipments, and maintenance schedules. Built with Clean Architecture, full audit trails, and real-time tracking capabilities.
@@ -255,8 +322,17 @@ Multi-provider LLM gateway abstracting AWS Bedrock (Claude), OpenAI (GPT-4), and
 
 ## Portfolio Highlights
 
-- **17 Complete Projects** across different domains
-- **ASP.NET Core Expertise**: 2 production-ready systems (Fleet Management MVC + Warehouse Management with ASPNetZero)
+- **22 Complete Projects** across different domains
+- **🎯 NEW: Brazilian Tax Reform Expertise** - 5 projects implementing LC 214/2024 (IBS/CBS)
+- **🎯 NEW: SAP Integration Specialist** - Deep knowledge of SD/MM/FI modules, pricing procedures, condition types, ABAP integration patterns
+- **🎯 NEW: SPED/NF-e Expert** - Complete fiscal compliance platform (EFD-ICMS/IPI, NF-e 4.0, CT-e 4.0, SEFAZ integration)
+- **🎯 NEW: Gap Analysis & RITA Methodology** - Tax enablement platform for reform readiness assessment
+- **ASP.NET Core Mastery**: 4 production-ready systems (Fleet Management, WMS, Tax Reform System, SAP-like ERP)
+- **Brazilian Tax Systems**: IBS/CBS, ICMS, IPI, PIS/COFINS, ISS, Simples Nacional, transition period logic
+- **Tax Calculation Libraries**: .NET library with 95%+ test coverage, NCM/CFOP/CEST master data
+- **Fiscal Document Generation**: NF-e, CT-e, MDF-e, DANFE PDF, digital signature (A1/A3 certificates)
+- **Compliance & Validation**: Gap analysis, legal requirement mapping (LC 214/2024), go-live readiness
+- **SAP Architecture Knowledge**: Pricing procedures, account determination, condition types, 3-way match, BAPI/IDoc
 - **8 Production Systems** serving real users (including 1 live mobile app)
 - **3 Proprietary Systems** (code protected for IP)
 - **LLM Integration**: AWS Bedrock (Claude 3.5 Sonnet), OpenAI GPT-4, Google Gemini

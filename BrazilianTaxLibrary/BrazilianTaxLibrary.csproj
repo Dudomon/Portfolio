@@ -1,0 +1,30 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <LangVersion>12.0</LangVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageId>BrazilianTaxLibrary</PackageId>
+    <Version>1.0.0</Version>
+    <Authors>Eduardo Lara Peiter</Authors>
+    <Company>Eduardo Peiter</Company>
+    <Description>Production-ready .NET library for Brazilian tax calculations including Tax Reform 2024 (IBS/CBS), ICMS, IPI, PIS/COFINS, ISS, and Simples Nacional. Designed for SAP integrations and ERP systems.</Description>
+    <PackageTags>brazil;tax;fiscal;icms;ipi;pis;cofins;iss;ibs;cbs;sap;erp;nfe;sped;tax-reform</PackageTags>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <RepositoryUrl>https://github.com/Dudomon/BrazilianTaxLibrary</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/Dudomon/BrazilianTaxLibrary</PackageProjectUrl>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Text.Json" Version="8.0.0" />
+  </ItemGroup>
+
+</Project>

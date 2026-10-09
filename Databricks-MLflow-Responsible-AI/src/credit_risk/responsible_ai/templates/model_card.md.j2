@@ -1,0 +1,135 @@
+# Model card: {{ card.model_name }}
+
+> Generated automatically on {{ card.generated_at.strftime("%Y-%m-%d %H:%M UTC") }} for the
+> candidate trained in MLflow run `{{ card.run_id }}`. The registered version that
+> carries this card points back to that run through its `source_run_id` tag.
+>
+> Trained on **synthetic, fictitious data** for a portfolio project. Do not use for
+> real lending decisions.
+
+## Intended use
+
+- **Task:** estimate the probability that a crop-financing loan to an agricultural
+  producer in Brazil defaults before maturity.
+- **Decision supported:** applications with a predicted probability of default at or
+  above **{{ card.evaluation.threshold | num }}** are flagged for decline or manual
+  review by a credit analyst. The score supports a human decision; it does not
+  replace it.
+- **Users:** rural credit analysts and the credit committee.
+
+## Out-of-scope uses
+
+- Fully automated declines without analyst review.
+- Pricing or credit-limit setting (the model was not validated for these).
+- Producers outside Brazil, non-agricultural loans, or products other than
+  seasonal and investment crop financing.
+
+## Training data
+
+| Item | Value |
+|---|---|
+| Source | `{{ card.inputs.training_data.source }}` |
+| Temporal cutoff (holdout starts) | {{ card.inputs.training_data.cutoff.isoformat() }} |
+| Training rows | {{ card.inputs.training_data.n_train }} |
+| Holdout rows | {{ card.inputs.training_data.n_holdout }} |
+| Training default rate | {{ card.inputs.training_data.train_default_rate | pct }} |
+| Holdout default rate | {{ card.inputs.training_data.holdout_default_rate | pct }} |
+
+**Features used ({{ card.features | length }}):** {{ card.features | join(", ") }}.
+
+**Excluded from training, used for evaluation only:**
+{{ card.excluded_attributes | join(", ") }}. Exclusion does not make the model
+fair by itself: proxies such as `rainfall_anomaly` (correlated with region) and
+`credit_history_months` (under-recorded for women) can carry the same information,
+which is why the fairness evaluation below is mandatory.
+
+## Hyperparameters
+
+| Parameter | Value |
+|---|---|
+{% for name, value in card.inputs.hyperparameters.items() %}
+| {{ name }} | {{ value | round(4) if value is float else value }} |
+{% endfor %}
+
+## Performance (holdout, most recent applications)
+
+| Metric | Value |
+|---|---|
+| ROC AUC | {{ card.evaluation.performance.roc_auc | num }} |
+| PR AUC | {{ card.evaluation.performance.pr_auc | num }} |
+| Brier score | {{ card.evaluation.performance.brier | num }} |
+| Expected calibration error | {{ card.evaluation.performance.ece | num }} |
+| Flag rate at threshold | {{ card.evaluation.performance.flag_rate | pct }} |
+| Observed default rate | {{ card.evaluation.performance.base_rate | pct }} |
+
+## Fairness
+
+Positive prediction = flagged (declined or sent to review). FPR is the share of
+producers who would have repaid but were flagged, the most direct harm.
+
+{% for attribute, summary in card.evaluation.fairness.items() %}
+### {{ attribute }}
+
+| Demographic parity difference | FPR difference | Equalized odds difference |
+|---|---|---|
+| {{ summary.demographic_parity_difference | num }} | {{ summary.false_positive_rate_difference | num }} | {{ summary.equalized_odds_difference | num }} |
+
+| Group | Count | Flag rate | TPR | FPR | Mean predicted | Observed rate |
+|---|---|---|---|---|---|---|
+{% set calibration = card.evaluation.calibration_by_group[attribute] %}
+{% for group, row in summary.by_group.iterrows() %}
+| {{ group }} | {{ row["count"] | int }} | {{ row["selection_rate"] | pct }} | {{ row["tpr"] | pct }} | {{ row["fpr"] | pct }} | {{ calibration.loc[group, "mean_predicted"] | pct }} | {{ calibration.loc[group, "observed_rate"] | pct }} |
+{% endfor %}
+
+{% endfor %}
+## Mitigation comparison
+
+Worst gap across all sensitive attributes, at the policy threshold.
+
+| Variant | Deployable | ROC AUC | Flag rate | Max FPR diff | Max EO diff | Note |
+|---|---|---|---|---|---|---|
+{% for m in card.inputs.mitigations %}
+| {{ m.name }} | {{ "yes" if m.deployable else "no" }} | {{ m.roc_auc | num }} | {{ m.flag_rate | pct }} | {{ m.max_false_positive_rate_difference | num }} | {{ m.max_equalized_odds_difference | num }} | {{ m.note }} |
+{% endfor %}
+
+## Explainability (mean |SHAP|, log-odds)
+
+| Feature | Mean absolute contribution |
+|---|---|
+{% for row in card.inputs.global_importance.itertuples() %}
+| {{ row.feature }} | {{ row.mean_abs_shap | num }} |
+{% endfor %}
+
+Per-application reason codes for the highest-risk holdout applications are logged
+as `explanations/local_reason_codes.json` in the same MLflow run.
+
+## Promotion gate (policy {{ card.gate.policy_version }})
+
+Result: **{{ "PASSED" if card.gate.passed else "FAILED" }}**
+
+| Check | Result | Observed | Threshold | Detail |
+|---|---|---|---|---|
+{% for check in card.gate.checks %}
+| {{ check.name }} | {{ "pass" if check.passed else "FAIL" }} | {{ check.observed | num if check.observed is not none else "n/a" }} | {{ check.threshold | num if check.threshold is not none else "n/a" }} | {{ check.detail }} |
+{% endfor %}
+
+## Known limitations
+
+- Labels for the Nordeste include drought-driven renegotiations recorded as
+  defaults (label bias). The model learns this pattern; reweighing reduces but
+  does not remove it. Correcting labels at the source is the real fix.
+- `credit_history_months` under-records history for women whose credit was
+  registered under a spouse (measurement bias).
+- Group metrics are estimated on finite samples; small groups have wide
+  uncertainty even when they pass `min_group_size`.
+- Climate shocks outside the training window (e.g. a severe El Niño year) can
+  invalidate the model quickly; drift monitoring is the early warning, not a fix.
+
+## Human oversight
+
+- Every flagged application is reviewed by a credit analyst, who can override the
+  score and must record a reason.
+- Promotion to `champion` in production requires a named approver after reading
+  this card; the gate result alone is necessary but not sufficient.
+- Override rates and fairness metrics by region, gender, and farm-size band are
+  monitored on the inference table; sustained divergence triggers a model review.

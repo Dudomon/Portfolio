@@ -1,0 +1,17 @@
+# Quality gates for `rag-eval`. A run fails (exit code 1) when any applicable metric is
+# below its minimum or could not be measured.
+#
+# These are starting values chosen from the design targets in docs/EVALUATION.md, not
+# from measured baselines. Once a baseline exists, set each gate a small margin below
+# it so that judge variance does not cause flaky failures while real regressions do.
+
+[retrieval]
+recall_at_5 = 0.90
+mrr = 0.75
+
+[generation]
+citation_precision = 0.90
+citation_recall = 0.80
+groundedness = 0.85
+answer_relevance = 0.75
+abstention_accuracy = 1.0

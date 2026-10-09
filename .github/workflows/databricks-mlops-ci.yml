@@ -1,0 +1,66 @@
+name: databricks-mlflow-responsible-ai
+
+on:
+  push:
+    paths:
+      - "Databricks-MLflow-Responsible-AI/**"
+      - '.github/workflows/databricks-mlops-ci.yml'
+  pull_request:
+    paths:
+      - "Databricks-MLflow-Responsible-AI/**"
+      - '.github/workflows/databricks-mlops-ci.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    working-directory: Databricks-MLflow-Responsible-AI
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      MLFLOW_DISABLE_AGENT_HINT: "1"
+      # Exposed as an env var so the step-level `if` can test for its presence;
+      # secrets cannot be referenced directly in `if` expressions.
+      DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
+      DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: Databricks-MLflow-Responsible-AI/pyproject.toml
+
+      - name: Install
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e ".[dev]"
+
+      - name: Ruff
+        run: |
+          ruff check src tests notebooks
+          ruff format --check src tests notebooks
+
+      - name: Mypy
+        run: mypy
+
+      - name: Pytest
+        run: pytest
+
+      - name: Install Databricks CLI
+        if: env.DATABRICKS_HOST != ''
+        # Databricks' documented reference; pin a commit SHA where immutable actions are required.
+        uses: databricks/setup-cli@main
+
+      - name: Bundle validate
+        if: env.DATABRICKS_HOST != ''
+        run: databricks bundle validate -t dev

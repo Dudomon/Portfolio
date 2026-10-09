@@ -1,0 +1,62 @@
+resources:
+  jobs:
+    # Human-approved promotion or rollback of @champion. Run on demand with:
+    #   databricks bundle run credit_risk_promote -t prod \
+    #     --params action=promote,version=7,approved_by=jane.doe@example.com
+    credit_risk_promote:
+      name: credit-risk-promote-${bundle.target}
+      description: Move @champion after human review of the model card (or roll back).
+      tags:
+        project: credit-risk-rai
+      max_concurrent_runs: 1
+      parameters:
+        - name: action
+          default: promote
+        - name: version
+          default: ""
+        - name: approved_by
+          default: ""
+      job_clusters:
+        - job_cluster_key: single_node
+          new_cluster: &single_node
+            spark_version: ${var.spark_version}
+            node_type_id: ${var.node_type_id}
+            num_workers: 0
+            data_security_mode: SINGLE_USER
+            spark_conf:
+              spark.databricks.cluster.profile: singleNode
+              spark.master: local[*]
+            custom_tags:
+              ResourceClass: SingleNode
+      tasks:
+        - task_key: promote
+          job_cluster_key: single_node
+          libraries:
+            - whl: ../dist/*.whl
+          notebook_task:
+            notebook_path: ../notebooks/08_promote_champion.py
+            base_parameters:
+              catalog: ${var.catalog}
+              schema: ${var.schema}
+              action: "{{job.parameters.action}}"
+              version: "{{job.parameters.version}}"
+              approved_by: "{{job.parameters.approved_by}}"
+
+    # Demo only: lands synthetic CSV files in the raw volume. Refuses prod catalogs.
+    credit_risk_seed_demo_data:
+      name: credit-risk-seed-demo-data-${bundle.target}
+      tags:
+        project: credit-risk-rai
+      job_clusters:
+        - job_cluster_key: single_node
+          new_cluster: *single_node
+      tasks:
+        - task_key: seed
+          job_cluster_key: single_node
+          libraries:
+            - whl: ../dist/*.whl
+          notebook_task:
+            notebook_path: ../notebooks/00_seed_synthetic_data.py
+            base_parameters:
+              catalog: ${var.catalog}
+              schema: ${var.schema}

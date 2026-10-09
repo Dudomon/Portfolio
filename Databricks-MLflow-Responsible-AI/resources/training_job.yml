@@ -1,0 +1,104 @@
+# ingest -> silver -> features -> train -> evaluate/gate -> (if passed) register
+resources:
+  jobs:
+    credit_risk_training:
+      name: credit-risk-training-${bundle.target}
+      description: Retrain the rural credit default model and run the promotion gate.
+      tags:
+        project: credit-risk-rai
+      max_concurrent_runs: 1
+      schedule:
+        # Weekly; development mode pauses schedules automatically.
+        quartz_cron_expression: "0 0 3 ? * MON"
+        timezone_id: America/Sao_Paulo
+      email_notifications:
+        on_failure:
+          - ${var.alert_email}
+      job_clusters:
+        - job_cluster_key: ml
+          new_cluster:
+            spark_version: ${var.spark_version}
+            node_type_id: ${var.node_type_id}
+            num_workers: 2
+            # ML runtimes with Unity Catalog require dedicated (single-user) access.
+            data_security_mode: SINGLE_USER
+            spark_env_vars:
+              MLFLOW_DISABLE_AGENT_HINT: "1"
+      tasks:
+        - task_key: ingest_bronze
+          job_cluster_key: ml
+          libraries: &wheel
+            - whl: ../dist/*.whl
+          notebook_task:
+            notebook_path: ../notebooks/01_ingest_bronze.py
+            base_parameters:
+              catalog: ${var.catalog}
+              schema: ${var.schema}
+              dataset: loan_applications
+
+        - task_key: build_silver
+          depends_on: [{ task_key: ingest_bronze }]
+          job_cluster_key: ml
+          libraries: *wheel
+          notebook_task:
+            notebook_path: ../notebooks/02_build_silver.py
+            base_parameters:
+              catalog: ${var.catalog}
+              schema: ${var.schema}
+              dataset: loan_applications
+              max_quarantine_rate: "0.05"
+
+        - task_key: publish_features
+          depends_on: [{ task_key: build_silver }]
+          job_cluster_key: ml
+          libraries: *wheel
+          notebook_task:
+            notebook_path: ../notebooks/03_publish_features.py
+            base_parameters:
+              catalog: ${var.catalog}
+              schema: ${var.schema}
+              dataset: loan_applications
+
+        - task_key: train
+          depends_on: [{ task_key: publish_features }]
+          job_cluster_key: ml
+          libraries: *wheel
+          notebook_task:
+            notebook_path: ../notebooks/04_train.py
+            base_parameters:
+              catalog: ${var.catalog}
+              schema: ${var.schema}
+              experiment_path: ${resources.experiments.credit_risk.name}
+              mitigation: reweighing
+              n_trials: ${var.n_trials}
+              policy_path: ${workspace.file_path}/conf/promotion_policy.yml
+
+        - task_key: evaluate_gate
+          depends_on: [{ task_key: train }]
+          job_cluster_key: ml
+          libraries: *wheel
+          notebook_task:
+            notebook_path: ../notebooks/05_evaluate_gate.py
+            base_parameters:
+              catalog: ${var.catalog}
+              schema: ${var.schema}
+              experiment_path: ${resources.experiments.credit_risk.name}
+              policy_path: ${workspace.file_path}/conf/promotion_policy.yml
+
+        - task_key: gate_passed
+          depends_on: [{ task_key: evaluate_gate }]
+          condition_task:
+            op: EQUAL_TO
+            left: "{{tasks.evaluate_gate.values.gate_passed}}"
+            right: "true"
+
+        - task_key: register
+          depends_on: [{ task_key: gate_passed, outcome: "true" }]
+          job_cluster_key: ml
+          libraries: *wheel
+          notebook_task:
+            notebook_path: ../notebooks/06_register.py
+            base_parameters:
+              catalog: ${var.catalog}
+              schema: ${var.schema}
+              auto_promote: ${var.auto_promote}

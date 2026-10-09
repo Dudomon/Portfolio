@@ -1,0 +1,45 @@
+# Promotion policy for the rural credit default model.
+#
+# Changing any value here is a governance change: bump `version`, get review from
+# the model risk owner, and record the rationale in the pull request. The version
+# string is stamped on every gate decision in MLflow and in the Delta audit table.
+version: "2026.10-1"
+
+# Probability of default at or above which an application is flagged
+# (declined or routed to manual review). Fairness metrics are only meaningful
+# at an operating point, so the threshold belongs to the policy, not the model.
+decision_threshold: 0.20
+
+performance:
+  primary_metric: roc_auc
+  min_value: 0.70
+  max_degradation_vs_champion: 0.01
+
+calibration:
+  # Expected calibration error, 10 equal-width bins.
+  max_ece: 0.05
+
+fairness:
+  attributes: [region, gender, farm_size_band]
+  # Gap in flag (decline) rates between the most- and least-flagged group.
+  max_demographic_parity_difference: 0.08
+  # Gap in the share of would-be repayers who are flagged. Primary harm metric.
+  max_false_positive_rate_difference: 0.05
+  # Larger of the TPR and FPR gaps. Looser backstop: each group has only a few
+  # hundred defaults in the holdout, so TPR estimates are noisy.
+  max_equalized_odds_difference: 0.25
+  min_group_size: 300
+  # Allowed widening of the FPR gap versus the current champion.
+  max_regression_vs_champion: 0.02
+
+drift:
+  # Population Stability Index, training window vs holdout window.
+  # 0.10-0.25 is conventionally "moderate" shift; above 0.25 is "significant".
+  max_psi: 0.25
+  features:
+    - loan_to_revenue
+    - installment_to_revenue
+    - interest_rate
+    - credit_history_months
+    - rainfall_anomaly
+    - farm_size_ha

@@ -1,0 +1,84 @@
+[project]
+name = "rag-platform"
+version = "0.1.0"
+description = "Multi-agent RAG knowledge assistant over enterprise policy and ERP documentation, built on Azure OpenAI and Azure AI Search."
+readme = "README.md"
+requires-python = ">=3.12"
+license = { text = "MIT" }
+dependencies = [
+    "azure-identity>=1.19",
+    "azure-monitor-opentelemetry>=1.6",
+    "azure-search-documents>=11.5.2",
+    "fastapi>=0.115",
+    "openai>=3.27,<4",
+    "opentelemetry-api>=1.28",
+    "opentelemetry-sdk>=1.28",
+    "pydantic>=2.9",
+    "pydantic-settings>=2.6",
+    "pypdf>=5.1",
+    "uvicorn[standard]>=0.32",
+]
+
+[project.scripts]
+rag-ingest = "rag_platform.ingestion.cli:main"
+rag-eval = "rag_platform.evaluation.cli:main"
+
+[dependency-groups]
+dev = [
+    "httpx>=0.27",
+    "httpx2>=2.12",
+    "mypy>=1.13",
+    "pytest>=8.3",
+    "pytest-asyncio>=0.24",
+    "ruff>=0.8",
+]
+
+[build-system]
+requires = ["hatchling>=1.25"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/rag_platform"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = [
+    "E", "W", "F", "I", "B", "UP", "N", "S", "SIM", "RUF", "ASYNC", "PT", "RET", "PL", "TRY", "C4", "PTH",
+]
+ignore = [
+    "PLR0913", # agent constructors take explicit collaborators by design
+    "TRY003",  # contextual exception messages are more useful than bespoke subclasses
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["S101", "PLR2004", "S105", "S106"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["rag_platform"]
+known-local-folder = ["conftest"]
+
+[tool.ruff.lint.pylint]
+max-args = 8
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+files = ["src", "tests"]
+mypy_path = "src,tests"
+warn_unreachable = true
+plugins = ["pydantic.mypy"]
+
+[tool.pydantic-mypy]
+init_forbid_extra = true
+init_typed = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
+addopts = "-ra --strict-markers"
+filterwarnings = ["error::RuntimeWarning"]

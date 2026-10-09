@@ -1,0 +1,99 @@
+[build-system]
+requires = ["hatchling>=1.25"]
+build-backend = "hatchling.build"
+
+[project]
+name = "credit-risk-rai"
+version = "0.1.0"
+description = "Rural credit risk scoring on Databricks with MLflow governance and responsible-AI checks (portfolio project, synthetic data)."
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+# Core dependencies are pure-Python or wheel-only and already present on the
+# Databricks ML runtime, so installing the bundle wheel on a cluster does not
+# pull a second copy of anything heavy.
+dependencies = [
+    "numpy>=1.26",
+    "pandas>=2.2",
+    "scikit-learn>=1.5",
+    "fairlearn>=0.11",
+    "jinja2>=3.1",
+    "pyyaml>=6.0",
+]
+
+[project.optional-dependencies]
+# Modeling stack. Preinstalled on Databricks Runtime ML; needed for local runs.
+ml = [
+    "lightgbm>=4.3",
+    "shap>=0.46",
+    "optuna>=3.6",
+    "mlflow>=3.1",
+]
+# Only meaningful inside a Databricks workspace (Spark I/O and Feature Engineering).
+databricks = [
+    "databricks-feature-engineering>=0.10",
+    "databricks-sdk>=0.40",
+]
+dev = [
+    "credit-risk-rai[ml]",
+    "pytest>=8.3",
+    "ruff>=0.8",
+    "mypy>=1.13",
+    "pandas-stubs>=2.2",
+    "types-PyYAML>=6.0",
+    "build>=1.2",
+]
+
+[project.scripts]
+credit-risk-local = "credit_risk.cli:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/credit_risk"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "W", "F", "I", "B", "UP", "SIM", "N", "RUF", "PTH", "PL", "NPY", "PD"]
+ignore = [
+    "PLR0913",  # explicit keyword arguments are clearer than config bags for pipeline entry points
+    "PLR2004",  # thresholds in tests are the point of the test
+    "N812",     # `functions as F` is the PySpark convention
+    "PLC0415",  # heavy optional deps (lightgbm, shap, optuna, Databricks SDKs) are imported lazily
+]
+
+[tool.ruff.lint.per-file-ignores]
+# Databricks notebooks rely on injected globals (spark, dbutils) and cell-level imports.
+"notebooks/*.py" = ["F821", "E402"]
+# Table-driven gate tests take one positional argument per table column.
+"tests/test_gate_policy.py" = ["PLR0917"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+mypy_path = "src"
+packages = ["credit_risk"]
+warn_unreachable = true
+
+[[tool.mypy.overrides]]
+module = [
+    "lightgbm.*",
+    "shap.*",
+    "fairlearn.*",
+    "optuna.*",
+    "sklearn.*",
+    "pyspark.*",
+    "databricks.*",
+    "mlflow.*",
+]
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+addopts = "-ra --strict-markers"
+filterwarnings = [
+    "error::FutureWarning:credit_risk.*",
+]

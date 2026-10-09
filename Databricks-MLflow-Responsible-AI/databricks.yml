@@ -1,0 +1,99 @@
+# Databricks Asset Bundle for the rural credit risk model.
+#
+# One bundle, three targets. Each target maps to its own Unity Catalog catalog,
+# so dev experiments, staging validation, and production scoring never share
+# tables or registered models. Promotion between aliases happens inside a
+# catalog; promotion between environments happens by deploying the same code.
+
+bundle:
+  name: credit-risk-rai
+
+include:
+  - resources/*.yml
+
+artifacts:
+  credit_risk_wheel:
+    type: whl
+    build: python -m build --wheel
+    path: .
+
+variables:
+  catalog:
+    description: Unity Catalog catalog for this target (must already exist).
+  schema:
+    description: Schema created by the bundle inside the catalog.
+    default: credit_risk
+  auto_promote:
+    description: Move @champion automatically when the gate passes ("true" outside prod).
+    default: "false"
+  spark_version:
+    description: Databricks Runtime ML (ships MLflow, LightGBM, SHAP, Feature Engineering).
+    default: 16.4.x-cpu-ml-scala2.12
+  node_type_id:
+    description: Worker type; cloud-specific (this default is Azure).
+    default: Standard_D4ds_v5
+  n_trials:
+    description: Optuna trials per training run.
+    default: "25"
+  serving_model_version:
+    description: Model version served by the endpoint (serving cannot resolve aliases).
+    default: "1"
+  service_principal:
+    description: Application ID of the service principal that runs production jobs.
+    default: ""
+  alert_email:
+    description: Recipient of job failure notifications.
+    default: ${workspace.current_user.userName}
+
+targets:
+  dev:
+    mode: development
+    default: true
+    variables:
+      catalog: dev_credit
+      # Per-developer schema so concurrent developers do not overwrite each other.
+      schema: credit_risk_${workspace.current_user.short_name}
+      auto_promote: "true"
+      n_trials: "10"
+
+  staging:
+    workspace:
+      root_path: /Workspace/Shared/.bundle/${bundle.name}/${bundle.target}
+    variables:
+      catalog: staging_credit
+      auto_promote: "true"
+    resources:
+      model_serving_endpoints:
+        credit_risk_endpoint: &serving_endpoint
+          name: credit-risk-${bundle.target}
+          config:
+            served_entities:
+              - name: champion
+                entity_name: ${var.catalog}.${var.schema}.rural_credit_default
+                entity_version: ${var.serving_model_version}
+                workload_size: Small
+                scale_to_zero_enabled: true
+          ai_gateway:
+            # Request/response payloads land in a Delta table for audit and monitoring.
+            inference_table_config:
+              enabled: true
+              catalog_name: ${var.catalog}
+              schema_name: ${var.schema}
+              table_name_prefix: credit_risk_endpoint
+          tags:
+            - key: project
+              value: credit-risk-rai
+
+  prod:
+    mode: production
+    workspace:
+      root_path: /Workspace/Shared/.bundle/${bundle.name}/${bundle.target}
+    run_as:
+      service_principal_name: ${var.service_principal}
+    variables:
+      catalog: prod_credit
+      # Production promotions are human-approved (job: credit-risk-promote).
+      auto_promote: "false"
+    resources:
+      model_serving_endpoints:
+        credit_risk_endpoint: *serving_endpoint

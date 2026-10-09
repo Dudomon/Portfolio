@@ -1,0 +1,65 @@
+name: azure-ai-multi-agent-rag-platform
+
+on:
+  push:
+    paths:
+      - 'Azure-AI-Multi-Agent-RAG-Platform/**'
+      - '.github/workflows/azure-rag-ci.yml'
+  pull_request:
+    paths:
+      - 'Azure-AI-Multi-Agent-RAG-Platform/**'
+      - '.github/workflows/azure-rag-ci.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    working-directory: Azure-AI-Multi-Agent-RAG-Platform
+
+jobs:
+  python:
+    name: Lint, type-check and test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: astral-sh/setup-uv@v6
+        with:
+          python-version: '3.12'
+          enable-cache: true
+          cache-dependency-glob: Azure-AI-Multi-Agent-RAG-Platform/uv.lock
+
+      - name: Install locked dependencies
+        run: uv sync --frozen
+
+      - name: Ruff lint
+        run: uv run ruff check .
+
+      - name: Ruff format check
+        run: uv run ruff format --check .
+
+      - name: Mypy (strict)
+        run: uv run mypy
+
+      - name: Pytest (fakes only, no Azure credentials)
+        run: uv run pytest
+
+      - name: Offline retrieval baseline (BM25, no Azure)
+        run: uv run rag-eval --mode retrieval --offline --out evals/reports/offline-retrieval.md
+
+  bicep:
+    name: Validate Bicep
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Build Bicep templates
+        run: |
+          az bicep install
+          az bicep build --file infra/main.bicep --stdout > /dev/null
+          az bicep lint --file infra/main.bicep

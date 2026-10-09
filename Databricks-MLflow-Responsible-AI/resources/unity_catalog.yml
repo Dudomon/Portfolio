@@ -1,0 +1,32 @@
+# Unity Catalog objects owned by the bundle. The catalog itself is created by the
+# platform team; the bundle owns everything below it for its target.
+resources:
+  schemas:
+    credit_risk:
+      catalog_name: ${var.catalog}
+      name: ${var.schema}
+      comment: Rural credit risk scoring (synthetic data, portfolio project).
+
+  volumes:
+    raw:
+      catalog_name: ${var.catalog}
+      schema_name: ${resources.schemas.credit_risk.name}
+      name: raw
+      volume_type: MANAGED
+      comment: Landing zone watched by Auto Loader.
+
+  registered_models:
+    rural_credit_default:
+      catalog_name: ${var.catalog}
+      schema_name: ${resources.schemas.credit_risk.name}
+      name: rural_credit_default
+      comment: >-
+        P(default) for crop-financing loans. Promotion only via aliases
+        (@challenger, @champion, @previous_champion) under the policy in
+        conf/promotion_policy.yml.
+
+  experiments:
+    credit_risk:
+      # Development mode prefixes the name per developer; jobs reference the
+      # resolved name, so they always log to the right experiment.
+      name: /Shared/credit-risk-rai-${bundle.target}

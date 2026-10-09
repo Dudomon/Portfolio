@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.venv/
+venv/
+
+# Tooling caches
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Databricks Asset Bundles local state
+.databricks/
+
+# Local MLflow tracking and artifacts produced by `credit-risk-local`
+mlruns/
+mlartifacts/
+mlflow.db
+.local_run/
+
+# Editors / OS
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db

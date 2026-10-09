@@ -88,6 +88,7 @@ jobs:
     needs: [web, api, worker]
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         context: [LedgerFlow/apps/web, LedgerFlow/services/api, LedgerFlow/services/worker]
     steps:

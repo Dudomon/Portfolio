@@ -1,9 +1,11 @@
-name: ci
+name: ledgerflow-ci
 
 on:
   push:
     branches: [main]
+    paths: ['LedgerFlow/**', '.github/workflows/ledgerflow-ci.yml']
   pull_request:
+    paths: ['LedgerFlow/**', '.github/workflows/ledgerflow-ci.yml']
 
 concurrency:
   group: ci-${{ github.ref }}
@@ -13,36 +15,18 @@ permissions:
   contents: read
 
 jobs:
-  changes:
-    runs-on: ubuntu-latest
-    outputs:
-      web: ${{ steps.filter.outputs.web }}
-      api: ${{ steps.filter.outputs.api }}
-      worker: ${{ steps.filter.outputs.worker }}
-    steps:
-      - uses: actions/checkout@v4
-      - uses: dorny/paths-filter@v3
-        id: filter
-        with:
-          filters: |
-            web: ['apps/web/**', 'docs/CONTRACTS.md']
-            api: ['services/api/**', 'docs/CONTRACTS.md']
-            worker: ['services/worker/**', 'docs/CONTRACTS.md']
-
   web:
-    needs: changes
-    if: needs.changes.outputs.web == 'true'
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: apps/web
+        working-directory: LedgerFlow/apps/web
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 24
           cache: npm
-          cache-dependency-path: apps/web/package-lock.json
+          cache-dependency-path: LedgerFlow/apps/web/package-lock.json
       - run: npm ci
       - run: npm run typecheck
       - run: npm run lint
@@ -52,12 +36,10 @@ jobs:
       - run: npm run build-storybook
 
   api:
-    needs: changes
-    if: needs.changes.outputs.api == 'true'
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: services/api
+        working-directory: LedgerFlow/services/api
     services:
       postgres:
         image: postgres:16.4-alpine
@@ -85,32 +67,29 @@ jobs:
       - run: uv run pytest
 
   worker:
-    needs: changes
-    if: needs.changes.outputs.worker == 'true'
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: services/worker
+        working-directory: LedgerFlow/services/worker
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-go@v5
         with:
-          go-version-file: services/worker/go.mod
-          cache-dependency-path: services/worker/go.sum
+          go-version-file: LedgerFlow/services/worker/go.mod
+          cache-dependency-path: LedgerFlow/services/worker/go.sum
       - run: go vet ./...
       - run: go test -race -count=1 ./...
       - uses: golangci/golangci-lint-action@v8
         with:
           version: v2.1
-          working-directory: services/worker
+          working-directory: LedgerFlow/services/worker
 
   images:
     needs: [web, api, worker]
-    if: ${{ !failure() && !cancelled() }}
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        context: [apps/web, services/api, services/worker]
+        context: [LedgerFlow/apps/web, LedgerFlow/services/api, LedgerFlow/services/worker]
     steps:
       - uses: actions/checkout@v4
       - uses: docker/setup-buildx-action@v3

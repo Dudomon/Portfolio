@@ -1,0 +1,30 @@
+.frame {
+  display: block;
+  width: 100%;
+  height: min(78dvh, 60rem);
+  min-height: 24rem;
+  overflow: auto;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface-sunken);
+}
+
+.image {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* Not height-capped: a nested scroll area would need its own keyboard focus. */
+.xml {
+  margin: 0;
+  padding: var(--space-4);
+  overflow: auto;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface-sunken);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  white-space: pre-wrap;
+  word-break: break-all;
+}

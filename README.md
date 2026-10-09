@@ -1,4 +1,4 @@
-﻿# Eduardo Peiter Software Development Portfolio
+# Eduardo Peiter Software Development Portfolio
 
 [English](#english) | [Português](#português)
 
@@ -28,11 +28,13 @@ This repository is my software development portfolio. It contains a curated set 
 
 ### Featured projects
 
-1. Azure AI Multi Agent RAG Platform `Azure-AI-Multi-Agent-RAG-Platform`
+1. LedgerFlow: AI Document Intake for ERP Modernization `LedgerFlow`
+   * React + TypeScript review workbench with an in-house component library, FastAPI + PostgreSQL (RLS, transactional outbox), Go worker extracting NF-e / invoice fields via rules and LLM structured output
+2. Azure AI Multi Agent RAG Platform `Azure-AI-Multi-Agent-RAG-Platform`
    * Azure OpenAI, Azure AI Search, agentic orchestration, telemetry, evaluation design
-2. NestJS AI Gateway and Next.js Dashboard `NestJS-AI-Gateway-Dashboard`
+3. NestJS AI Gateway and Next.js Dashboard `NestJS-AI-Gateway-Dashboard`
    * TypeScript first gateway, provider abstraction, SDK, UI surface
-3. Databricks MLOps with MLflow and Responsible AI `Databricks-MLflow-Responsible-AI`
+4. Databricks MLOps with MLflow and Responsible AI `Databricks-MLflow-Responsible-AI`
    * Lakehouse workflow, MLflow patterns, bias testing, explainability documentation
 
 ### Enterprise tax and SAP focused projects
@@ -96,11 +98,13 @@ Este repositório é o meu portfólio de desenvolvimento. Ele contém um conjunt
 
 ### Projetos em destaque
 
-1. Plataforma RAG Multi Agent com Azure `Azure-AI-Multi-Agent-RAG-Platform`
+1. LedgerFlow: Captura de Documentos com IA para Modernização de ERP `LedgerFlow`
+   * Workbench de revisão em React + TypeScript com biblioteca de componentes própria, FastAPI + PostgreSQL (RLS, transactional outbox), worker em Go extraindo campos de NF-e / faturas com regras e LLM com saída estruturada
+2. Plataforma RAG Multi Agent com Azure `Azure-AI-Multi-Agent-RAG-Platform`
    * Azure OpenAI, Azure AI Search, orquestração com agentes, telemetria, desenho de avaliação
-2. Gateway de IA com NestJS e Dashboard com Next.js `NestJS-AI-Gateway-Dashboard`
+3. Gateway de IA com NestJS e Dashboard com Next.js `NestJS-AI-Gateway-Dashboard`
    * Gateway TypeScript, abstração de provedores, SDK, superfície de UI
-3. MLOps com Databricks, MLflow e Responsible AI `Databricks-MLflow-Responsible-AI`
+4. MLOps com Databricks, MLflow e Responsible AI `Databricks-MLflow-Responsible-AI`
    * Lakehouse, padrões de MLflow, testes de viés, documentação de explicabilidade
 
 ### Projetos empresariais de impostos e integração com SAP
@@ -138,4 +142,4 @@ Alguns projetos são proprietários e mostram somente documentação. O código 
 * Localização: Brasil
 * Idiomas: Português nativo, Inglês profissional
 
-Last update: 2025-12-30
+Last update: 2026-10-09

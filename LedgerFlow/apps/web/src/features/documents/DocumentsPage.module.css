@@ -1,0 +1,43 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.title {
+  font-size: var(--text-2xl);
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-tight);
+}
+
+.muted {
+  color: var(--color-text-muted);
+}
+
+.fileCell {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  max-width: 22rem;
+}
+
+.fileName {
+  overflow: hidden;
+  color: var(--color-text);
+  font-weight: var(--weight-medium);
+  text-decoration: none;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.fileName:hover {
+  text-decoration: underline;
+}

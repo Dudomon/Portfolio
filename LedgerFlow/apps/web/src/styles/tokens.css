@@ -1,0 +1,157 @@
+/*
+ * Design tokens. Components reference semantic tokens (--color-surface, --color-text-muted…),
+ * never the raw palette, so themes only need to remap the semantic layer.
+ */
+:root {
+  /* Palette */
+  --blue-50: #eef3ff;
+  --blue-100: #dbe5ff;
+  --blue-500: #3b6cf0;
+  --blue-600: #1f4fd1;
+  --blue-700: #1a40a8;
+  --gray-0: #ffffff;
+  --gray-25: #fafbfc;
+  --gray-50: #f4f6f8;
+  --gray-100: #e9edf1;
+  --gray-200: #d7dde4;
+  --gray-400: #9aa5b1;
+  --gray-500: #6b7785;
+  --gray-700: #3a4450;
+  --gray-800: #232a33;
+  --gray-850: #1a2029;
+  --gray-900: #12161c;
+  --gray-950: #0b0e12;
+  --green-100: #dcf5e6;
+  --green-600: #1c8a4c;
+  --green-300: #6fd29a;
+  --amber-100: #fff1d1;
+  --amber-600: #a86400;
+  --amber-300: #f2bd5a;
+  --red-100: #fde2e1;
+  --red-600: #c4302b;
+  --red-300: #f28b86;
+
+  /* Typography */
+  --font-sans: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, 'Cascadia Code', Consolas, monospace;
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-md: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.375rem;
+  --text-2xl: 1.75rem;
+  --leading-tight: 1.25;
+  --leading-normal: 1.5;
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --weight-semibold: 600;
+
+  /* Spacing (4px grid) */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+
+  /* Shape & motion */
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 10px;
+  --radius-full: 999px;
+  --duration-fast: 120ms;
+  --duration-normal: 200ms;
+  --easing-standard: cubic-bezier(0.2, 0, 0, 1);
+  --control-height-sm: 2rem;
+  --control-height-md: 2.5rem;
+  --focus-ring-width: 2px;
+  --z-dialog: 100;
+  --z-toast: 200;
+
+  /* Semantic: light theme */
+  color-scheme: light;
+  --color-bg: var(--gray-25);
+  --color-surface: var(--gray-0);
+  --color-surface-sunken: var(--gray-50);
+  --color-surface-hover: var(--gray-50);
+  --color-border: var(--gray-200);
+  --color-border-strong: var(--gray-400);
+  --color-text: var(--gray-900);
+  --color-text-muted: var(--gray-500);
+  --color-text-inverse: var(--gray-0);
+  --color-accent: var(--blue-600);
+  --color-accent-hover: var(--blue-700);
+  --color-accent-subtle: var(--blue-50);
+  --color-focus: var(--blue-500);
+  --color-success: var(--green-600);
+  --color-success-subtle: var(--green-100);
+  --color-warning: var(--amber-600);
+  --color-warning-subtle: var(--amber-100);
+  --color-danger: var(--red-600);
+  --color-danger-subtle: var(--red-100);
+  --color-overlay: rgb(18 22 28 / 0.45);
+  --color-skeleton: var(--gray-100);
+  --color-skeleton-highlight: var(--gray-50);
+  --shadow-sm: 0 1px 2px rgb(18 22 28 / 0.06);
+  --shadow-lg: 0 12px 32px rgb(18 22 28 / 0.18);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    color-scheme: dark;
+    --color-bg: var(--gray-950);
+    --color-surface: var(--gray-900);
+    --color-surface-sunken: var(--gray-950);
+    --color-surface-hover: var(--gray-850);
+    --color-border: var(--gray-800);
+    --color-border-strong: var(--gray-700);
+    --color-text: var(--gray-50);
+    --color-text-muted: var(--gray-400);
+    --color-text-inverse: var(--gray-950);
+    --color-accent: var(--blue-500);
+    --color-accent-hover: #5b85f5;
+    --color-accent-subtle: rgb(59 108 240 / 0.16);
+    --color-focus: #7c9df7;
+    --color-success: var(--green-300);
+    --color-success-subtle: rgb(111 210 154 / 0.14);
+    --color-warning: var(--amber-300);
+    --color-warning-subtle: rgb(242 189 90 / 0.14);
+    --color-danger: var(--red-300);
+    --color-danger-subtle: rgb(242 139 134 / 0.14);
+    --color-overlay: rgb(0 0 0 / 0.6);
+    --color-skeleton: var(--gray-800);
+    --color-skeleton-highlight: var(--gray-850);
+    --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.4);
+    --shadow-lg: 0 12px 32px rgb(0 0 0 / 0.5);
+  }
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --color-bg: var(--gray-950);
+  --color-surface: var(--gray-900);
+  --color-surface-sunken: var(--gray-950);
+  --color-surface-hover: var(--gray-850);
+  --color-border: var(--gray-800);
+  --color-border-strong: var(--gray-700);
+  --color-text: var(--gray-50);
+  --color-text-muted: var(--gray-400);
+  --color-text-inverse: var(--gray-950);
+  --color-accent: var(--blue-500);
+  --color-accent-hover: #5b85f5;
+  --color-accent-subtle: rgb(59 108 240 / 0.16);
+  --color-focus: #7c9df7;
+  --color-success: var(--green-300);
+  --color-success-subtle: rgb(111 210 154 / 0.14);
+  --color-warning: var(--amber-300);
+  --color-warning-subtle: rgb(242 189 90 / 0.14);
+  --color-danger: var(--red-300);
+  --color-danger-subtle: rgb(242 139 134 / 0.14);
+  --color-overlay: rgb(0 0 0 / 0.6);
+  --color-skeleton: var(--gray-800);
+  --color-skeleton-highlight: var(--gray-850);
+  --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.4);
+  --shadow-lg: 0 12px 32px rgb(0 0 0 / 0.5);
+}

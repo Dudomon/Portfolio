@@ -1,0 +1,45 @@
+.callout {
+  --callout-color: var(--color-accent);
+  --callout-bg: var(--color-accent-subtle);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  border-left: 3px solid var(--callout-color);
+  border-radius: var(--radius-md);
+  background: var(--callout-bg);
+}
+
+.warning {
+  --callout-color: var(--color-warning);
+  --callout-bg: var(--color-warning-subtle);
+}
+
+.danger {
+  --callout-color: var(--color-danger);
+  --callout-bg: var(--color-danger-subtle);
+}
+
+.success {
+  --callout-color: var(--color-success);
+  --callout-bg: var(--color-success-subtle);
+}
+
+.body {
+  min-width: 0;
+}
+
+.title {
+  font-weight: var(--weight-semibold);
+}
+
+.content {
+  color: var(--color-text-muted);
+}
+
+.actions {
+  display: flex;
+  gap: var(--space-2);
+}

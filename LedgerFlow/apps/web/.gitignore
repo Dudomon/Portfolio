@@ -1,0 +1,11 @@
+node_modules/
+dist/
+storybook-static/
+coverage/
+*.local
+.env
+.env.*
+!.env.example
+!.env.mocks
+*.tsbuildinfo
+.vite/

@@ -1,0 +1,22 @@
+.wrapper {
+  position: relative;
+}
+
+.wrapper::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  right: var(--space-3);
+  width: 0.4rem;
+  height: 0.4rem;
+  border-right: 1.5px solid var(--color-text-muted);
+  border-bottom: 1.5px solid var(--color-text-muted);
+  transform: translateY(-70%) rotate(45deg);
+  pointer-events: none;
+}
+
+.select {
+  appearance: none;
+  padding-right: var(--space-8);
+  cursor: pointer;
+}

@@ -1,0 +1,23 @@
+.env
+.DS_Store
+.idea/
+.vscode/
+
+# web
+node_modules/
+dist/
+storybook-static/
+coverage/
+
+# api
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# worker
+/services/worker/bin/
+*.test
+*.out

@@ -1,0 +1,60 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "supplier_name",
+    "supplier_tax_id",
+    "invoice_number",
+    "issue_date",
+    "due_date",
+    "currency",
+    "total_amount",
+    "tax_amount",
+    "nfe_access_key",
+    "line_items"
+  ],
+  "properties": {
+    "supplier_name": { "$ref": "#/$defs/text_field" },
+    "supplier_tax_id": { "$ref": "#/$defs/text_field" },
+    "invoice_number": { "$ref": "#/$defs/text_field" },
+    "issue_date": { "$ref": "#/$defs/text_field" },
+    "due_date": { "$ref": "#/$defs/text_field" },
+    "currency": { "$ref": "#/$defs/text_field" },
+    "total_amount": { "$ref": "#/$defs/text_field" },
+    "tax_amount": { "$ref": "#/$defs/text_field" },
+    "nfe_access_key": { "$ref": "#/$defs/text_field" },
+    "line_items": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["value", "confidence"],
+      "properties": {
+        "value": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["description", "quantity", "unit_price", "total"],
+            "properties": {
+              "description": { "type": "string" },
+              "quantity": { "type": "string" },
+              "unit_price": { "type": "string" },
+              "total": { "type": "string" }
+            }
+          }
+        },
+        "confidence": { "type": "number" }
+      }
+    }
+  },
+  "$defs": {
+    "text_field": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["value", "confidence"],
+      "properties": {
+        "value": { "type": ["string", "null"] },
+        "confidence": { "type": "number" }
+      }
+    }
+  }
+}

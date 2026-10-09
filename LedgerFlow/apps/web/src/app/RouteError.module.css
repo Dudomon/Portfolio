@@ -1,0 +1,11 @@
+.container {
+  max-width: 40rem;
+  margin: var(--space-8) auto;
+  padding: 0 var(--space-4);
+}
+
+.link {
+  align-self: center;
+  color: var(--color-accent);
+  font-weight: var(--weight-medium);
+}

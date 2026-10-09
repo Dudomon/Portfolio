@@ -1,0 +1,56 @@
+.zone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-8) var(--space-4);
+  border: 2px dashed var(--color-border-strong);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface-sunken);
+  text-align: center;
+  transition:
+    border-color var(--duration-fast) var(--easing-standard),
+    background-color var(--duration-fast) var(--easing-standard);
+}
+
+.dragging {
+  border-color: var(--color-accent);
+  background: var(--color-accent-subtle);
+}
+
+.disabled {
+  opacity: 0.6;
+}
+
+.icon {
+  font-size: 1.75rem;
+  color: var(--color-text-muted);
+}
+
+.label {
+  font-weight: var(--weight-medium);
+}
+
+.browse {
+  color: var(--color-accent);
+  font-weight: var(--weight-medium);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  cursor: pointer;
+}
+
+/* The real input is visually hidden; surface its focus on the visible label. */
+.input:focus-visible + .browse {
+  outline: var(--focus-ring-width) solid var(--color-focus);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+.disabled .browse {
+  cursor: not-allowed;
+}
+
+.hint {
+  color: var(--color-text-muted);
+  font-size: var(--text-xs);
+}

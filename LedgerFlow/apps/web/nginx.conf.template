@@ -1,0 +1,45 @@
+server {
+  listen 8080;
+  server_name _;
+  root /usr/share/nginx/html;
+  server_tokens off;
+
+  # Declared once at server level: nginx only inherits add_header into
+  # locations that declare none of their own, so caching below uses `expires`.
+  add_header Content-Security-Policy "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' blob: data:; frame-src 'self' blob:; object-src 'none'; connect-src 'self' ${CSP_CONNECT_SRC}; base-uri 'self'; form-action 'self'; frame-ancestors 'none'" always;
+  add_header X-Content-Type-Options "nosniff" always;
+  add_header X-Frame-Options "DENY" always;
+  add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+  add_header Permissions-Policy "camera=(), microphone=(), geolocation=()" always;
+  add_header Cross-Origin-Opener-Policy "same-origin" always;
+
+  gzip on;
+  gzip_types text/css application/javascript application/json image/svg+xml;
+
+  location = /healthz {
+    access_log off;
+    default_type text/plain;
+    return 200 "ok";
+  }
+
+  # Same-origin API keeps the bearer token out of CORS preflights and the CSP simple.
+  location /api/ {
+    proxy_pass ${API_UPSTREAM};
+    proxy_set_header Host $host;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+    client_max_body_size 16m;
+  }
+
+  # Content-hashed build output can be cached forever.
+  location /assets/ {
+    expires 1y;
+    try_files $uri =404;
+  }
+
+  # SPA fallback. index.html is revalidated on every load so deploys take effect.
+  location / {
+    expires -1;
+    try_files $uri $uri/ /index.html;
+  }
+}

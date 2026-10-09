@@ -20,7 +20,7 @@ type Policy struct {
 // Delay returns the wait before retry n (0-based) using "equal jitter": half
 // of the exponential step is fixed and half is random. Pure full jitter can
 // return ~0, which turns a flapping dependency into a hot loop; equal jitter
-// keeps a floor while still de-synchronising replicas.
+// keeps a floor while still de-synchronizing replicas.
 func (p Policy) Delay(n int) time.Duration {
 	if p.Base <= 0 {
 		return 0

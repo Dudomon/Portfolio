@@ -15,7 +15,7 @@ func TestValidCNPJ(t *testing.T) {
 		{name: "valid second", in: "27865757000102", want: true},
 		{name: "wrong first check digit", in: "11222333000191", want: false},
 		{name: "wrong second check digit", in: "11222333000182", want: false},
-		{name: "formatted input must be normalised first", in: "11.222.333/0001-81", want: false},
+		{name: "formatted input must be normalized first", in: "11.222.333/0001-81", want: false},
 		{name: "too short", in: "1122233300018", want: false},
 		{name: "too long", in: "112223330001810", want: false},
 		{name: "letters", in: "1122233300018A", want: false},

@@ -35,7 +35,7 @@ const (
 var errNoInfNFe = errors.New("no infNFe element found")
 
 // infNFe maps the subset of the NF-e layout the contract needs. Tags carry no
-// namespace so both the bare <NFe> and the authorised <nfeProc> envelope match.
+// namespace so both the bare <NFe> and the authorized <nfeProc> envelope match.
 type infNFe struct {
 	ID  string `xml:"Id,attr"`
 	Ide struct {
@@ -260,7 +260,7 @@ func lineItems(inf *infNFe) extract.Field {
 			continue
 		}
 		// qCom/vUnCom carry up to 4 and 10 decimal places; trailing zeros
-		// are layout padding, not precision, so they are normalised away.
+		// are layout padding, not precision, so they are normalized away.
 		item.Quantity = qty.String()
 		item.UnitPrice = unit.String()
 		item.Total = total.StringFixed(2)

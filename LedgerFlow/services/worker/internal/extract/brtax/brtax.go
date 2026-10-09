@@ -35,7 +35,7 @@ func OnlyDigits(s string) string {
 }
 
 // ValidCNPJ reports whether s is a 14-digit CNPJ with correct check digits.
-// Callers normalise formatting with OnlyDigits first.
+// Callers normalize formatting with OnlyDigits first.
 func ValidCNPJ(s string) bool {
 	if len(s) != cnpjLen || !allDigits(s) || allSame(s) {
 		return false

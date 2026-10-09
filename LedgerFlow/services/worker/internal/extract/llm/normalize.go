@@ -46,7 +46,7 @@ type modelOutput struct {
 	} `json:"line_items"`
 }
 
-// validator normalises a raw value, reporting false when it is invalid.
+// validator normalizes a raw value, reporting false when it is invalid.
 type validator func(string) (string, bool)
 
 // normalize converts model output into contract fields, validating every
@@ -171,7 +171,7 @@ func validMoney(v string) (string, bool) {
 	return decimal.RequireFromString(norm).StringFixed(2), true
 }
 
-// validTaxID checks CNPJs (anything that normalises to 14 digits) and passes
+// validTaxID checks CNPJs (anything that normalizes to 14 digits) and passes
 // foreign VAT identifiers through, since their formats are country-specific.
 func validTaxID(v string) (string, bool) {
 	digits := brtax.OnlyDigits(v)

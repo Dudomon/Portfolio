@@ -243,7 +243,7 @@ func (c *Client) send(ctx context.Context, payload []byte) (*chatResponse, error
 
 	var cr chatResponse
 	if err := json.Unmarshal(body, &cr); err != nil {
-		return nil, fmt.Errorf("%w: response envelope: %v", ErrMalformedOutput, err)
+		return nil, fmt.Errorf("%w: response envelope: %w", ErrMalformedOutput, err)
 	}
 	return &cr, nil
 }
@@ -273,7 +273,7 @@ func parseOutput(resp *chatResponse) (modelOutput, error) {
 	dec := json.NewDecoder(strings.NewReader(choice.Message.Content))
 	dec.DisallowUnknownFields()
 	if err := dec.Decode(&out); err != nil {
-		return modelOutput{}, fmt.Errorf("%w: %v", ErrMalformedOutput, err)
+		return modelOutput{}, fmt.Errorf("%w: %w", ErrMalformedOutput, err)
 	}
 	return out, nil
 }

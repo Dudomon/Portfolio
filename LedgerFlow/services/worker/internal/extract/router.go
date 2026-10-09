@@ -49,7 +49,7 @@ func (r *Router) Extract(ctx context.Context, doc Document) (Result, error) {
 		// is retried: that is the failure an operator needs to see.
 		ruleRes, ruleErr := r.rules.Extract(ctx, doc)
 		if ruleErr != nil {
-			return Result{}, fmt.Errorf("model extraction: %w (rule fallback: %v)", err, ruleErr)
+			return Result{}, fmt.Errorf("model extraction: %w (rule fallback: %w)", err, ruleErr)
 		}
 		r.log.WarnContext(ctx, "model failed on xml-like content; used rule fallback",
 			"content_type", doc.ContentType, "model_error", err)

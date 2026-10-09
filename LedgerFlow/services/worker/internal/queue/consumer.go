@@ -90,7 +90,7 @@ func NewConsumer(cfg Config, h Handler, m Metrics, log *slog.Logger) *Consumer {
 // Ready reports whether the consumer is currently attached to the broker.
 func (c *Consumer) Ready() bool { return c.ready.Load() }
 
-// Run consumes until ctx is cancelled, reconnecting with backoff whenever the
+// Run consumes until ctx is canceled, reconnecting with backoff whenever the
 // connection or a channel is lost. It returns nil on clean shutdown and an
 // error only for failures that reconnecting cannot fix (bad credentials,
 // conflicting topology); crashing surfaces those to the orchestrator.
@@ -116,7 +116,7 @@ func (c *Consumer) Run(ctx context.Context) error {
 	}
 }
 
-// session runs one connection until it fails or ctx is cancelled. It reports
+// session runs one connection until it fails or ctx is canceled. It reports
 // whether consumption actually started, which resets the reconnect backoff.
 func (c *Consumer) session(ctx context.Context) (bool, error) {
 	conn, err := amqp.DialConfig(c.cfg.URL, amqp.Config{

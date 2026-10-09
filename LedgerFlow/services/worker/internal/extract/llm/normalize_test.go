@@ -16,7 +16,7 @@ func TestToField(t *testing.T) {
 		want     extract.Field
 	}{
 		{
-			name:     "valid CNPJ is normalised to digits",
+			name:     "valid CNPJ is normalized to digits",
 			in:       modelField{Value: str("11.222.333/0001-81"), Confidence: 0.9},
 			validate: validTaxID,
 			want:     extract.Field{Value: "11222333000181", Confidence: 0.9, Source: extract.SourceLLM},
@@ -46,7 +46,7 @@ func TestToField(t *testing.T) {
 			want:     extract.Field{Value: "2026-02-30", Confidence: invalidConfidenceCap, Source: extract.SourceLLM},
 		},
 		{
-			name:     "amount is normalised to two decimals",
+			name:     "amount is normalized to two decimals",
 			in:       modelField{Value: str("1530.4"), Confidence: 0.9},
 			validate: validMoney,
 			want:     extract.Field{Value: "1530.40", Confidence: 0.9, Source: extract.SourceLLM},
@@ -132,6 +132,6 @@ func TestNormalizeEmptyLineItemsIsEmptyList(t *testing.T) {
 	fields, _ := normalize(modelOutput{})
 	items, ok := fields[extract.KeyLineItems].Value.([]extract.LineItem)
 	if !ok || items == nil || len(items) != 0 {
-		t.Fatalf("line items = %#v, want empty non-nil slice (serialises as [])", fields[extract.KeyLineItems].Value)
+		t.Fatalf("line items = %#v, want empty non-nil slice (serializes as [])", fields[extract.KeyLineItems].Value)
 	}
 }

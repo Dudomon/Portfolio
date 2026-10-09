@@ -35,7 +35,7 @@ func NewServer(addr string, reg *prometheus.Registry, ready func() bool) *http.S
 	}
 }
 
-// Serve runs srv until ctx is cancelled, then shuts it down gracefully.
+// Serve runs srv until ctx is canceled, then shuts it down gracefully.
 func Serve(ctx context.Context, srv *http.Server, shutdownTimeout time.Duration) error {
 	errCh := make(chan error, 1)
 	go func() { errCh <- srv.ListenAndServe() }()

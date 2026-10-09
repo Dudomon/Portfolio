@@ -40,7 +40,7 @@ func TestSleepHonoursContext(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	cancel()
 	if err := Sleep(ctx, time.Hour); !errors.Is(err, context.Canceled) {
-		t.Fatalf("Sleep on cancelled ctx = %v, want context.Canceled", err)
+		t.Fatalf("Sleep on canceled ctx = %v, want context.Canceled", err)
 	}
 }
 

@@ -1,0 +1,75 @@
+generator client {
+  provider = "prisma-client-js"
+  // linux-musl-openssl-3.0.x covers the Alpine-based Docker image.
+  binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Project {
+  id        String        @id @default(cuid())
+  name      String        @unique
+  createdAt DateTime      @default(now()) @map("created_at")
+  apiKeys   ApiKey[]
+  usage     UsageRecord[]
+
+  @@map("projects")
+}
+
+model ApiKey {
+  id                 String        @id @default(cuid())
+  projectId          String        @map("project_id")
+  name               String
+  /// Public, non-secret lookup handle embedded in the key (gw_<prefix>_<secret>).
+  prefix             String        @unique
+  /// HMAC-SHA256(pepper, secret), hex. The plaintext key is never stored.
+  hash               String
+  monthlyBudgetUsd   Decimal?      @map("monthly_budget_usd") @db.Decimal(12, 2)
+  rateLimitPerMinute Int           @default(60) @map("rate_limit_per_minute")
+  createdAt          DateTime      @default(now()) @map("created_at")
+  revokedAt          DateTime?     @map("revoked_at")
+  project            Project       @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  usage              UsageRecord[]
+
+  @@index([projectId])
+  @@map("api_keys")
+}
+
+enum RequestStatus {
+  success
+  error
+}
+
+/// One row per client request (not per upstream attempt).
+model UsageRecord {
+  id               String        @id @default(cuid())
+  requestId        String        @map("request_id")
+  apiKeyId         String        @map("api_key_id")
+  projectId        String        @map("project_id")
+  /// Alias the client asked for (e.g. "fast").
+  alias            String
+  /// Provider/model that produced the final answer; null if every attempt failed.
+  provider         String?
+  model            String?
+  status           RequestStatus
+  errorCode        String?       @map("error_code")
+  promptTokens     Int           @default(0) @map("prompt_tokens")
+  completionTokens Int           @default(0) @map("completion_tokens")
+  costUsd          Decimal       @default(0) @map("cost_usd") @db.Decimal(14, 8)
+  latencyMs        Int           @map("latency_ms")
+  attempts         Int           @default(1)
+  cached           Boolean       @default(false)
+  streamed         Boolean       @default(false)
+  createdAt        DateTime      @default(now()) @map("created_at")
+  apiKey           ApiKey        @relation(fields: [apiKeyId], references: [id], onDelete: Cascade)
+  project          Project       @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@index([createdAt])
+  @@index([apiKeyId, createdAt])
+  @@index([provider, createdAt])
+  @@index([alias, createdAt])
+  @@map("usage_records")
+}

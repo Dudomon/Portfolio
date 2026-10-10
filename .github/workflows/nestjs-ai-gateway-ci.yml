@@ -1,0 +1,53 @@
+name: NestJS AI Gateway and Dashboard
+
+on:
+  push:
+    paths: ['NestJS-AI-Gateway-Dashboard/**', '.github/workflows/nestjs-ai-gateway-ci.yml']
+  pull_request:
+    paths: ['NestJS-AI-Gateway-Dashboard/**', '.github/workflows/nestjs-ai-gateway-ci.yml']
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: NestJS-AI-Gateway-Dashboard
+    env:
+      NEXT_TELEMETRY_DISABLED: '1'
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: NestJS-AI-Gateway-Dashboard/package-lock.json
+
+      - name: Install
+        run: npm ci
+
+      - name: Generate Prisma client
+        run: npm run prisma:generate
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Format
+        run: npm run format:check
+
+      - name: Test
+        run: npm test
+
+      - name: Build
+        run: npm run build

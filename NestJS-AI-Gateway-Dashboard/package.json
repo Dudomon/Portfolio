@@ -1,0 +1,39 @@
+{
+  "name": "nestjs-ai-gateway-dashboard",
+  "private": true,
+  "description": "OpenAI-compatible LLM gateway (NestJS) with a typed SDK and a Next.js admin dashboard.",
+  "license": "MIT",
+  "engines": {
+    "node": ">=24"
+  },
+  "workspaces": [
+    "packages/shared",
+    "packages/sdk",
+    "apps/gateway",
+    "apps/dashboard"
+  ],
+  "scripts": {
+    "build:packages": "npm run build -w @aigw/shared && npm run build -w @aigw/sdk",
+    "prisma:generate": "npm run prisma:generate -w @aigw/gateway",
+    "typecheck": "npm run build:packages && npm run typecheck --workspaces --if-present",
+    "lint": "eslint . --max-warnings=0",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "test": "npm run build:packages && npm run test --workspaces --if-present",
+    "build": "npm run build:packages && npm run build -w @aigw/gateway && npm run build -w @aigw/dashboard"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.0",
+    "@next/eslint-plugin-next": "^15.5.0",
+    "@types/node": "^24.0.0",
+    "eslint": "^9.39.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-jsx-a11y": "^6.10.2",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "globals": "^16.0.0",
+    "prettier": "^3.6.0",
+    "typescript": "~5.9.3",
+    "typescript-eslint": "^8.46.0",
+    "vitest": "^3.2.4"
+  }
+}

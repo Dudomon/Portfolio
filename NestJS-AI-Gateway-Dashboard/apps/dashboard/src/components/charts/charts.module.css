@@ -1,0 +1,39 @@
+.chart {
+  width: 100%;
+  height: 240px;
+}
+
+.tooltip {
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 8px 10px;
+  font-size: 13px;
+  box-shadow: 0 4px 16px rgb(0 0 0 / 0.12);
+}
+
+.tooltipLabel {
+  color: var(--text-secondary);
+  margin-bottom: 2px;
+}
+
+.tooltipValue {
+  color: var(--text-primary);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.tableToggle {
+  margin-top: 12px;
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.tableToggle summary {
+  cursor: pointer;
+  width: fit-content;
+}
+
+.tableToggle[open] summary {
+  margin-bottom: 8px;
+}

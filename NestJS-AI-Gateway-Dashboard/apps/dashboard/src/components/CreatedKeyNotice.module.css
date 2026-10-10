@@ -1,0 +1,35 @@
+.notice {
+  border: 1px solid var(--accent);
+  border-radius: var(--radius);
+  background: var(--surface-2);
+  padding: 16px;
+  display: grid;
+  gap: 8px;
+}
+
+.title {
+  font-size: 15px;
+}
+
+.warning {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+
+.secretRow {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.secret {
+  flex: 1 1 280px;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  background: var(--surface-0);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 8px 10px;
+}
